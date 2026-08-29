@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ffb84d">
+  <title>Кот, который слишком хорошо живёт</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="game">
+    <header class="topbar">
+      <div><span class="eyebrow">СОСТОЯНИЕ ШЕФА</span><h1 id="food">0 рыбок</h1></div>
+      <button id="sound" class="round" aria-label="Звук">🔊</button>
+    </header>
+
+    <section class="scene">
+      <div id="phrase" class="speech">В этой миске подозрительно видно дно.</div>
+      <button id="cat" class="cat" aria-label="Покормить кота">
+        <span class="ears">▲　▲</span><span class="face">ฅ^•ﻌ•^ฅ</span>
+        <span id="catBody" class="body">●</span>
+      </button>
+      <button id="feed" class="feed">🐟 ПОКОРМИТЬ <small id="perClick">+1 рыбка</small></button>
+      <p class="hint">Можно нажимать на кота или на кнопку</p>
+    </section>
+
+    <section class="status">
+      <div><span>Уровень наглости</span><strong id="level">1 · Голодный стратег</strong></div>
+      <div class="meter"><i id="levelProgress"></i></div>
+      <div class="income">Доход: <b id="income">0</b> рыбок/сек.</div>
+    </section>
+
+    <section class="shop">
+      <h2>Улучшить жизнь Шефа</h2>
+      <div id="upgrades" class="upgrade-list"></div>
+    </section>
+  </main>
+  <div id="floaters" aria-hidden="true"></div>
+  <script src="game.js"></script>
+</body>
+</html>
