@@ -18,7 +18,7 @@ const levels=[
   {at:300000,name:'Герцог Диванный',scale:1.28,img:'assets/images/shef-level-7.png'},
   {at:1500000,name:'Лососевый барон',scale:1,img:'assets/images/shef-level-8.png'},
   {at:8000000,name:'Министр полной миски',scale:1.2,img:'assets/images/shef-level-9.png'},
-  {at:40000000,name:'Император квартиры',scale:1.14,img:'assets/images/shef-level-10.png'},
+  {at:40000000,name:'Император квартиры',scale:1.14,img:'assets/images/shef-level-10-v2.png'},
   {at:200000000,name:'Кот, купивший Луну',scale:1.1,img:'assets/images/shef-level-11.png'},
   {at:1000000000,name:'Хозяин Вселенной',scale:1.13,img:'assets/images/shef-level-12.png'}
 ];
