@@ -11,12 +11,12 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 .speech{position:relative;z-index:4;max-width:88%;padding:8px 13px;border:2px solid #3a1712;border-radius:15px;background:#fff4d1;color:#3a1712;box-shadow:0 4px 0 rgba(40,10,5,.5);font-size:clamp(.72rem,2.8vw,.9rem);font-weight:900}
 .speech:after{content:"";position:absolute;left:50%;bottom:-9px;width:14px;height:14px;background:#fff4d1;border-right:2px solid #3a1712;border-bottom:2px solid #3a1712;transform:rotate(45deg)}
 .cat{position:relative;top:clamp(20px,3dvh,34px);width:min(76vw,390px);height:clamp(190px,36dvh,330px);margin-top:0;border:0;background:none;cursor:pointer;filter:drop-shadow(0 10px 6px rgba(20,5,0,.58));transition:transform .09s}
+.helper{position:absolute;z-index:1;bottom:20%;width:clamp(105px,23vw,175px);height:clamp(145px,29dvh,240px);object-fit:contain;opacity:0;pointer-events:none;transform:scale(.75);transition:.45s ease;filter:drop-shadow(0 8px 5px rgba(20,5,0,.55))}.helper.visible{opacity:1;transform:scale(1)}.grandma-helper{left:-1%}.chef-helper{right:-2%}
 .cat img{width:100%;height:100%;object-fit:contain;transition:transform .35s;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none;user-select:none}
 .cat:active,.cat.bop{transform:scale(.94) rotate(-1deg)}
 .bowl{z-index:2;width:min(42vw,210px);height:clamp(90px,15dvh,145px);object-fit:contain;margin-top:clamp(-55px,-6dvh,-30px);filter:drop-shadow(0 7px 4px rgba(20,5,0,.55));pointer-events:none}
 .bowl.served{animation:served .18s ease}
-.room-event{position:absolute;z-index:8;left:var(--event-x,20%);top:var(--event-y,45%);width:58px;height:58px;border:3px solid #35170f;border-radius:50%;background:radial-gradient(circle,#fff7a0,#ff9e19);box-shadow:0 0 0 3px #ffe35d,0 0 22px #fff36c;font-size:2rem;opacity:0;pointer-events:none;transform:translate(-50%,-50%) scale(.3) rotate(-20deg);transition:.25s}.room-event.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1) rotate(0);animation:eventPulse 1s infinite alternate}
-.room-event img{width:145%;height:145%;margin:-22%;object-fit:contain;pointer-events:none}
+.room-event{position:absolute;z-index:8;left:var(--event-x,20%);top:var(--event-y,45%);width:86px;height:86px;border:0;background:none;opacity:0;pointer-events:none;transform:translate(-50%,-50%) scale(.3) rotate(-20deg);transition:.25s}.room-event.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1) rotate(0);animation:eventFloat 1.1s infinite alternate ease-in-out}.room-event img{width:100%;height:100%;object-fit:contain;pointer-events:none;filter:drop-shadow(0 0 7px #fff36c) drop-shadow(0 0 14px #45e9ff)}
 .feed{position:relative;z-index:3;margin-top:-10px;border:3px solid #3a1712;border-radius:15px;padding:8px 27px;background:linear-gradient(#ffe95b,#ff9d14);color:#35170f;box-shadow:0 0 0 2px #ffd65a,0 5px 0 #3a1712;font-size:1rem;font-weight:1000;cursor:pointer}
 .feed small{display:block;font-size:.75rem}
 .hint{display:none}
@@ -51,7 +51,7 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 }
 @keyframes nope{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 @keyframes served{50%{transform:scale(1.12) rotate(-3deg)}}
-@keyframes eventPulse{to{filter:brightness(1.18);box-shadow:0 0 0 3px #ffe35d,0 0 34px #fff36c}}
+@keyframes eventFloat{to{transform:translate(-50%,calc(-50% - 9px)) scale(1.08);filter:brightness(1.18)}}
 @media(min-width:760px){.game{width:min(100%,900px);padding-inline:20px}
 .scene{inset:86px 20px 145px}
 .cat{width:min(44vw,410px)}

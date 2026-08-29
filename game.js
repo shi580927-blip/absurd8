@@ -9,19 +9,21 @@ const upgrades = [
   {id:'box', icon:'📦', name:'Коробка дороже квартиры', desc:'+250 рыбок в секунду', base:18000, cps:250}
 ];
 const levels=[
-  {at:0,name:'Голодный стратег',scale:1,img:'assets/images/shef-level-2.png'},
-  {at:100,name:'Кот с личной миской',scale:1.05,img:'assets/images/shef-level-2.png'},
-  {at:500,name:'Диванный аристократ',scale:1.08,img:'assets/images/shef-level-3.png'},
-  {at:2500,name:'Ресторанный критик',scale:1.14,img:'assets/images/shef-level-3.png'},
-  {at:12000,name:'Владелец кухни',scale:1.2,img:'assets/images/shef-level-3.png'},
-  {at:60000,name:'Кот, купивший Луну',scale:1.28,img:'assets/images/shef-level-3.png'}
+  {at:0,name:'Голодный стратег',scale:1,img:'assets/images/shef-level-1.png'},
+  {at:100,name:'Кот с личной миской',scale:1.01,img:'assets/images/shef-level-2.png'},
+  {at:500,name:'Диванный аристократ',scale:1.02,img:'assets/images/shef-level-3.png'},
+  {at:2500,name:'Ресторанный критик',scale:1.03,img:'assets/images/shef-level-4.png'},
+  {at:12000,name:'Владелец кухни',scale:1.04,img:'assets/images/shef-level-5.png'},
+  {at:60000,name:'Рыбный магнат',scale:1.05,img:'assets/images/shef-level-6.png'},
+  {at:300000,name:'Герцог Диванный',scale:1.06,img:'assets/images/shef-level-7.png'},
+  {at:1500000,name:'Лососевый барон',scale:1.07,img:'assets/images/shef-level-8.png'},
+  {at:8000000,name:'Министр полной миски',scale:1.08,img:'assets/images/shef-level-9.png'},
+  {at:40000000,name:'Император квартиры',scale:1.09,img:'assets/images/shef-level-10.png'},
+  {at:200000000,name:'Кот, купивший Луну',scale:1.1,img:'assets/images/shef-level-11.png'},
+  {at:1000000000,name:'Хозяин Вселенной',scale:1.11,img:'assets/images/shef-level-12.png'}
 ];
 const phrases=['Шеф требует второе первое.','Кот не толстый. Он стратегически запасливый.','Эта рыбка была недостаточно амбициозна.','Шеф одобряет. Молча и свысока.','В миске появилось дно. Кто ответит?','Кот съел бюджет. Буквально.','Теперь можно и перекусить.','Работай усерднее. Кот сам себя не накормит.','Уровень мурчания временно повышен.','Рыбка поступила в распоряжение руководства.'];
-const outfits=[
-  {id:'jacket',name:'Фирменный пиджак',img:'assets/images/shef-level-2.png',unlock:0},
-  {id:'scarf',name:'Голодный стратег',img:'assets/images/shef-level-1.png',unlock:1},
-  {id:'robe',name:'Диванный аристократ',img:'assets/images/shef-level-3.png',unlock:2}
-];
+const outfits=levels.map((level,index)=>({id:`level-${index+1}`,name:level.name,img:level.img,unlock:index}));
 let state={food:0,total:0,counts:{},sound:true,last:Date.now(),outfit:null};
 try{state={...state,...JSON.parse(localStorage.getItem('absurd8-save')||'{}')}}catch(e){}
 upgrades.forEach(u=>state.counts[u.id]??=0);
@@ -41,6 +43,10 @@ function render(){
   $('catBody').style.transform=`scale(${level.scale})`;
   $('levelProgress').style.width=next?`${Math.min(100,(state.total-level.at)/(next.at-level.at)*100)}%`:'100%';
   $('upgrades').innerHTML=upgrades.map(u=>`<button class="upgrade ${state.food<price(u)?'locked':''}" data-id="${u.id}"><span class="icon">${u.icon}</span><span><b>${u.name} · ${state.counts[u.id]}</b><small>${u.desc}</small></span><span class="price">🐟 ${format(price(u))}</span></button>`).join('');
+  $('grandmaHelper').classList.toggle('visible',state.counts.grandma>0);
+  $('chefHelper').classList.toggle('visible',state.counts.chef>0);
+  $('grandmaHelper').dataset.tier=state.counts.grandma>=10?'3':state.counts.grandma>=5?'2':'1';
+  $('chefHelper').dataset.tier=state.counts.chef>=10?'3':state.counts.chef>=5?'2':'1';
   $('outfits').innerHTML=outfits.map(o=>{const unlocked=li>=o.unlock,active=(chosen?chosen.id:null)===o.id;return `<button class="outfit-card ${unlocked?'':'locked'} ${active?'selected':''}" data-outfit="${o.id}"><img src="${o.img}" alt=""><b>${o.name}</b><small>${unlocked?(active?'Надето':'Надеть'):`Откроется на уровне ${o.unlock+1}`}</small></button>`}).join('');
 }
 function feed(e){const before=currentLevel();state.food+=perClick();state.total+=perClick();const after=currentLevel();const cat=$('cat'),bowl=$('bowl');cat.classList.add('bop');bowl.classList.add('served');setTimeout(()=>{cat.classList.remove('bop');bowl.classList.remove('served')},180);if(after>before)$('phrase').textContent=`Новый статус: «${levels[after].name}». Шеф ожидал этого раньше.`;else if(Math.random()<.28)$('phrase').textContent=phrases[Math.floor(Math.random()*phrases.length)];const f=document.createElement('span');f.className='floater';f.textContent=`+${format(perClick())} 🐟`;f.style.left=`${e?.clientX||innerWidth/2}px`;f.style.top=`${e?.clientY||innerHeight/2}px`;$('floaters').append(f);setTimeout(()=>f.remove(),850);render()}
