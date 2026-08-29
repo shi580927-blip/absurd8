@@ -29,6 +29,7 @@ function render(){
 }
 function feed(e){state.food+=perClick();state.total+=perClick();const cat=$('cat');cat.classList.add('bop');setTimeout(()=>cat.classList.remove('bop'),100);if(Math.random()<.28)$('phrase').textContent=phrases[Math.floor(Math.random()*phrases.length)];const f=document.createElement('span');f.className='floater';f.textContent=`+${format(perClick())} 🐟`;f.style.left=`${e?.clientX||innerWidth/2}px`;f.style.top=`${e?.clientY||innerHeight/2}px`;$('floaters').append(f);setTimeout(()=>f.remove(),850);render()}
 $('cat').addEventListener('click',feed);$('feed').addEventListener('click',feed);
+$('cat').addEventListener('contextmenu',e=>e.preventDefault());
 $('openShop').addEventListener('click',()=>{$('shop').classList.add('open');$('shop').setAttribute('aria-hidden','false')});
 $('closeShop').addEventListener('click',()=>{$('shop').classList.remove('open');$('shop').setAttribute('aria-hidden','true')});
 $('upgrades').addEventListener('click',e=>{const b=e.target.closest('.upgrade');if(!b)return;const u=upgrades.find(x=>x.id===b.dataset.id),p=price(u);if(state.food>=p){state.food-=p;state.counts[u.id]++;$('phrase').textContent=`Куплено: «${u.name}». Бухгалтер плачет.`;render()}});
