@@ -6,9 +6,12 @@ const upgrades = [
   {id:'ministry', icon:'🏛️', name:'Министерство кошачьей еды', desc:'+100 рыбок в секунду', base:6000, cps:100}
 ];
 const levels=[
-  {at:0,name:'Голодный стратег',scale:1}, {at:100,name:'Кот с личной миской',scale:1.05},
-  {at:500,name:'Диванный аристократ',scale:1.12}, {at:2500,name:'Ресторанный критик',scale:1.2},
-  {at:12000,name:'Владелец кухни',scale:1.3}, {at:60000,name:'Кот, купивший Луну',scale:1.42}
+  {at:0,name:'Голодный стратег',scale:1,img:'assets/images/shef-level-1.png'},
+  {at:100,name:'Кот с личной миской',scale:1.05,img:'assets/images/shef-level-2.png'},
+  {at:500,name:'Диванный аристократ',scale:1.08,img:'assets/images/shef-level-3.png'},
+  {at:2500,name:'Ресторанный критик',scale:1.14,img:'assets/images/shef-level-3.png'},
+  {at:12000,name:'Владелец кухни',scale:1.2,img:'assets/images/shef-level-3.png'},
+  {at:60000,name:'Кот, купивший Луну',scale:1.28,img:'assets/images/shef-level-3.png'}
 ];
 const phrases=['Шеф требует второе первое.','Кот не толстый. Он стратегически запасливый.','Эта рыбка была недостаточно амбициозна.','Шеф одобряет. Молча и свысока.','В миске появилось дно. Кто ответит?','Кот съел бюджет. Буквально.','Теперь можно и перекусить.','Работай усерднее. Кот сам себя не накормит.','Уровень мурчания временно повышен.','Рыбка поступила в распоряжение руководства.'];
 let state={food:0,total:0,counts:{},sound:true,last:Date.now()};
@@ -23,11 +26,13 @@ function currentLevel(){let i=0;levels.forEach((l,n)=>{if(state.total>=l.at)i=n}
 function render(){
   $('food').textContent=`${format(state.food)} рыбок`; $('perClick').textContent=`+${format(perClick())} рыбок`;
   $('income').textContent=format(cps()); const li=currentLevel(),level=levels[li],next=levels[li+1];
-  $('level').textContent=`${li+1} · ${level.name}`; $('catBody').style.transform=`scale(${level.scale})`;
+  $('level').textContent=`${li+1} · ${level.name}`;
+  if($('catBody').getAttribute('src')!==level.img)$('catBody').src=level.img;
+  $('catBody').style.transform=`scale(${level.scale})`;
   $('levelProgress').style.width=next?`${Math.min(100,(state.total-level.at)/(next.at-level.at)*100)}%`:'100%';
   $('upgrades').innerHTML=upgrades.map(u=>`<button class="upgrade" data-id="${u.id}" ${state.food<price(u)?'disabled':''}><span class="icon">${u.icon}</span><span><b>${u.name} · ${state.counts[u.id]}</b><small>${u.desc}</small></span><span class="price">🐟 ${format(price(u))}</span></button>`).join('');
 }
-function feed(e){state.food+=perClick();state.total+=perClick();const cat=$('cat');cat.classList.add('bop');setTimeout(()=>cat.classList.remove('bop'),100);if(Math.random()<.28)$('phrase').textContent=phrases[Math.floor(Math.random()*phrases.length)];const f=document.createElement('span');f.className='floater';f.textContent=`+${format(perClick())} 🐟`;f.style.left=`${e?.clientX||innerWidth/2}px`;f.style.top=`${e?.clientY||innerHeight/2}px`;$('floaters').append(f);setTimeout(()=>f.remove(),850);render()}
+function feed(e){const before=currentLevel();state.food+=perClick();state.total+=perClick();const after=currentLevel();const cat=$('cat');cat.classList.add('bop');setTimeout(()=>cat.classList.remove('bop'),100);if(after>before)$('phrase').textContent=`Новый статус: «${levels[after].name}». Шеф ожидал этого раньше.`;else if(Math.random()<.28)$('phrase').textContent=phrases[Math.floor(Math.random()*phrases.length)];const f=document.createElement('span');f.className='floater';f.textContent=`+${format(perClick())} 🐟`;f.style.left=`${e?.clientX||innerWidth/2}px`;f.style.top=`${e?.clientY||innerHeight/2}px`;$('floaters').append(f);setTimeout(()=>f.remove(),850);render()}
 $('cat').addEventListener('click',feed);$('feed').addEventListener('click',feed);
 $('cat').addEventListener('contextmenu',e=>e.preventDefault());
 $('openShop').addEventListener('click',()=>{$('shop').classList.add('open');$('shop').setAttribute('aria-hidden','false')});
