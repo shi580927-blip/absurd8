@@ -9,18 +9,18 @@ const upgrades = [
   {id:'box', icon:'📦', name:'Коробка дороже квартиры', desc:'+250 рыбов в секунду', base:18000, cps:250}
 ];
 const levels=[
-  {at:0,name:'Голодный стратег',scale:1,img:'assets/images/shef-level-1.png'},
-  {at:100,name:'Кот с личной миской',scale:1.01,img:'assets/images/shef-level-2.png'},
-  {at:500,name:'Диванный аристократ',scale:1.02,img:'assets/images/shef-level-3.png'},
-  {at:2500,name:'Ресторанный критик',scale:1.03,img:'assets/images/shef-level-4.png'},
-  {at:12000,name:'Владелец кухни',scale:1.04,img:'assets/images/shef-level-5.png'},
-  {at:60000,name:'Рыбный магнат',scale:1.05,img:'assets/images/shef-level-6.png'},
-  {at:300000,name:'Герцог Диванный',scale:1.06,img:'assets/images/shef-level-7.png'},
-  {at:1500000,name:'Лососевый барон',scale:1.07,img:'assets/images/shef-level-8.png'},
-  {at:8000000,name:'Министр полной миски',scale:1.08,img:'assets/images/shef-level-9.png'},
-  {at:40000000,name:'Император квартиры',scale:1.09,img:'assets/images/shef-level-10.png'},
-  {at:200000000,name:'Кот, купивший Луну',scale:1.1,img:'assets/images/shef-level-11.png'},
-  {at:1000000000,name:'Хозяин Вселенной',scale:1.11,img:'assets/images/shef-level-12.png'}
+  {at:0,name:'Голодный стратег',scale:.88,img:'assets/images/shef-level-1.png'},
+  {at:100,name:'Кот с личной миской',scale:.94,img:'assets/images/shef-level-2.png'},
+  {at:500,name:'Диванный аристократ',scale:.98,img:'assets/images/shef-level-3.png'},
+  {at:2500,name:'Ресторанный критик',scale:1.02,img:'assets/images/shef-level-4.png'},
+  {at:12000,name:'Владелец кухни',scale:1.06,img:'assets/images/shef-level-5.png'},
+  {at:60000,name:'Рыбный магнат',scale:1.09,img:'assets/images/shef-level-6.png'},
+  {at:300000,name:'Герцог Диванный',scale:1.12,img:'assets/images/shef-level-7.png'},
+  {at:1500000,name:'Лососевый барон',scale:1.15,img:'assets/images/shef-level-8.png'},
+  {at:8000000,name:'Министр полной миски',scale:1.18,img:'assets/images/shef-level-9.png'},
+  {at:40000000,name:'Император квартиры',scale:1.21,img:'assets/images/shef-level-10.png'},
+  {at:200000000,name:'Кот, купивший Луну',scale:1.24,img:'assets/images/shef-level-11.png'},
+  {at:1000000000,name:'Хозяин Вселенной',scale:1.27,img:'assets/images/shef-level-12.png'}
 ];
 const phrases=['Шеф требует второе первое.','Кот не толстый. Он стратегически запасливый.','Эта рыбка была недостаточно амбициозна.','Шеф одобряет. Молча и свысока.','В миске появилось дно. Кто ответит?','Кот съел бюджет. Буквально.','Теперь можно и перекусить.','Работай усерднее. Кот сам себя не накормит.','Уровень мурчания временно повышен.','Рыбка поступила в распоряжение руководства.'];
 const outfits=levels.map((level,index)=>({id:`level-${index+1}`,name:level.name,img:level.img,unlock:index}));
@@ -45,6 +45,7 @@ function render(updatePanels=false){
   if(updatePanels)$('upgrades').innerHTML=upgrades.map(u=>`<button class="upgrade ${state.food<price(u)?'locked':''}" data-id="${u.id}"><span class="icon">${u.icon}</span><span><b>${u.name} · ${state.counts[u.id]}</b><small>${u.desc}</small></span><span class="price">🐟 ${format(price(u))}</span></button>`).join('');
   $('grandmaHelper').classList.toggle('visible',state.counts.grandma>0);
   $('chefHelper').classList.toggle('visible',state.counts.chef>0);
+  $('deliveryHelper').classList.toggle('visible',state.counts.delivery>0);
   $('bowl').classList.toggle('upgraded',state.counts.bowl>0);
   $('grandmaHelper').dataset.tier=state.counts.grandma>=10?'3':state.counts.grandma>=5?'2':'1';
   $('chefHelper').dataset.tier=state.counts.chef>=10?'3':state.counts.chef>=5?'2':'1';
