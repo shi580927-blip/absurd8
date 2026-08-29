@@ -70,6 +70,9 @@ function render(updatePanels=false){
   $('grandmaHelper').classList.toggle('visible',state.counts.grandma>0);
   $('chefHelper').classList.toggle('visible',state.counts.chef>0);
   $('deliveryHelper').classList.toggle('visible',state.counts.delivery>0);
+  $('mouseDecor').classList.toggle('visible',state.counts.mouse>0);
+  $('boxDecor').classList.toggle('visible',state.counts.box>0);
+  $('laserDecor').classList.toggle('visible',state.counts.laser>0);
   if(updatePanels)$('outfits').innerHTML=outfits.map(o=>{const unlocked=li>=o.unlock,active=(chosen?chosen.id:null)===o.id;return `<button class="outfit-card ${unlocked?'':'locked'} ${active?'selected':''}" data-outfit="${o.id}"><img src="${o.img}" alt=""><b>${unlocked?o.name:'Секретный образ'}</b><small>${unlocked?(active?'Надето':'Надеть'):`Откроется на уровне ${o.unlock+1}`}</small></button>`}).join('');
   if(updatePanels)$('achievements').innerHTML=achievements.map(a=>`<article class="achievement ${a.done()?'earned':'locked'}"><span>${a.done()?a.icon:'❔'}</span><div><b>${a.name}</b><small>${a.desc}</small></div><strong>${a.done()?'Получено':'Не открыто'}</strong></article>`).join('');
 }
