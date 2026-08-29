@@ -5,24 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#ffb84d">
   <title>Кот, который слишком хорошо живёт</title>
-  <link rel="stylesheet" href="style.css?v=20260829-5">
+  <link rel="stylesheet" href="style.css?v=20260829-6">
 </head>
 <body>
   <main class="game">
     <header class="topbar">
       <div><span class="eyebrow">СОСТОЯНИЕ ШЕФА</span><h1 id="food">0 рыбов</h1></div>
-      <button id="sound" class="round" aria-label="Звук">🔊</button>
+      <div class="top-actions"><button id="layoutToggle" class="round" aria-label="Режим расстановки">🛠️</button><button id="sound" class="round" aria-label="Звук">🔊</button></div>
     </header>
 
     <section class="scene">
       <div id="phrase" class="speech">В этой миске подозрительно видно дно.</div>
       <div class="helper-stage" aria-hidden="true">
-        <img id="grandmaHelper" class="room-helper grandma-helper" src="assets/images/helpers/grandma-v2.png" alt="">
-        <img id="chefHelper" class="room-helper chef-helper" src="assets/images/helpers/chef.png" alt="">
-        <img id="deliveryHelper" class="room-helper delivery-helper" src="assets/images/helpers/delivery.png" alt="">
-        <img id="mouseDecor" class="room-prop mouse-decor" src="assets/images/events/mouse.png" alt="">
-        <img id="boxDecor" class="room-prop box-decor" src="assets/images/helpers/luxury-box.png" alt="">
-        <i id="laserDecor" class="laser-decor"></i>
+        <img id="grandmaHelper" data-layout-name="Бабушка" class="room-helper grandma-helper layout-item" src="assets/images/helpers/grandma-v2.png" alt="">
+        <img id="chefHelper" data-layout-name="Повар" class="room-helper chef-helper layout-item" src="assets/images/helpers/chef.png" alt="">
+        <img id="deliveryHelper" data-layout-name="Курьер" class="room-helper delivery-helper layout-item" src="assets/images/helpers/delivery.png" alt="">
+        <img id="mouseDecor" data-layout-name="Мышь" class="room-prop mouse-decor layout-item" src="assets/images/events/mouse.png" alt="">
+        <img id="boxDecor" data-layout-name="Коробка" class="room-prop box-decor layout-item" src="assets/images/helpers/luxury-box.png" alt="">
+        <i id="laserDecor" data-layout-name="Лазер" class="laser-decor layout-item"></i>
       </div>
       <button id="cat" class="cat" aria-label="Покормить кота">
         <img id="catBody" src="assets/images/shef-level-1.png" alt="Рыжий кот Шеф">
@@ -32,6 +32,8 @@
       <button id="feed" class="feed">🐟 ПОКОРМИТЬ <small id="perClick">+1 рыбов</small></button>
       <p class="hint">Можно нажимать на кота или на кнопку</p>
     </section>
+
+    <aside id="layoutTools" class="layout-tools" aria-hidden="true"><b>Выбрано: <span id="layoutStatus">перетащите объект</span></b><div><button id="sizeDown">− размер</button><button id="sizeUp">+ размер</button></div><div><button id="copyLayout">Копировать</button><button id="resetLayout">Сбросить</button><button id="closeLayout">Готово</button></div></aside>
 
     <section class="status">
       <div><span>Уровень наглости</span><strong id="level">1 · Голодный стратег</strong></div>
@@ -65,6 +67,6 @@
     </section>
   </main>
   <div id="floaters" aria-hidden="true"></div>
-  <script src="game.js?v=20260829-4"></script>
+  <script src="game.js?v=20260829-6"></script>
 </body>
 </html>
