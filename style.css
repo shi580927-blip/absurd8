@@ -34,15 +34,18 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 .close{width:38px;height:38px;border:2px solid #35170f;border-radius:10px;background:#ff5367;color:#fff;font-size:1.8rem;line-height:1;font-weight:900}
 .upgrade-list{display:grid;gap:9px;overflow:auto;padding:2px}
 .upgrade{display:grid;grid-template-columns:42px 1fr auto;gap:8px;align-items:center;width:100%;padding:10px;border:2px solid #251029;border-radius:13px;background:linear-gradient(#7c3a7d,#4c245a);box-shadow:inset 0 0 0 2px #df5bde;text-align:left;color:#fff}
-.upgrade:disabled{filter:grayscale(.65);opacity:.58}
+.upgrade.locked{filter:grayscale(.45);opacity:.68}
+.upgrade.nope{animation:nope .3s}
 .upgrade .icon{font-size:1.55rem}
 .upgrade b,.upgrade small{display:block}
 .upgrade b{font-size:.87rem}
 .upgrade small{font-size:.72rem}
 .upgrade .price{font-size:.84rem;font-weight:900;color:#a9ff69}
+.bonus{width:100%;margin:0 0 10px;padding:10px;border:2px solid #35170f;border-radius:13px;background:linear-gradient(#ffe95b,#ff9d14);color:#35170f;font-size:.9rem;font-weight:1000;box-shadow:0 3px 0 #35170f}.bonus small{display:block;font-size:.7rem}.bonus:disabled{filter:grayscale(.45);opacity:.72}
 .floater{position:fixed;z-index:30;pointer-events:none;color:#baff66;font-size:1.1rem;font-weight:1000;text-shadow:0 3px 0 #35170f;animation:fly .8s ease-out forwards}
 @keyframes fly{to{transform:translateY(-90px) scale(1.4);opacity:0}
 }
+@keyframes nope{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 @media(min-width:760px){.game{width:min(100%,900px);padding-inline:20px}
 .scene{inset:86px 20px 145px}
 .cat{width:min(44vw,410px)}
