@@ -30,8 +30,15 @@
       <div class="income">Доход: <b id="income">0</b> рыбок/сек.</div>
     </section>
 
-    <section class="shop">
-      <h2>Улучшить жизнь Шефа</h2>
+    <nav class="bottom-nav">
+      <button class="nav-button active">🐟<span>Кормить</span></button>
+      <button id="openShop" class="nav-button">⬆️<span>Улучшения</span></button>
+      <button class="nav-button">👕<span>Шкаф</span></button>
+      <button class="nav-button">🏆<span>Награды</span></button>
+    </nav>
+
+    <section id="shop" class="shop" aria-hidden="true">
+      <div class="shop-head"><h2>Улучшить жизнь Шефа</h2><button id="closeShop" class="close" aria-label="Закрыть">×</button></div>
       <div id="upgrades" class="upgrade-list"></div>
     </section>
   </main>
