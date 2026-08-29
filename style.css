@@ -14,6 +14,8 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 .cat img{width:100%;height:100%;object-fit:contain;transition:transform .35s;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none;user-select:none}
 .cat:active,.cat.bop{transform:scale(.94) rotate(-1deg)}
 .bowl{z-index:2;width:min(42vw,210px);height:clamp(90px,15dvh,145px);object-fit:contain;margin-top:clamp(-55px,-6dvh,-30px);filter:drop-shadow(0 7px 4px rgba(20,5,0,.55));pointer-events:none}
+.bowl.served{animation:served .18s ease}
+.room-event{position:absolute;z-index:8;left:var(--event-x,20%);top:var(--event-y,45%);width:58px;height:58px;border:3px solid #35170f;border-radius:50%;background:radial-gradient(circle,#fff7a0,#ff9e19);box-shadow:0 0 0 3px #ffe35d,0 0 22px #fff36c;font-size:2rem;opacity:0;pointer-events:none;transform:translate(-50%,-50%) scale(.3) rotate(-20deg);transition:.25s}.room-event.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1) rotate(0);animation:eventPulse 1s infinite alternate}
 .feed{position:relative;z-index:3;margin-top:-10px;border:3px solid #3a1712;border-radius:15px;padding:8px 27px;background:linear-gradient(#ffe95b,#ff9d14);color:#35170f;box-shadow:0 0 0 2px #ffd65a,0 5px 0 #3a1712;font-size:1rem;font-weight:1000;cursor:pointer}
 .feed small{display:block;font-size:.75rem}
 .hint{display:none}
@@ -41,11 +43,12 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 .upgrade b{font-size:.87rem}
 .upgrade small{font-size:.72rem}
 .upgrade .price{font-size:.84rem;font-weight:900;color:#a9ff69}
-.bonus{width:100%;margin:0 0 10px;padding:10px;border:2px solid #35170f;border-radius:13px;background:linear-gradient(#ffe95b,#ff9d14);color:#35170f;font-size:.9rem;font-weight:1000;box-shadow:0 3px 0 #35170f}.bonus small{display:block;font-size:.7rem}.bonus:disabled{filter:grayscale(.45);opacity:.72}
 .floater{position:fixed;z-index:30;pointer-events:none;color:#baff66;font-size:1.1rem;font-weight:1000;text-shadow:0 3px 0 #35170f;animation:fly .8s ease-out forwards}
 @keyframes fly{to{transform:translateY(-90px) scale(1.4);opacity:0}
 }
 @keyframes nope{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes served{50%{transform:scale(1.12) rotate(-3deg)}}
+@keyframes eventPulse{to{filter:brightness(1.18);box-shadow:0 0 0 3px #ffe35d,0 0 34px #fff36c}}
 @media(min-width:760px){.game{width:min(100%,900px);padding-inline:20px}
 .scene{inset:86px 20px 145px}
 .cat{width:min(44vw,410px)}
