@@ -106,9 +106,9 @@ $('sound').addEventListener('click',()=>{state.sound=!state.sound;$('sound').tex
 const layoutItems=[...document.querySelectorAll('.layout-item')];
 const layoutStage=document.querySelector('.helper-stage');
 function layoutProfile(){if(innerWidth>=1100)return'desktop';if(innerWidth>=760)return'tablet';if(innerWidth<=390)return'mobile-small';return'mobile-large'}
-const layoutKey=()=>`absurd8-layout-v2-${layoutProfile()}`;
+const layoutKey=()=>`absurd8-layout-v3-${layoutProfile()}`;
 const defaultLayouts={
-  desktop:{grandmaHelper:{left:8.31,top:1.71,width:24.09},mouseDecor:{left:85.34,top:54.99,width:12.82},boxDecor:{left:67.79,top:68,width:30.04},chefHelper:{left:60.79,top:6.81,width:36.33},deliveryHelper:{left:0,top:45.5,width:30.22},laserDecor:{left:34.28,top:95.06,width:1.74},cat:{dx:-1.61,dy:2.92,scale:1},bowl:{dx:-.08,dy:.31,scale:1}},
+  desktop:{grandmaHelper:{left:8.31,top:1.71,width:24.09},mouseDecor:{left:85.34,top:54.99,width:12.82},boxDecor:{left:67.79,top:68,width:30.04},chefHelper:{left:60.79,top:6.81,width:36.33},deliveryHelper:{left:.46,top:52.87,width:26.2},laserDecor:{left:34.28,top:95.06,width:1.74},cat:{dx:-1.61,dy:2.92,scale:1},bowl:{dx:-.08,dy:.31,scale:1}},
   tablet:{grandmaHelper:{left:7.39,top:15.85,width:24.09},mouseDecor:{left:85.34,top:54.99,width:12.82},boxDecor:{left:67.8,top:75.84,width:30.04},chefHelper:{left:61.16,top:17.49,width:36.33},deliveryHelper:{left:0,top:53.93,width:30.22},laserDecor:{left:34.28,top:93.7,width:1.74},cat:{dx:-1.61,dy:2.92,scale:1},bowl:{dx:1.49,dy:.55,scale:1}},
   'mobile-small':{cat:{dx:-5.96,dy:7.75,scale:.7},bowl:{dx:-.3,dy:-1.17,scale:.7},mouseDecor:{left:85.85,top:58.69,width:12.82},boxDecor:{left:67.96,top:70.65,width:32.04},chefHelper:{left:59.68,top:29.64,width:40.32},grandmaHelper:{left:1.73,top:26.46,width:26.08},deliveryHelper:{left:0,top:66.93,width:34.2},laserDecor:{left:34.28,top:93.7,width:1.74}},
   'mobile-large':{cat:{dx:-2,dy:6.52,scale:.82},bowl:{dx:.76,dy:1.9,scale:.88},grandmaHelper:{left:0,top:19.31,width:28.85},chefHelper:{left:64.5,top:27.11,width:35.47},boxDecor:{left:77.76,top:68.64,width:23.43},mouseDecor:{left:85.85,top:58.69,width:12.82},deliveryHelper:{left:0,top:66.93,width:34.2},laserDecor:{left:34.28,top:93.7,width:1.74}}
