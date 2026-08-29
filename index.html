@@ -24,10 +24,10 @@
         <img id="boxDecor" data-layout-name="Коробка" class="room-prop box-decor layout-item" src="assets/images/helpers/luxury-box.png" alt="">
         <i id="laserDecor" data-layout-name="Лазер" class="laser-decor layout-item"></i>
       </div>
-      <button id="cat" class="cat" aria-label="Покормить кота">
+      <button id="cat" data-layout-name="Шеф" data-layout-mode="offset" class="cat layout-item" aria-label="Покормить кота">
         <img id="catBody" src="assets/images/shef-level-1.png" alt="Рыжий кот Шеф">
       </button>
-      <img id="bowl" class="bowl" src="assets/images/bowl-empty.png" alt="Пустая миска">
+      <img id="bowl" data-layout-name="Миска" data-layout-mode="offset" class="bowl layout-item" src="assets/images/bowl-empty.png" alt="Пустая миска">
       <button id="roomEvent" class="room-event" aria-label="Собрать случайный бонус"></button>
       <button id="feed" class="feed">🐟 ПОКОРМИТЬ <small id="perClick">+1 рыбов</small></button>
       <p class="hint">Можно нажимать на кота или на кнопку</p>
@@ -67,6 +67,6 @@
     </section>
   </main>
   <div id="floaters" aria-hidden="true"></div>
-  <script src="game.js?v=20260829-7"></script>
+  <script src="game.js?v=20260829-8"></script>
 </body>
 </html>
