@@ -36,6 +36,12 @@ const achievements=[
   {icon:'🌌',name:'Вселенная оформлена на кота',desc:'Достичь 12 уровня',done:()=>currentLevel()>=11}
 ];
 const outfits=levels.map((level,index)=>({id:`level-${index+1}`,name:level.name,img:level.img,unlock:index}));
+const rooms=[
+  'assets/images/rooms/room-stage-1.webp',
+  'assets/images/rooms/room-stage-2.webp',
+  'assets/images/rooms/room-stage-3.webp',
+  'assets/images/rooms/room-stage-4.webp'
+];
 let state={food:0,total:0,counts:{},sound:true,last:Date.now(),outfit:null};
 try{state={...state,...JSON.parse(localStorage.getItem('absurd8-save')||'{}')}}catch(e){}
 upgrades.forEach(u=>state.counts[u.id]??=0);
@@ -51,6 +57,8 @@ function render(updatePanels=false){
   $('income').textContent=format(cps()); const li=currentLevel();
   if(li>renderedLevel){state.outfit=null;renderedLevel=li;save();updatePanels=true}
   const level=levels[li],next=levels[li+1];
+  const roomStage=li>=10?3:li>=8?2:li>=4?1:0;
+  document.querySelector('.game').style.setProperty('--room-bg',`url("${rooms[roomStage]}")`);
   $('level').textContent=`${li+1} · ${level.name}`;
   const chosen=outfits.find(o=>o.id===state.outfit&&li>=o.unlock);
   const catImage=chosen?chosen.img:level.img;
