@@ -10,6 +10,7 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 .scene{position:absolute;inset:86px 10px 145px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
 .speech{position:relative;z-index:4;max-width:88%;padding:8px 13px;border:2px solid #3a1712;border-radius:15px;background:#fff4d1;color:#3a1712;box-shadow:0 4px 0 rgba(40,10,5,.5);font-size:clamp(.72rem,2.8vw,.9rem);font-weight:900}
 .speech:after{content:"";position:absolute;left:50%;bottom:-9px;width:14px;height:14px;background:#fff4d1;border-right:2px solid #3a1712;border-bottom:2px solid #3a1712;transform:rotate(45deg)}
+.helper-stage{position:absolute;z-index:1;inset:0;pointer-events:none;overflow:hidden}.room-helper{position:absolute;display:block;object-fit:contain;opacity:0;transform:translateY(12px) scale(.88);transform-origin:bottom center;transition:opacity .5s ease,transform .55s cubic-bezier(.2,.9,.25,1.25);filter:drop-shadow(0 6px 4px rgba(20,5,0,.5))}.room-helper.visible{opacity:.96;transform:none}.grandma-helper{left:-2%;bottom:37%;width:clamp(105px,24vw,155px);height:clamp(150px,28dvh,220px)}.chef-helper{right:-3%;bottom:35%;width:clamp(100px,23vw,150px);height:clamp(155px,30dvh,230px)}.delivery-helper{left:53%;bottom:57%;width:clamp(68px,15vw,100px);height:clamp(100px,19dvh,150px);opacity:0;filter:drop-shadow(0 3px 3px rgba(20,5,0,.45))}.delivery-helper.visible{opacity:.9;animation:deliveryHover 1.8s ease-in-out infinite alternate}
 .cat{position:relative;z-index:2;top:clamp(20px,3dvh,34px);width:min(90vw,530px);height:clamp(260px,47dvh,440px);margin-top:-24px;border:0;background:none;cursor:pointer;filter:drop-shadow(0 10px 6px rgba(20,5,0,.58));transition:transform .09s}
 .cat img{width:100%;height:100%;object-fit:contain;transition:transform .35s;pointer-events:none;-webkit-user-drag:none;-webkit-touch-callout:none;user-select:none}
 .cat:active,.cat.bop{transform:scale(.94) rotate(-1deg)}
@@ -52,6 +53,7 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 @keyframes nope{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 @keyframes served{50%{transform:scale(1.12) rotate(-3deg)}}
 @keyframes eventFloat{to{transform:translate(-50%,calc(-50% - 9px)) scale(1.08);filter:brightness(1.18)}}
+@keyframes deliveryHover{to{transform:translateY(-5px) rotate(-2deg)}}
 @media(min-width:760px){.game{width:min(100%,900px);padding-inline:20px}
 .scene{inset:86px 20px 145px}
 .cat{width:min(58vw,540px)}
