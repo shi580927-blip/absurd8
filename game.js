@@ -23,6 +23,18 @@ const levels=[
   {at:1000000000,name:'Хозяин Вселенной',scale:1.13,img:'assets/images/shef-level-12.png'}
 ];
 const phrases=['Шеф требует второе первое.','Кот не толстый. Он стратегически запасливый.','Эта рыбка была недостаточно амбициозна.','Шеф одобряет. Молча и свысока.','В миске появилось дно. Кто ответит?','Кот съел бюджет. Буквально.','Теперь можно и перекусить.','Работай усерднее. Кот сам себя не накормит.','Уровень мурчания временно повышен.','Рыбка поступила в распоряжение руководства.'];
+const achievements=[
+  {icon:'🐾',name:'Первая лапа власти',desc:'Заработать 10 рыбов',done:()=>state.total>=10},
+  {icon:'🥣',name:'У миски появился бюджет',desc:'Купить «Миску без дна»',done:()=>state.counts.bowl>0},
+  {icon:'👵',name:'Бабушка одобрила комплекцию',desc:'Нанять бабушку-кормителя',done:()=>state.counts.grandma>0},
+  {icon:'👨‍🍳',name:'Повар подал заявление',desc:'Нанять испуганного повара',done:()=>state.counts.chef>0},
+  {icon:'🛵',name:'Рыбы особой срочности',desc:'Купить скоростную доставку',done:()=>state.counts.delivery>0},
+  {icon:'👔',name:'Кот вышел в руководство',desc:'Достичь 5 уровня',done:()=>currentLevel()>=4},
+  {icon:'💼',name:'Пассивная наглость',desc:'Получать 25 рыбов в секунду',done:()=>cps()>=25},
+  {icon:'🏛️',name:'Миска государственного значения',desc:'Получить поддержку министерства',done:()=>state.counts.ministry>0},
+  {icon:'💰',name:'Рыбовый миллионер',desc:'Заработать 1 000 000 рыбов',done:()=>state.total>=1000000},
+  {icon:'🌌',name:'Вселенная оформлена на кота',desc:'Достичь 12 уровня',done:()=>currentLevel()>=11}
+];
 const outfits=levels.map((level,index)=>({id:`level-${index+1}`,name:level.name,img:level.img,unlock:index}));
 let state={food:0,total:0,counts:{},sound:true,last:Date.now(),outfit:null};
 try{state={...state,...JSON.parse(localStorage.getItem('absurd8-save')||'{}')}}catch(e){}
@@ -48,14 +60,21 @@ function render(updatePanels=false){
   if(updatePanels)$('upgrades').innerHTML=upgrades.map(u=>`<button class="upgrade ${state.food<price(u)?'locked':''}" data-id="${u.id}"><span class="icon">${u.icon}</span><span><b>${u.name} · ${state.counts[u.id]}</b><small>${u.desc}</small></span><span class="price">🐟 ${format(price(u))}</span></button>`).join('');
   $('bowl').classList.toggle('upgraded',state.counts.bowl>0);
   if(updatePanels)$('outfits').innerHTML=outfits.map(o=>{const unlocked=li>=o.unlock,active=(chosen?chosen.id:null)===o.id;return `<button class="outfit-card ${unlocked?'':'locked'} ${active?'selected':''}" data-outfit="${o.id}"><img src="${o.img}" alt=""><b>${unlocked?o.name:'Секретный образ'}</b><small>${unlocked?(active?'Надето':'Надеть'):`Откроется на уровне ${o.unlock+1}`}</small></button>`}).join('');
+  if(updatePanels)$('achievements').innerHTML=achievements.map(a=>`<article class="achievement ${a.done()?'earned':'locked'}"><span>${a.done()?a.icon:'❔'}</span><div><b>${a.name}</b><small>${a.desc}</small></div><strong>${a.done()?'Получено':'Не открыто'}</strong></article>`).join('');
 }
 function feed(e){const before=currentLevel();state.food+=perClick();state.total+=perClick();const after=currentLevel();const cat=$('cat'),bowl=$('bowl');cat.classList.add('bop');bowl.classList.add('served');setTimeout(()=>{cat.classList.remove('bop');bowl.classList.remove('served')},180);if(after>before)$('phrase').textContent=`Новый статус: «${levels[after].name}». Шеф ожидал этого раньше.`;else if(Math.random()<.28)$('phrase').textContent=phrases[Math.floor(Math.random()*phrases.length)];const f=document.createElement('span');f.className='floater';f.textContent=`+${format(perClick())} 🐟`;f.style.left=`${e?.clientX||innerWidth/2}px`;f.style.top=`${e?.clientY||innerHeight/2}px`;$('floaters').append(f);setTimeout(()=>f.remove(),850);render(after>before)}
 $('cat').addEventListener('click',feed);$('feed').addEventListener('click',feed);
 $('cat').addEventListener('contextmenu',e=>e.preventDefault());
-$('openShop').addEventListener('click',()=>{render(true);$('wardrobe').classList.remove('open');$('shop').classList.add('open');$('shop').setAttribute('aria-hidden','false')});
-$('closeShop').addEventListener('click',()=>{$('shop').classList.remove('open');$('shop').setAttribute('aria-hidden','true')});
-$('openWardrobe').addEventListener('click',()=>{render(true);$('shop').classList.remove('open');$('wardrobe').classList.add('open');$('wardrobe').setAttribute('aria-hidden','false')});
-$('closeWardrobe').addEventListener('click',()=>{$('wardrobe').classList.remove('open');$('wardrobe').setAttribute('aria-hidden','true')});
+const panels=['shop','wardrobe','awards'];
+const navButtons=['openFeed','openShop','openWardrobe','openAwards'];
+function showPanel(panelId,buttonId){panels.forEach(id=>{$(id).classList.toggle('open',id===panelId);$(id).setAttribute('aria-hidden',id===panelId?'false':'true')});navButtons.forEach(id=>$(id).classList.toggle('active',id===buttonId));if(panelId)render(true)}
+$('openFeed').addEventListener('click',()=>showPanel(null,'openFeed'));
+$('openShop').addEventListener('click',()=>showPanel('shop','openShop'));
+$('closeShop').addEventListener('click',()=>showPanel(null,'openFeed'));
+$('openWardrobe').addEventListener('click',()=>showPanel('wardrobe','openWardrobe'));
+$('closeWardrobe').addEventListener('click',()=>showPanel(null,'openFeed'));
+$('openAwards').addEventListener('click',()=>showPanel('awards','openAwards'));
+$('closeAwards').addEventListener('click',()=>showPanel(null,'openFeed'));
 $('outfits').addEventListener('click',e=>{const card=e.target.closest('.outfit-card');if(!card)return;const outfit=outfits.find(o=>o.id===card.dataset.outfit);if(currentLevel()<outfit.unlock){$('phrase').textContent='Шеф ещё не заслужил этот наряд. Хотя он с этим не согласен.';return}state.outfit=outfit.id;$('phrase').textContent=`Шеф выбрал: «${outfit.name}». Публика может аплодировать.`;save();render(true)});
 $('upgrades').addEventListener('click',e=>{const b=e.target.closest('.upgrade');if(!b)return;const u=upgrades.find(x=>x.id===b.dataset.id),p=price(u);if(state.food>=p){state.food-=p;state.counts[u.id]++;const message=`Куплено: «${u.name}» · уровень ${state.counts[u.id]}.`;$('phrase').textContent=message;$('shopMessage').textContent=message;$('shopMessage').className='panel-message success';save();render(true);if((u.id==='grandma'||u.id==='chef')&&state.counts[u.id]===1){$('shop').classList.remove('open');$('shop').setAttribute('aria-hidden','true')}}else{const message=`Не хватает ${format(p-state.food)} рыбов.`;$('phrase').textContent=message;$('shopMessage').textContent=message;$('shopMessage').className='panel-message warning';b.classList.add('nope');setTimeout(()=>b.classList.remove('nope'),300)}});
 $('roomEvent').addEventListener('click',()=>{const toy=$('roomEvent');if(!toy.classList.contains('show'))return;const reward=Math.max(10,perClick()*12);state.food+=reward;state.total+=reward;$('phrase').textContent=toy.dataset.phrase;toy.classList.remove('show');save();render();scheduleRoomEvent()});
