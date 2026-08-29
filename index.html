@@ -32,10 +32,10 @@
     </section>
 
     <nav class="bottom-nav">
-      <button class="nav-button active">🐟<span>Кормить</span></button>
+      <button id="openFeed" class="nav-button active">🐟<span>Кормить</span></button>
       <button id="openShop" class="nav-button">⬆️<span>Улучшения</span></button>
       <button id="openWardrobe" class="nav-button">👕<span>Шкаф</span></button>
-      <button class="nav-button">🏆<span>Награды</span></button>
+      <button id="openAwards" class="nav-button">🏆<span>Награды</span></button>
     </nav>
 
     <section id="shop" class="shop" aria-hidden="true">
@@ -48,6 +48,12 @@
       <div class="shop-head"><h2>Гардероб Шефа</h2><button id="closeWardrobe" class="close" aria-label="Закрыть">×</button></div>
       <div class="panel-message">Одежда меняет вид, но не уменьшает наглость.</div>
       <div id="outfits" class="outfit-list"></div>
+    </section>
+
+    <section id="awards" class="shop awards" aria-hidden="true">
+      <div class="shop-head"><h2>Награды Шефа</h2><button id="closeAwards" class="close" aria-label="Закрыть">×</button></div>
+      <div class="panel-message">Шеф не хвастается. Он официально информирует.</div>
+      <div id="achievements" class="achievement-list"></div>
     </section>
   </main>
   <div id="floaters" aria-hidden="true"></div>
