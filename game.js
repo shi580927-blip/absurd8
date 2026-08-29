@@ -17,7 +17,12 @@ const levels=[
   {at:60000,name:'Кот, купивший Луну',scale:1.28,img:'assets/images/shef-level-3.png'}
 ];
 const phrases=['Шеф требует второе первое.','Кот не толстый. Он стратегически запасливый.','Эта рыбка была недостаточно амбициозна.','Шеф одобряет. Молча и свысока.','В миске появилось дно. Кто ответит?','Кот съел бюджет. Буквально.','Теперь можно и перекусить.','Работай усерднее. Кот сам себя не накормит.','Уровень мурчания временно повышен.','Рыбка поступила в распоряжение руководства.'];
-let state={food:0,total:0,counts:{},sound:true,last:Date.now()};
+const outfits=[
+  {id:'jacket',name:'Фирменный пиджак',img:'assets/images/shef-level-2.png',unlock:0},
+  {id:'scarf',name:'Голодный стратег',img:'assets/images/shef-level-1.png',unlock:1},
+  {id:'robe',name:'Диванный аристократ',img:'assets/images/shef-level-3.png',unlock:2}
+];
+let state={food:0,total:0,counts:{},sound:true,last:Date.now(),outfit:null};
 try{state={...state,...JSON.parse(localStorage.getItem('absurd8-save')||'{}')}}catch(e){}
 upgrades.forEach(u=>state.counts[u.id]??=0);
 const $=id=>document.getElementById(id);
@@ -30,28 +35,34 @@ function render(){
   $('food').textContent=`${format(state.food)} рыбок`; $('perClick').textContent=`+${format(perClick())} рыбок`;
   $('income').textContent=format(cps()); const li=currentLevel(),level=levels[li],next=levels[li+1];
   $('level').textContent=`${li+1} · ${level.name}`;
-  if($('catBody').getAttribute('src')!==level.img)$('catBody').src=level.img;
+  const chosen=outfits.find(o=>o.id===state.outfit&&li>=o.unlock);
+  const catImage=chosen?chosen.img:level.img;
+  if($('catBody').getAttribute('src')!==catImage)$('catBody').src=catImage;
   $('catBody').style.transform=`scale(${level.scale})`;
   $('levelProgress').style.width=next?`${Math.min(100,(state.total-level.at)/(next.at-level.at)*100)}%`:'100%';
   $('upgrades').innerHTML=upgrades.map(u=>`<button class="upgrade ${state.food<price(u)?'locked':''}" data-id="${u.id}"><span class="icon">${u.icon}</span><span><b>${u.name} · ${state.counts[u.id]}</b><small>${u.desc}</small></span><span class="price">🐟 ${format(price(u))}</span></button>`).join('');
+  $('outfits').innerHTML=outfits.map(o=>{const unlocked=li>=o.unlock,active=(chosen?chosen.id:null)===o.id;return `<button class="outfit-card ${unlocked?'':'locked'} ${active?'selected':''}" data-outfit="${o.id}"><img src="${o.img}" alt=""><b>${o.name}</b><small>${unlocked?(active?'Надето':'Надеть'):`Откроется на уровне ${o.unlock+1}`}</small></button>`}).join('');
 }
 function feed(e){const before=currentLevel();state.food+=perClick();state.total+=perClick();const after=currentLevel();const cat=$('cat'),bowl=$('bowl');cat.classList.add('bop');bowl.classList.add('served');setTimeout(()=>{cat.classList.remove('bop');bowl.classList.remove('served')},180);if(after>before)$('phrase').textContent=`Новый статус: «${levels[after].name}». Шеф ожидал этого раньше.`;else if(Math.random()<.28)$('phrase').textContent=phrases[Math.floor(Math.random()*phrases.length)];const f=document.createElement('span');f.className='floater';f.textContent=`+${format(perClick())} 🐟`;f.style.left=`${e?.clientX||innerWidth/2}px`;f.style.top=`${e?.clientY||innerHeight/2}px`;$('floaters').append(f);setTimeout(()=>f.remove(),850);render()}
 $('cat').addEventListener('click',feed);$('feed').addEventListener('click',feed);
 $('cat').addEventListener('contextmenu',e=>e.preventDefault());
-$('openShop').addEventListener('click',()=>{$('shop').classList.add('open');$('shop').setAttribute('aria-hidden','false')});
+$('openShop').addEventListener('click',()=>{$('wardrobe').classList.remove('open');$('shop').classList.add('open');$('shop').setAttribute('aria-hidden','false')});
 $('closeShop').addEventListener('click',()=>{$('shop').classList.remove('open');$('shop').setAttribute('aria-hidden','true')});
-$('upgrades').addEventListener('click',e=>{const b=e.target.closest('.upgrade');if(!b)return;const u=upgrades.find(x=>x.id===b.dataset.id),p=price(u);if(state.food>=p){state.food-=p;state.counts[u.id]++;$('phrase').textContent=`Куплено: «${u.name}». Бухгалтер плачет.`;save();render()}else{$('phrase').textContent=`Не хватает ${format(p-state.food)} рыбок. Шеф предлагает нажимать убедительнее.`;b.classList.add('nope');setTimeout(()=>b.classList.remove('nope'),300)}});
+$('openWardrobe').addEventListener('click',()=>{$('shop').classList.remove('open');$('wardrobe').classList.add('open');$('wardrobe').setAttribute('aria-hidden','false')});
+$('closeWardrobe').addEventListener('click',()=>{$('wardrobe').classList.remove('open');$('wardrobe').setAttribute('aria-hidden','true')});
+$('outfits').addEventListener('click',e=>{const card=e.target.closest('.outfit-card');if(!card)return;const outfit=outfits.find(o=>o.id===card.dataset.outfit);if(currentLevel()<outfit.unlock){$('phrase').textContent='Шеф ещё не заслужил этот наряд. Хотя он с этим не согласен.';return}state.outfit=outfit.id;$('phrase').textContent=`Шеф выбрал: «${outfit.name}». Публика может аплодировать.`;save();render()});
+$('upgrades').addEventListener('click',e=>{const b=e.target.closest('.upgrade');if(!b)return;const u=upgrades.find(x=>x.id===b.dataset.id),p=price(u);if(state.food>=p){state.food-=p;state.counts[u.id]++;const message=`Куплено: «${u.name}» · уровень ${state.counts[u.id]}.`;$('phrase').textContent=message;$('shopMessage').textContent=message;$('shopMessage').className='panel-message success';save();render()}else{const message=`Не хватает ${format(p-state.food)} рыбок.`;$('phrase').textContent=message;$('shopMessage').textContent=message;$('shopMessage').className='panel-message warning';b.classList.add('nope');setTimeout(()=>b.classList.remove('nope'),300)}});
 $('roomEvent').addEventListener('click',()=>{const toy=$('roomEvent');if(!toy.classList.contains('show'))return;const reward=Math.max(10,perClick()*12);state.food+=reward;state.total+=reward;$('phrase').textContent=toy.dataset.phrase;toy.classList.remove('show');save();render();scheduleRoomEvent()});
 $('roomEvent').addEventListener('contextmenu',e=>e.preventDefault());
 const roomEvents=[
-  {icon:'🧶',phrase:'Клубок обезврежен. Он слишком много знал.'},
-  {icon:'🐭',phrase:'Мышь внесла добровольный взнос и скрылась.'},
-  {icon:'🥿',phrase:'Найден тапок. Второй объявлен в розыск.'},
-  {icon:'🪶',phrase:'Перо поймано. Шеф утверждает, что это была охота.'},
-  {icon:'🐟',phrase:'Рыбка сама пришла устраиваться на работу.'}
+  {img:'assets/images/events/yarn.png',phrase:'Клубок обезврежен. Он слишком много знал.'},
+  {img:'assets/images/events/mouse.png',phrase:'Мышь внесла добровольный взнос и скрылась.'},
+  {img:'assets/images/events/slipper.png',phrase:'Найден тапок. Второй объявлен в розыск.'},
+  {img:'assets/images/events/feather.png',phrase:'Перо поймано. Шеф утверждает, что это была охота.'},
+  {img:'assets/images/events/fish.png',phrase:'Рыбка сама пришла устраиваться на работу.'}
 ];
 let roomEventTimer;
-function scheduleRoomEvent(first=false){clearTimeout(roomEventTimer);roomEventTimer=setTimeout(()=>{const event=roomEvents[Math.floor(Math.random()*roomEvents.length)],toy=$('roomEvent');toy.textContent=event.icon;toy.dataset.phrase=event.phrase;toy.style.setProperty('--event-x',`${12+Math.random()*72}%`);toy.style.setProperty('--event-y',`${30+Math.random()*38}%`);toy.classList.add('show');setTimeout(()=>{if(toy.classList.contains('show')){toy.classList.remove('show');scheduleRoomEvent()}},9000)},first?5000:18000+Math.random()*18000)}
+function scheduleRoomEvent(first=false){clearTimeout(roomEventTimer);roomEventTimer=setTimeout(()=>{const event=roomEvents[Math.floor(Math.random()*roomEvents.length)],toy=$('roomEvent');toy.innerHTML=`<img src="${event.img}" alt="">`;toy.dataset.phrase=event.phrase;toy.style.setProperty('--event-x',`${12+Math.random()*72}%`);toy.style.setProperty('--event-y',`${30+Math.random()*38}%`);toy.classList.add('show');setTimeout(()=>{if(toy.classList.contains('show')){toy.classList.remove('show');scheduleRoomEvent()}},9000)},first?5000:18000+Math.random()*18000)}
 $('sound').addEventListener('click',()=>{state.sound=!state.sound;$('sound').textContent=state.sound?'🔊':'🔇';save()});
 function save(){state.last=Date.now();localStorage.setItem('absurd8-save',JSON.stringify(state))}
 const away=Math.min(4*3600,Math.max(0,(Date.now()-(state.last||Date.now()))/1000));if(away>10&&cps()>0){const bonus=Math.floor(away*cps());state.food+=bonus;state.total+=bonus;$('phrase').textContent=`Пока тебя не было, Шеф получил ${format(bonus)} рыбок.`}
