@@ -6,7 +6,7 @@ const upgrades = [
   {id:'ministry', icon:'🏛️', name:'Министерство кошачьей еды', desc:'+100 рыбок в секунду', base:6000, cps:100}
 ];
 const levels=[
-  {at:0,name:'Голодный стратег',scale:1,img:'assets/images/shef-level-1.png'},
+  {at:0,name:'Голодный стратег',scale:1,img:'assets/images/shef-level-2.png'},
   {at:100,name:'Кот с личной миской',scale:1.05,img:'assets/images/shef-level-2.png'},
   {at:500,name:'Диванный аристократ',scale:1.08,img:'assets/images/shef-level-3.png'},
   {at:2500,name:'Ресторанный критик',scale:1.14,img:'assets/images/shef-level-3.png'},
@@ -14,7 +14,7 @@ const levels=[
   {at:60000,name:'Кот, купивший Луну',scale:1.28,img:'assets/images/shef-level-3.png'}
 ];
 const phrases=['Шеф требует второе первое.','Кот не толстый. Он стратегически запасливый.','Эта рыбка была недостаточно амбициозна.','Шеф одобряет. Молча и свысока.','В миске появилось дно. Кто ответит?','Кот съел бюджет. Буквально.','Теперь можно и перекусить.','Работай усерднее. Кот сам себя не накормит.','Уровень мурчания временно повышен.','Рыбка поступила в распоряжение руководства.'];
-let state={food:0,total:0,counts:{},sound:true,last:Date.now()};
+let state={food:0,total:0,counts:{},sound:true,last:Date.now(),bonusAt:0};
 try{state={...state,...JSON.parse(localStorage.getItem('absurd8-save')||'{}')}}catch(e){}
 upgrades.forEach(u=>state.counts[u.id]??=0);
 const $=id=>document.getElementById(id);
@@ -30,14 +30,17 @@ function render(){
   if($('catBody').getAttribute('src')!==level.img)$('catBody').src=level.img;
   $('catBody').style.transform=`scale(${level.scale})`;
   $('levelProgress').style.width=next?`${Math.min(100,(state.total-level.at)/(next.at-level.at)*100)}%`:'100%';
-  $('upgrades').innerHTML=upgrades.map(u=>`<button class="upgrade" data-id="${u.id}" ${state.food<price(u)?'disabled':''}><span class="icon">${u.icon}</span><span><b>${u.name} · ${state.counts[u.id]}</b><small>${u.desc}</small></span><span class="price">🐟 ${format(price(u))}</span></button>`).join('');
+  $('upgrades').innerHTML=upgrades.map(u=>`<button class="upgrade ${state.food<price(u)?'locked':''}" data-id="${u.id}"><span class="icon">${u.icon}</span><span><b>${u.name} · ${state.counts[u.id]}</b><small>${u.desc}</small></span><span class="price">🐟 ${format(price(u))}</span></button>`).join('');
+  const wait=Math.max(0,60-Math.floor((Date.now()-(state.bonusAt||0))/1000));
+  $('bonus').disabled=wait>0;$('bonus').innerHTML=wait>0?`⏳ Бонус через ${wait} сек.<small>Шеф следит за часами</small>`:'🎁 Получить 50 рыбок<small>Бесплатный бонус раз в минуту</small>';
 }
 function feed(e){const before=currentLevel();state.food+=perClick();state.total+=perClick();const after=currentLevel();const cat=$('cat');cat.classList.add('bop');setTimeout(()=>cat.classList.remove('bop'),100);if(after>before)$('phrase').textContent=`Новый статус: «${levels[after].name}». Шеф ожидал этого раньше.`;else if(Math.random()<.28)$('phrase').textContent=phrases[Math.floor(Math.random()*phrases.length)];const f=document.createElement('span');f.className='floater';f.textContent=`+${format(perClick())} 🐟`;f.style.left=`${e?.clientX||innerWidth/2}px`;f.style.top=`${e?.clientY||innerHeight/2}px`;$('floaters').append(f);setTimeout(()=>f.remove(),850);render()}
 $('cat').addEventListener('click',feed);$('feed').addEventListener('click',feed);
 $('cat').addEventListener('contextmenu',e=>e.preventDefault());
 $('openShop').addEventListener('click',()=>{$('shop').classList.add('open');$('shop').setAttribute('aria-hidden','false')});
 $('closeShop').addEventListener('click',()=>{$('shop').classList.remove('open');$('shop').setAttribute('aria-hidden','true')});
-$('upgrades').addEventListener('click',e=>{const b=e.target.closest('.upgrade');if(!b)return;const u=upgrades.find(x=>x.id===b.dataset.id),p=price(u);if(state.food>=p){state.food-=p;state.counts[u.id]++;$('phrase').textContent=`Куплено: «${u.name}». Бухгалтер плачет.`;render()}});
+$('bonus').addEventListener('click',()=>{if(Date.now()-(state.bonusAt||0)<60000)return;state.food+=50;state.total+=50;state.bonusAt=Date.now();$('phrase').textContent='Шеф получил рекламный аванс. И уже считает его своим.';save();render()});
+$('upgrades').addEventListener('click',e=>{const b=e.target.closest('.upgrade');if(!b)return;const u=upgrades.find(x=>x.id===b.dataset.id),p=price(u);if(state.food>=p){state.food-=p;state.counts[u.id]++;$('phrase').textContent=`Куплено: «${u.name}». Бухгалтер плачет.`;save();render()}else{$('phrase').textContent=`Не хватает ${format(p-state.food)} рыбок. Шеф предлагает нажимать убедительнее.`;b.classList.add('nope');setTimeout(()=>b.classList.remove('nope'),300)}});
 $('sound').addEventListener('click',()=>{state.sound=!state.sound;$('sound').textContent=state.sound?'🔊':'🔇';save()});
 function save(){state.last=Date.now();localStorage.setItem('absurd8-save',JSON.stringify(state))}
 const away=Math.min(4*3600,Math.max(0,(Date.now()-(state.last||Date.now()))/1000));if(away>10&&cps()>0){const bonus=Math.floor(away*cps());state.food+=bonus;state.total+=bonus;$('phrase').textContent=`Пока тебя не было, Шеф получил ${format(bonus)} рыбок.`}
