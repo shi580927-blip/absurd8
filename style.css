@@ -2,7 +2,7 @@
 *{box-sizing:border-box}
 button{-webkit-tap-highlight-color:transparent;outline:none;touch-action:manipulation}
 html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#21100c;user-select:none}
-.game{position:relative;width:min(100%,620px);height:100dvh;min-height:560px;margin:auto;padding:10px 12px 84px;overflow:hidden;background-image:linear-gradient(rgba(20,8,4,.04),rgba(30,7,8,.26)),url("assets/images/shef-room.webp");background-size:cover;background-position:center 58%}
+.game{--room-bg:url("assets/images/rooms/room-stage-1.webp");position:relative;width:min(100%,620px);height:100dvh;min-height:560px;margin:auto;padding:10px 12px 84px;overflow:hidden;background-image:linear-gradient(rgba(20,8,4,.04),rgba(30,7,8,.26)),var(--room-bg);background-size:cover;background-position:center 58%;transition:background-image .5s ease}
 .topbar{position:relative;z-index:5;height:72px;display:flex;align-items:center;justify-content:space-between;padding:8px 13px;border:3px solid #2c130d;border-radius:16px;background:linear-gradient(#3b231b,#21100c);box-shadow:0 0 0 2px #f3a927,0 5px 0 rgba(20,5,0,.5)}
 .eyebrow{font-size:.72rem;font-weight:900;letter-spacing:.1em;color:#ffd96a}
 h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow:0 3px #35170f}
