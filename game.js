@@ -9,20 +9,20 @@ const upgrades = [
   {id:'box', icon:'📦', name:'Коробка дороже квартиры', desc:'+250 рыбов в секунду', base:18000, cps:250}
 ];
 const levels=[
-  {at:0,name:'Голодный стратег',scale:1,img:'assets/images/shef-level-1.png'},
-  {at:100,name:'Кот с личной миской',scale:1,img:'assets/images/shef-level-2.png'},
-  {at:500,name:'Диванный аристократ',scale:1,img:'assets/images/shef-level-3.png'},
-  {at:2500,name:'Ресторанный критик',scale:1,img:'assets/images/shef-level-4.png'},
-  {at:12000,name:'Хозяин недвижимости',scale:1,img:'assets/images/shef-level-5.png'},
-  {at:60000,name:'Рыбный магнат',scale:1,img:'assets/images/shef-level-6.png'},
-  {at:300000,name:'Его Рыбное Величество',scale:1,img:'assets/images/shef-level-7.png'},
-  {at:1500000,name:'Лососевый барон',scale:1,img:'assets/images/shef-level-8.png'},
-  {at:8000000,name:'Министр полной миски',scale:1,img:'assets/images/shef-level-9.png'},
-  {at:40000000,name:'Император квартиры',scale:1,img:'assets/images/shef-level-10-v2.png'},
-  {at:200000000,name:'Кот, купивший Луну',scale:1,img:'assets/images/shef-level-11.png'},
-  {at:1000000000,name:'Хозяин Вселенной',scale:1,img:'assets/images/shef-level-12.png'},
-  {at:5000000000,name:'Шефу пора отдохнуть',scale:1,img:'assets/images/shef-level-13.png'},
-  {at:25000000000,name:'Шеф наконец наелся',scale:1,img:'assets/images/shef-level-14.png'}
+  {at:0,name:'Голодный стратег',scale:1,img:'assets/images/cat-level-01.png'},
+  {at:100,name:'Кот с личной миской',scale:1,img:'assets/images/cat-level-02.png'},
+  {at:500,name:'Диванный аристократ',scale:1,img:'assets/images/cat-level-03.png'},
+  {at:2500,name:'Ресторанный критик',scale:1,img:'assets/images/cat-level-04.png'},
+  {at:12000,name:'Хозяин недвижимости',scale:1,img:'assets/images/cat-level-05.png'},
+  {at:60000,name:'Рыбный магнат',scale:1,img:'assets/images/cat-level-06.png'},
+  {at:300000,name:'Его Рыбное Величество',scale:1,img:'assets/images/cat-level-07.png'},
+  {at:1500000,name:'Лососевый барон',scale:1,img:'assets/images/cat-level-08.png'},
+  {at:8000000,name:'Министр полной миски',scale:1,img:'assets/images/cat-level-09.png'},
+  {at:40000000,name:'Император квартиры',scale:1,img:'assets/images/cat-level-10.png'},
+  {at:200000000,name:'Кот, купивший Луну',scale:1,img:'assets/images/cat-level-11.png'},
+  {at:1000000000,name:'Хозяин Вселенной',scale:1,img:'assets/images/cat-level-12.png'},
+  {at:5000000000,name:'Шефу пора отдохнуть',scale:1,img:'assets/images/cat-level-13.png'},
+  {at:25000000000,name:'Шеф наконец наелся',scale:1,img:'assets/images/cat-level-14.png'}
 ];
 const phrases=['Шеф требует второе первое.','Кот не толстый. Он стратегически запасливый.','Эта рыбка была недостаточно амбициозна.','Шеф одобряет. Молча и свысока.','В миске появилось дно. Кто ответит?','Кот съел бюджет. Буквально.','Теперь можно и перекусить.','Работай усерднее. Кот сам себя не накормит.','Уровень мурчания временно повышен.','Рыбка поступила в распоряжение руководства.'];
 const achievements=[
