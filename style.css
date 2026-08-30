@@ -182,3 +182,8 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 .nav-button.active .nav-icon{fill:#228dc4;stroke:#17485e}.nav-button span{display:block}
 @media(max-width:759px){.counter-copy{max-width:48%;padding:6px 10px}.topbar h1{font-size:1.28rem}.nav-icon{width:28px;height:28px}}
 @media(max-width:420px){.counter-copy{max-width:46%}.topbar h1{font-size:1.05rem}.counter-fish{font-size:1.05rem}.nav-icon{width:25px;height:25px}}
+
+/* Richer nav artwork and a genuinely compact mobile counter. */
+.nav-icon{width:48px;height:40px;margin:0 auto 0;object-fit:contain;fill:initial;stroke:none;filter:drop-shadow(0 2px 1px rgba(35,9,4,.65))}.nav-button.active .nav-icon{fill:initial;stroke:none}
+@media(max-width:759px){.counter-copy{max-width:40%;padding:5px 9px}.counter-fish{font-size:1rem}.topbar h1{font-size:1rem}.nav-icon{width:44px;height:38px}.nav-button span{font-size:.57rem}}
+@media(max-width:420px){.counter-copy{max-width:39%}.nav-icon{width:41px;height:36px}}
