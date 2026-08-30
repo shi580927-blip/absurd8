@@ -5,17 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#ffb84d">
   <title>Кот, который слишком хорошо живёт</title>
-  <link rel="stylesheet" href="style.css?v=20260830-2">
+  <link rel="stylesheet" href="style.css?v=20260830-3">
 </head>
 <body>
   <main class="game">
     <header class="topbar">
       <div><span class="eyebrow">СОСТОЯНИЕ ШЕФА</span><h1 id="food">0 рыбов</h1></div>
-      <div class="top-actions"><button id="layoutToggle" class="round" aria-label="Режим расстановки">🛠️</button><button id="sound" class="round" aria-label="Звук">🔊</button></div>
+      <div class="top-actions"><button id="openCare" class="round care-button" aria-label="Состояние Шефа">🐾</button><button id="layoutToggle" class="round" aria-label="Режим расстановки">🛠️</button><button id="sound" class="round" aria-label="Звук">🔊</button></div>
     </header>
 
     <section class="scene">
       <div id="phrase" class="speech">В этой миске подозрительно видно дно.</div>
+      <div id="foodDecor" class="food-decor" aria-hidden="true"></div>
       <div class="helper-stage" aria-hidden="true">
         <img id="grandmaHelper" data-layout-name="Бабушка" class="room-helper grandma-helper layout-item" src="assets/images/helpers/grandma-v2.png" alt="">
         <img id="chefHelper" data-layout-name="Повар" class="room-helper chef-helper layout-item" src="assets/images/helpers/chef-stage-1.png" alt="">
@@ -65,8 +66,25 @@
       <div class="panel-message">Шеф не хвастается. Он официально информирует.</div>
       <div id="achievements" class="achievement-list"></div>
     </section>
+
+    <section id="care" class="shop care" aria-hidden="true">
+      <div class="shop-head"><h2>Как поживает Шеф</h2><button id="closeCare" class="close" aria-label="Закрыть">×</button></div>
+      <div class="panel-message">Шеф не нуждается в заботе. Он разрешает её проявить.</div>
+      <div class="care-meters">
+        <div class="care-meter"><span>🐟 Сытость</span><div><i id="hungerBar"></i></div><b id="hungerValue">80%</b></div>
+        <div class="care-meter"><span>🧶 Настроение</span><div><i id="moodBar"></i></div><b id="moodValue">80%</b></div>
+        <div class="care-meter"><span>💤 Отдых</span><div><i id="restBar"></i></div><b id="restValue">80%</b></div>
+      </div>
+      <article class="care-request">
+        <span id="careRequestIcon">🐾</span>
+        <div><b id="careRequestTitle">Шеф обдумывает пожелания</b><p id="careRequestText">Он сообщит, когда потребуется персонал.</p></div>
+      </article>
+      <button id="careAction" class="care-action" disabled>Ожидаем распоряжений</button>
+      <p id="careBonus" class="care-bonus">Бонус заботы пока не действует.</p>
+      <p class="care-note">Показатели снижаются очень медленно. Шеф не болеет, не убегает и никого не наказывает. Почти.</p>
+    </section>
   </main>
   <div id="floaters" aria-hidden="true"></div>
-  <script src="game.js?v=20260830-4"></script>
+  <script src="game.js?v=20260830-7"></script>
 </body>
 </html>

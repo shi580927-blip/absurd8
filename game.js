@@ -9,18 +9,20 @@ const upgrades = [
   {id:'box', icon:'📦', name:'Коробка дороже квартиры', desc:'+250 рыбов в секунду', base:18000, cps:250}
 ];
 const levels=[
-  {at:0,name:'Голодный стратег',scale:.88,img:'assets/images/shef-level-1.png'},
-  {at:100,name:'Кот с личной миской',scale:.94,img:'assets/images/shef-level-2.png'},
-  {at:500,name:'Диванный аристократ',scale:.96,img:'assets/images/shef-level-3.png'},
-  {at:2500,name:'Ресторанный критик',scale:1.04,img:'assets/images/shef-level-4.png'},
-  {at:12000,name:'Владелец кухни',scale:.95,img:'assets/images/shef-level-5.png'},
-  {at:60000,name:'Рыбный магнат',scale:.98,img:'assets/images/shef-level-6.png'},
-  {at:300000,name:'Герцог Диванный',scale:1.28,img:'assets/images/shef-level-7.png'},
+  {at:0,name:'Голодный стратег',scale:1,img:'assets/images/shef-level-1.png'},
+  {at:100,name:'Кот с личной миской',scale:1,img:'assets/images/shef-level-2.png'},
+  {at:500,name:'Диванный аристократ',scale:1,img:'assets/images/shef-level-3.png'},
+  {at:2500,name:'Ресторанный критик',scale:1,img:'assets/images/shef-level-4.png'},
+  {at:12000,name:'Хозяин недвижимости',scale:1,img:'assets/images/shef-level-5.png'},
+  {at:60000,name:'Рыбный магнат',scale:1,img:'assets/images/shef-level-6.png'},
+  {at:300000,name:'Его Рыбное Величество',scale:1,img:'assets/images/shef-level-7.png'},
   {at:1500000,name:'Лососевый барон',scale:1,img:'assets/images/shef-level-8.png'},
-  {at:8000000,name:'Министр полной миски',scale:1.2,img:'assets/images/shef-level-9.png'},
-  {at:40000000,name:'Император квартиры',scale:1.14,img:'assets/images/shef-level-10-v2.png'},
-  {at:200000000,name:'Кот, купивший Луну',scale:1.1,img:'assets/images/shef-level-11.png'},
-  {at:1000000000,name:'Хозяин Вселенной',scale:1.13,img:'assets/images/shef-level-12.png'}
+  {at:8000000,name:'Министр полной миски',scale:1,img:'assets/images/shef-level-9.png'},
+  {at:40000000,name:'Император квартиры',scale:1,img:'assets/images/shef-level-10-v2.png'},
+  {at:200000000,name:'Кот, купивший Луну',scale:1,img:'assets/images/shef-level-11.png'},
+  {at:1000000000,name:'Хозяин Вселенной',scale:1,img:'assets/images/shef-level-12.png'},
+  {at:5000000000,name:'Шефу пора отдохнуть',scale:1,img:'assets/images/shef-level-13.png'},
+  {at:25000000000,name:'Шеф наконец наелся',scale:1,img:'assets/images/shef-level-14.png'}
 ];
 const phrases=['Шеф требует второе первое.','Кот не толстый. Он стратегически запасливый.','Эта рыбка была недостаточно амбициозна.','Шеф одобряет. Молча и свысока.','В миске появилось дно. Кто ответит?','Кот съел бюджет. Буквально.','Теперь можно и перекусить.','Работай усерднее. Кот сам себя не накормит.','Уровень мурчания временно повышен.','Рыбка поступила в распоряжение руководства.'];
 const achievements=[
@@ -33,7 +35,8 @@ const achievements=[
   {icon:'💼',name:'Пассивная наглость',desc:'Получать 25 рыбов в секунду',done:()=>cps()>=25},
   {icon:'🏛️',name:'Миска государственного значения',desc:'Получить поддержку министерства',done:()=>state.counts.ministry>0},
   {icon:'💰',name:'Рыбовый миллионер',desc:'Заработать 1 000 000 рыбов',done:()=>state.total>=1000000},
-  {icon:'🌌',name:'Вселенная оформлена на кота',desc:'Достичь 12 уровня',done:()=>currentLevel()>=11}
+  {icon:'🌌',name:'Вселенная оформлена на кота',desc:'Достичь 12 уровня',done:()=>currentLevel()>=11},
+  {icon:'😴',name:'Можно и подремлю',desc:'Наконец накормить Шефа',done:()=>currentLevel()>=13}
 ];
 const outfits=levels.map((level,index)=>({id:`level-${index+1}`,name:level.name,img:level.img,unlock:index}));
 const rooms=[
@@ -42,15 +45,55 @@ const rooms=[
   'assets/images/rooms/room-stage-3.webp',
   'assets/images/rooms/room-stage-4.webp'
 ];
-let state={food:0,total:0,counts:{},helperUntil:{},sound:true,last:Date.now(),outfit:null};
+const bowlImages=[
+  'assets/images/bowl-empty.png',
+  'assets/images/bowl-stage-2.png',
+  'assets/images/bowl-stage-3.png',
+  'assets/images/bowl-stage-4.png',
+  'assets/images/bowl-stage-5.png',
+  'assets/images/bowl-stage-6.png',
+  'assets/images/bowl-stage-7.png',
+  'assets/images/bowl-stage-8.png',
+  'assets/images/bowl-stage-9.png'
+];
+const carpetFood=[
+  {img:15,unlock:1,x:10,y:77,w:18},
+  {img:16,unlock:2,x:91,y:72,w:14},
+  {img:12,unlock:2,x:8,y:62,w:13},
+  {img:11,unlock:3,x:90,y:58,w:20},
+  {img:9,unlock:4,x:12,y:48,w:19},
+  {img:5,unlock:4,x:92,y:45,w:13},
+  {img:3,unlock:5,x:8,y:35,w:13},
+  {img:8,unlock:5,x:91,y:34,w:18},
+  {img:6,unlock:6,x:13,y:25,w:23},
+  {img:7,unlock:6,x:88,y:24,w:13},
+  {img:4,unlock:7,x:18,y:68,w:13},
+  {img:13,unlock:7,x:82,y:68,w:13},
+  {img:2,unlock:8,x:17,y:56,w:24},
+  {img:10,unlock:8,x:84,y:54,w:25},
+  {img:14,unlock:9,x:18,y:39,w:25},
+  {img:1,unlock:10,x:82,y:39,w:36}
+];
+let state={food:0,total:0,counts:{},helperUntil:{},sound:true,last:Date.now(),outfit:null,care:null};
 try{state={...state,...JSON.parse(localStorage.getItem('absurd8-save')||'{}')}}catch(e){}
 upgrades.forEach(u=>state.counts[u.id]??=0);
 state.helperUntil??={};
+const freshCare={hunger:82,mood:78,rest:80,last:Date.now(),nextRequest:Date.now(),request:null,bonusUntil:0};
+state.care={...freshCare,...(state.care||{})};
 const $=id=>document.getElementById(id);
+$('foodDecor').innerHTML=carpetFood.map((item,index)=>`<img id="foodProp${index+1}" class="food-prop" src="assets/images/food-${item.img}.png" style="--food-x:${item.x}%;--food-y:${item.y}%;--food-w:${item.w}%" alt="">`).join('');
 const format=n=>Math.floor(n).toLocaleString('ru-RU');
 const price=u=>Math.floor(u.base*Math.pow(1.55,state.counts[u.id]));
-const perClick=()=>1+upgrades.reduce((n,u)=>n+(u.click||0)*state.counts[u.id],0);
-const cps=()=>upgrades.reduce((n,u)=>n+(u.cps||0)*state.counts[u.id],0);
+const careMultiplier=()=>state.care.bonusUntil>Date.now()?2:1;
+const perClick=()=>Math.floor((1+upgrades.reduce((n,u)=>n+(u.click||0)*state.counts[u.id],0))*careMultiplier());
+const cps=()=>upgrades.reduce((n,u)=>n+(u.cps||0)*state.counts[u.id],0)*careMultiplier();
+const careRequests={
+  hunger:{icon:'🐟',title:'Шеф требует особый перекус',text:'Обычное кормление считается работой. А это — забота.',action:'Подать особый перекус'},
+  mood:{icon:'🪶',title:'Шеф желает развлечений',text:'Перо уже уведомлено о неизбежном поражении.',action:'Поиграть с пером'},
+  rest:{icon:'💤',title:'Шеф устал руководить',text:'Нужно обеспечить тишину государственного значения.',action:'Уложить Шефа'}
+};
+function updateCare(){const now=Date.now(),hours=Math.min(24,Math.max(0,now-state.care.last)/3600000);state.care.hunger=Math.max(18,state.care.hunger-hours*3);state.care.mood=Math.max(18,state.care.mood-hours*2);state.care.rest=Math.max(18,state.care.rest-hours*2.5);state.care.last=now;if(!state.care.request&&now>=state.care.nextRequest){const types=Object.keys(careRequests);state.care.request=types[Math.floor(Math.random()*types.length)]}}
+function renderCare(){updateCare();['hunger','mood','rest'].forEach(key=>{const value=Math.round(state.care[key]);$(`${key}Bar`).style.width=`${value}%`;$(`${key}Value`).textContent=`${value}%`});const request=state.care.request?careRequests[state.care.request]:null;$('openCare').classList.toggle('has-request',!!request);$('careRequestIcon').textContent=request?.icon||'🐾';$('careRequestTitle').textContent=request?.title||'Шеф обдумывает пожелания';$('careRequestText').textContent=request?.text||'Он сообщит, когда потребуется персонал.';$('careAction').textContent=request?.action||'Ожидаем распоряжений';$('careAction').disabled=!request;const remaining=Math.max(0,state.care.bonusUntil-Date.now());$('careBonus').classList.toggle('active',remaining>0);$('careBonus').textContent=remaining>0?`Забота одобрена: доход ×2 ещё ${Math.ceil(remaining/60000)} мин.`:'Бонус заботы пока не действует.'}
 function currentLevel(){let i=0;levels.forEach((l,n)=>{if(state.total>=l.at)i=n});return i}
 let renderedLevel=currentLevel();
 function render(updatePanels=false){
@@ -64,10 +107,13 @@ function render(updatePanels=false){
   const chosen=outfits.find(o=>o.id===state.outfit&&li>=o.unlock);
   const catImage=chosen?chosen.img:level.img;
   if($('catBody').getAttribute('src')!==catImage)$('catBody').src=catImage;
+  const bowlImage=bowlImages[Math.min(li,bowlImages.length-1)];
+  if($('bowl').getAttribute('src')!==bowlImage)$('bowl').src=bowlImage;
   $('catBody').style.transform=`scale(${level.scale})`;
   $('levelProgress').style.width=next?`${Math.min(100,(state.total-level.at)/(next.at-level.at)*100)}%`:'100%';
   if(updatePanels)$('upgrades').innerHTML=upgrades.map(u=>`<button class="upgrade ${state.food<price(u)?'locked':''}" data-id="${u.id}"><span class="icon">${u.icon}</span><span><b>${u.name} · ${state.counts[u.id]}</b><small>${u.desc}</small></span><span class="price">🐟 ${format(price(u))}</span></button>`).join('');
   $('bowl').classList.toggle('upgraded',state.counts.bowl>0);
+  [...$('foodDecor').children].forEach((item,index)=>item.classList.toggle('visible',li>=carpetFood[index].unlock));
   $('grandmaHelper').classList.toggle('visible',(state.helperUntil.grandma||0)>Date.now());
   const chefStage=state.counts.chef>=10?4:state.counts.chef>=6?3:state.counts.chef>=3?2:1;
   const chefImage=`assets/images/helpers/chef-stage-${chefStage}.png`;
@@ -79,12 +125,13 @@ function render(updatePanels=false){
   $('laserDecor').classList.toggle('visible',state.counts.laser>0);
   if(updatePanels)$('outfits').innerHTML=outfits.map(o=>{const unlocked=li>=o.unlock,active=(chosen?chosen.id:null)===o.id;return `<button class="outfit-card ${unlocked?'':'locked'} ${active?'selected':''}" data-outfit="${o.id}"><img src="${o.img}" alt=""><b>${unlocked?o.name:'Секретный образ'}</b><small>${unlocked?(active?'Надето':'Надеть'):`Откроется на уровне ${o.unlock+1}`}</small></button>`}).join('');
   if(updatePanels)$('achievements').innerHTML=achievements.map(a=>`<article class="achievement ${a.done()?'earned':'locked'}"><span>${a.done()?a.icon:'❔'}</span><div><b>${a.name}</b><small>${a.desc}</small></div><strong>${a.done()?'Получено':'Не открыто'}</strong></article>`).join('');
+  if(updatePanels||$('care').classList.contains('open'))renderCare();
 }
 let lastClickPhrase=0;
-function feed(e){if(document.querySelector('.game').classList.contains('layout-mode'))return;const before=currentLevel();state.food+=perClick();state.total+=perClick();const after=currentLevel();const cat=$('cat'),bowl=$('bowl');cat.classList.add('bop');bowl.classList.add('served');setTimeout(()=>{cat.classList.remove('bop');bowl.classList.remove('served')},180);if(after>before){$('phrase').textContent=`Новый статус: «${levels[after].name}». Шеф ожидал этого раньше.`;lastClickPhrase=Date.now()}else if(Date.now()-lastClickPhrase>6500&&Math.random()<.16){$('phrase').textContent=phrases[Math.floor(Math.random()*phrases.length)];lastClickPhrase=Date.now()}const f=document.createElement('span');f.className='floater';f.textContent=`+${format(perClick())} 🐟`;f.style.left=`${e?.clientX||innerWidth/2}px`;f.style.top=`${e?.clientY||innerHeight/2}px`;$('floaters').append(f);setTimeout(()=>f.remove(),850);render(after>before)}
+function feed(e){if(document.querySelector('.game').classList.contains('layout-mode'))return;const before=currentLevel();state.food+=perClick();state.total+=perClick();const after=currentLevel();const cat=$('cat'),bowl=$('bowl');cat.classList.add('bop');bowl.classList.add('served');setTimeout(()=>{cat.classList.remove('bop');bowl.classList.remove('served')},180);if(after>before){$('phrase').textContent=after===12?'Шеф устал. Государственные дела и рыбов лучше продолжить после отдыха.':after===13?'Шеф наконец наелся. Тишина: руководитель спит.':`Новый статус: «${levels[after].name}». Шеф ожидал этого раньше.`;lastClickPhrase=Date.now()}else if(Date.now()-lastClickPhrase>18000&&Math.random()<.06){$('phrase').textContent=phrases[Math.floor(Math.random()*phrases.length)];lastClickPhrase=Date.now()}const f=document.createElement('span');f.className='floater';f.textContent=`+${format(perClick())} 🐟`;f.style.left=`${e?.clientX||innerWidth/2}px`;f.style.top=`${e?.clientY||innerHeight/2}px`;$('floaters').append(f);setTimeout(()=>f.remove(),850);render(after>before)}
 $('cat').addEventListener('click',feed);$('feed').addEventListener('click',feed);
 $('cat').addEventListener('contextmenu',e=>e.preventDefault());
-const panels=['shop','wardrobe','awards'];
+const panels=['shop','wardrobe','awards','care'];
 const navButtons=['openFeed','openShop','openWardrobe','openAwards'];
 function showPanel(panelId,buttonId){panels.forEach(id=>{$(id).classList.toggle('open',id===panelId);$(id).setAttribute('aria-hidden',id===panelId?'false':'true')});navButtons.forEach(id=>$(id).classList.toggle('active',id===buttonId));if(panelId)render(true)}
 $('openFeed').addEventListener('click',()=>showPanel(null,'openFeed'));
@@ -94,6 +141,9 @@ $('openWardrobe').addEventListener('click',()=>showPanel('wardrobe','openWardrob
 $('closeWardrobe').addEventListener('click',()=>showPanel(null,'openFeed'));
 $('openAwards').addEventListener('click',()=>showPanel('awards','openAwards'));
 $('closeAwards').addEventListener('click',()=>showPanel(null,'openFeed'));
+$('openCare').addEventListener('click',()=>showPanel('care'));
+$('closeCare').addEventListener('click',()=>showPanel(null,'openFeed'));
+$('careAction').addEventListener('click',()=>{updateCare();const type=state.care.request;if(!type)return;if(type==='hunger'){const cost=Math.max(10,perClick()*8);if(state.food<cost){$('careRequestText').textContent=`Для особого перекуса не хватает ${format(cost-state.food)} рыбов.`;return}state.food-=cost}state.care[type]=Math.min(100,state.care[type]+32);state.care.request=null;state.care.bonusUntil=Date.now()+5*60*1000;state.care.nextRequest=Date.now()+(2+Math.random())*3600000;$('phrase').textContent=type==='hunger'?'Особый перекус принят. Шеф великодушно не оставил ни крошки.':type==='mood'?'Перо побеждено. Настроение руководства улучшилось.':'Тишина объявлена государственной необходимостью.';save();render(true)});
 $('outfits').addEventListener('click',e=>{const card=e.target.closest('.outfit-card');if(!card)return;const outfit=outfits.find(o=>o.id===card.dataset.outfit);if(currentLevel()<outfit.unlock){$('phrase').textContent='Шеф ещё не заслужил этот наряд. Хотя он с этим не согласен.';return}state.outfit=outfit.id;$('phrase').textContent=`Шеф выбрал: «${outfit.name}». Публика может аплодировать.`;save();render(true)});
 $('upgrades').addEventListener('click',e=>{const b=e.target.closest('.upgrade');if(!b)return;const u=upgrades.find(x=>x.id===b.dataset.id),p=price(u);if(state.food>=p){state.food-=p;state.counts[u.id]++;if(['grandma','chef','delivery'].includes(u.id))state.helperUntil[u.id]=Date.now()+5*60*1000;const message=`Куплено: «${u.name}» · уровень ${state.counts[u.id]}.`;$('phrase').textContent=message;$('shopMessage').textContent=message;$('shopMessage').className='panel-message success';save();render(true);if(['grandma','chef','delivery'].includes(u.id)){$('shop').classList.remove('open');$('shop').setAttribute('aria-hidden','true')}}else{const message=`Не хватает ${format(p-state.food)} рыбов.`;$('phrase').textContent=message;$('shopMessage').textContent=message;$('shopMessage').className='panel-message warning';b.classList.add('nope');setTimeout(()=>b.classList.remove('nope'),300)}});
 $('roomEvent').addEventListener('click',()=>{const toy=$('roomEvent');if(!toy.classList.contains('show'))return;const reward=Math.max(10,perClick()*12);state.food+=reward;state.total+=reward;$('phrase').textContent=toy.dataset.phrase;toy.classList.remove('show');save();render();scheduleRoomEvent()});
@@ -135,4 +185,4 @@ $('copyLayout').addEventListener('click',async()=>{const value=JSON.stringify({d
 $('resetLayout').addEventListener('click',()=>{localStorage.removeItem(layoutKey());layoutItems.forEach(item=>{['left','top','right','bottom','width','height'].forEach(prop=>item.style.removeProperty(prop));['--layout-x','--layout-y','--layout-scale'].forEach(prop=>item.style.removeProperty(prop))});applyLayout();selectLayoutItem(null);$('layoutStatus').textContent='возвращена стандартная расстановка'});
 function save(){state.last=Date.now();localStorage.setItem('absurd8-save',JSON.stringify(state))}
 const away=Math.min(4*3600,Math.max(0,(Date.now()-(state.last||Date.now()))/1000));if(away>10&&cps()>0){const bonus=Math.floor(away*cps());state.food+=bonus;state.total+=bonus;$('phrase').textContent=`Пока тебя не было, Шеф получил ${format(bonus)} рыбов.`}
-setInterval(()=>{const gain=cps()/10;state.food+=gain;state.total+=gain;render()},100);setInterval(save,5000);addEventListener('beforeunload',save);render(true);applyLayout();scheduleRoomEvent(true);
+setInterval(()=>{const gain=cps()/10;state.food+=gain;state.total+=gain;render()},100);setInterval(()=>{updateCare();save();if($('care').classList.contains('open'))renderCare();else $('openCare').classList.toggle('has-request',!!state.care.request)},60000);setInterval(save,5000);addEventListener('beforeunload',save);updateCare();render(true);applyLayout();scheduleRoomEvent(true);
