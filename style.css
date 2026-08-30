@@ -187,3 +187,9 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 .nav-icon{width:48px;height:40px;margin:0 auto 0;object-fit:contain;fill:initial;stroke:none;filter:drop-shadow(0 2px 1px rgba(35,9,4,.65))}.nav-button.active .nav-icon{fill:initial;stroke:none}
 @media(max-width:759px){.counter-copy{max-width:40%;padding:5px 9px}.counter-fish{font-size:1rem}.topbar h1{font-size:1rem}.nav-icon{width:44px;height:38px}.nav-button span{font-size:.57rem}}
 @media(max-width:420px){.counter-copy{max-width:39%}.nav-icon{width:41px;height:36px}}
+
+/* Cleaner food floor layout and a shorter mobile HUD. */
+.food-prop{transform:scale(.82);transform-origin:center;max-height:none}.food-prop.visible{transform:scale(1)}
+.layout-mode .food-decor{z-index:11;overflow:visible;pointer-events:auto}.layout-mode .food-prop{transform:none!important;pointer-events:auto!important}
+@media(max-width:759px){.topbar{height:54px}.counter-copy{height:48px;align-self:auto;border-width:3px;border-radius:15px}.top-actions{height:54px}.round{width:40px;height:40px;border-width:3px;border-radius:13px;font-size:1.05rem}.scene{top:calc(max(8px,env(safe-area-inset-top)) + 62px)}.layout-tools{top:66px}}
+@media(max-width:420px){.counter-copy{height:46px}.topbar h1{font-size:.98rem}}

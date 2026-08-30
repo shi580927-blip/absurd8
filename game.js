@@ -57,22 +57,14 @@ const bowlImages=[
   'assets/images/bowl-stage-9.png'
 ];
 const carpetFood=[
-  {img:15,unlock:1,x:10,y:77,w:18},
-  {img:16,unlock:2,x:91,y:72,w:14},
-  {img:12,unlock:2,x:8,y:62,w:13},
-  {img:11,unlock:3,x:90,y:58,w:20},
-  {img:9,unlock:4,x:12,y:48,w:19},
-  {img:5,unlock:4,x:92,y:45,w:13},
-  {img:3,unlock:5,x:8,y:35,w:13},
-  {img:8,unlock:5,x:91,y:34,w:18},
-  {img:6,unlock:6,x:13,y:25,w:23},
-  {img:7,unlock:6,x:88,y:24,w:13},
-  {img:4,unlock:7,x:18,y:68,w:13},
-  {img:13,unlock:7,x:82,y:68,w:13},
-  {img:2,unlock:8,x:17,y:56,w:24},
-  {img:10,unlock:8,x:84,y:54,w:25},
-  {img:14,unlock:9,x:18,y:39,w:25},
-  {img:1,unlock:10,x:82,y:39,w:36}
+  {img:15,unlock:1,x:3,y:68,w:15},
+  {img:16,unlock:2,x:82,y:69,w:13},
+  {img:12,unlock:3,x:15,y:76,w:12},
+  {img:11,unlock:4,x:70,y:77,w:16},
+  {img:9,unlock:5,x:2,y:52,w:14},
+  {img:5,unlock:6,x:85,y:53,w:12},
+  {img:3,unlock:8,x:24,y:66,w:11},
+  {img:8,unlock:10,x:63,y:65,w:14}
 ];
 let state={food:0,total:0,counts:{},helperUntil:{},sound:true,last:Date.now(),outfit:null,care:null,adBonusUntil:0};
 try{state={...state,...JSON.parse(localStorage.getItem('absurd8-save')||'{}')}}catch(e){}
@@ -82,7 +74,7 @@ const freshCare={hunger:82,mood:78,rest:80,last:Date.now(),nextRequest:Date.now(
 state.care={...freshCare,...(state.care||{})};
 if(state.artVersion!==2){state.outfit=null;state.artVersion=2}
 const $=id=>document.getElementById(id);
-$('foodDecor').innerHTML=carpetFood.map((item,index)=>`<img id="foodProp${index+1}" class="food-prop" src="assets/images/food-${item.img}.png" style="--food-x:${item.x}%;--food-y:${item.y}%;--food-w:${item.w}%" alt="">`).join('');
+$('foodDecor').innerHTML=carpetFood.map((item,index)=>`<img id="foodProp${index+1}" data-layout-name="Еда ${index+1}" class="food-prop layout-item" src="assets/images/food-${item.img}.png" style="left:${item.x}%;top:${item.y}%;width:${item.w}%" alt="">`).join('');
 const format=n=>Math.floor(n).toLocaleString('ru-RU');
 const price=u=>Math.floor(u.base*Math.pow(1.55,state.counts[u.id]));
 const boostMultiplier=()=>Math.max(state.care.bonusUntil>Date.now()?2:1,state.adBonusUntil>Date.now()?3:1);
