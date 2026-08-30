@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#ffb84d">
   <title>Кот, который слишком хорошо живёт</title>
-  <link rel="stylesheet" href="style.css?v=20260830-7">
+  <link rel="stylesheet" href="style.css?v=20260830-8">
 </head>
 <body>
   <main class="game">
     <header class="topbar">
-      <div><span class="eyebrow">СОСТОЯНИЕ ШЕФА</span><h1 id="food">0 рыбов</h1></div>
+      <div class="counter-copy"><span class="eyebrow">СОСТОЯНИЕ ШЕФА</span><div class="counter-value"><span class="counter-fish" aria-hidden="true">🐟</span><h1 id="food">0 рыбов</h1></div></div>
       <div class="top-actions"><button id="openCare" class="round care-button" aria-label="Состояние Шефа">🐾</button><button id="layoutToggle" class="round" aria-label="Режим расстановки">🛠️</button><button id="sound" class="round" aria-label="Звук">🔊</button></div>
     </header>
 
@@ -31,8 +31,8 @@
       <img id="bowl" data-layout-name="Миска" data-layout-mode="offset" class="bowl layout-item" src="assets/images/bowl-empty.png" alt="Пустая миска">
       <button id="roomEvent" class="room-event" aria-label="Собрать случайный бонус"></button>
       <div class="action-dock">
-        <button id="feed" class="feed">🐟 ПОКОРМИТЬ <small id="perClick">+1 рыбов</small></button>
-        <button id="rewardedAd" class="rewarded-ad-pill"><span>🎬 Посмотреть рекламу</span><small>Наедание ×3 на 5 минут</small></button>
+        <button id="feed" class="feed"><span class="action-icon" aria-hidden="true">🐟</span><span class="action-copy"><b>ПОКОРМИТЬ</b><small id="perClick">+1 рыбов</small></span></button>
+        <button id="rewardedAd" class="rewarded-ad-pill"><span class="action-icon" aria-hidden="true">🎬</span><span class="action-copy"><b>Посмотреть рекламу</b><small>Наедание ×3 на 5 минут</small></span></button>
         <span id="adStatus" class="sr-status" aria-live="polite"></span>
       </div>
       <p class="hint">Можно нажимать на кота или на кнопку</p>
@@ -90,6 +90,6 @@
   </main>
   <div id="floaters" aria-hidden="true"></div>
   <script src="https://sdk.games.s3.yandex.net/sdk.js"></script>
-  <script src="game.js?v=20260830-12"></script>
+  <script src="game.js?v=20260830-13"></script>
 </body>
 </html>
