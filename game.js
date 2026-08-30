@@ -61,8 +61,8 @@ const carpetFood=[
   {img:16,unlock:2,x:82,y:69,w:13},
   {img:12,unlock:3,x:15,y:76,w:12},
   {img:11,unlock:4,x:70,y:77,w:16},
-  {img:9,unlock:5,x:2,y:52,w:14},
-  {img:5,unlock:6,x:85,y:53,w:12},
+  {img:6,unlock:5,x:2,y:52,w:14},
+  {img:10,unlock:6,x:85,y:53,w:12},
   {img:3,unlock:8,x:24,y:66,w:11},
   {img:8,unlock:10,x:63,y:65,w:14}
 ];
