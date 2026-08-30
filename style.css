@@ -110,3 +110,27 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 .bottom-nav{height:calc(60px + env(safe-area-inset-bottom))}
 .shop{bottom:calc(68px + env(safe-area-inset-bottom))}
 }
+
+/* Unified full-height game panels. */
+.shop{top:calc(max(8px,env(safe-area-inset-top)) + 82px);right:10px;bottom:calc(78px + env(safe-area-inset-bottom));left:10px;width:auto;padding:0;overflow:hidden;border:3px solid #2b120c;border-radius:18px;background:radial-gradient(circle at 50% 0,rgba(153,77,33,.55),transparent 36%),linear-gradient(160deg,#4c281b,#24110d 58%,#170a08);box-shadow:0 0 0 3px #f1ad32,0 12px 30px rgba(13,3,2,.8);transform:translateY(calc(100% + 90px))}
+.shop.open{transform:translateY(0)}
+.shop-head{flex:0 0 auto;margin:0;padding:10px 12px;border-bottom:2px solid #a95f28;background:linear-gradient(#673b24,#3a1d15);box-shadow:0 3px 10px rgba(20,5,0,.55)}
+.shop h2{font-size:clamp(1.02rem,4.5vw,1.3rem);text-shadow:0 2px #35170f}
+.close{width:36px;height:36px;flex:0 0 36px;border-color:#4a2115;border-radius:50%;background:linear-gradient(#ffe05a,#f19a18);box-shadow:0 3px 0 #35170f;color:#35170f;font-size:1.55rem}
+.panel-message{flex:0 0 auto;margin:10px 12px 8px;padding:9px 11px;border-color:#a8662f;border-radius:12px;background:rgba(31,13,10,.88);font-size:.82rem;line-height:1.25}
+.upgrade-list,.achievement-list,.outfit-list{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:4px 12px 16px;scrollbar-color:#d58a2f #24110d}
+.upgrade-list,.achievement-list{gap:10px}
+.upgrade{min-height:68px;padding:11px;border-color:#3a170e;border-radius:15px;background:linear-gradient(145deg,#7b4728,#3d2016);box-shadow:inset 0 0 0 2px #bd7131,0 4px 0 #180806}
+.upgrade .icon{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:rgba(35,13,9,.55);font-size:1.65rem}
+.upgrade b{font-size:.9rem}.upgrade small{margin-top:3px;font-size:.75rem;line-height:1.2;color:#f0d5b6}.upgrade .price{padding:5px 7px;border-radius:9px;background:#25110d;font-size:.8rem;white-space:nowrap}
+.achievement{min-height:68px;padding:11px;border-radius:15px}.achievement>span{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:rgba(31,12,9,.56)}
+.outfit-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-content:start}
+.outfit-card{min-height:190px;aspect-ratio:auto;border-radius:16px;background:linear-gradient(#754427,#351a12);box-shadow:inset 0 0 0 1px #e09a42,0 4px 0 #1c0906}
+.outfit-card img{min-height:125px}
+.care{overflow-y:auto;overscroll-behavior:contain;padding-bottom:16px}
+.care .shop-head{position:sticky;z-index:2;top:0}
+.care-meters{margin:5px 12px 15px;padding:12px;border:2px solid #764528;border-radius:14px;background:rgba(31,13,10,.7)}
+.care-request{margin:0 12px}.care-action,.care-bonus,.care-note{width:auto;margin-right:12px;margin-left:12px}
+.nav-button{transition:transform .1s,filter .1s}.nav-button:active{transform:translateY(2px);filter:brightness(1.08)}
+@media(min-width:760px){.shop{left:50%;right:auto;width:min(620px,calc(100% - 40px));transform:translate(-50%,calc(100% + 90px))}.shop.open{transform:translate(-50%,0)}.outfit-list{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:390px){.shop{top:calc(max(6px,env(safe-area-inset-top)) + 68px)}.panel-message{font-size:.76rem}.upgrade{grid-template-columns:38px 1fr auto;padding:9px}.upgrade .icon{width:38px;height:38px}.upgrade b{font-size:.82rem}.upgrade small{font-size:.68rem}.upgrade .price{font-size:.72rem}.outfit-card{min-height:165px}.outfit-card img{min-height:105px}.care-meter{grid-template-columns:92px 1fr 36px;font-size:.76rem}}
