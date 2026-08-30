@@ -9,8 +9,8 @@ const upgrades = [
   {id:'box', icon:'📦', name:'Коробка дороже квартиры', desc:'+250 рыбов в секунду', base:18000, cps:250}
 ];
 const levels=[
-  {at:0,name:'Голодный стратег',scale:1,img:'assets/images/cat-level-01.png'},
-  {at:100,name:'Кот с личной миской',scale:1,img:'assets/images/cat-level-02.png'},
+  {at:0,name:'Голодный стратег',scale:.84,img:'assets/images/cat-level-01.png'},
+  {at:100,name:'Кот с личной миской',scale:1,filter:'brightness(1.09) saturate(1.03)',img:'assets/images/cat-level-02.png'},
   {at:500,name:'Диванный аристократ',scale:1,img:'assets/images/cat-level-03.png'},
   {at:2500,name:'Ресторанный критик',scale:1,img:'assets/images/cat-level-04.png'},
   {at:12000,name:'Хозяин недвижимости',scale:1,img:'assets/images/cat-level-05.png'},
@@ -38,7 +38,7 @@ const achievements=[
   {icon:'🌌',name:'Вселенная оформлена на кота',desc:'Достичь 12 уровня',done:()=>currentLevel()>=11},
   {icon:'😴',name:'Можно и подремлю',desc:'Наконец накормить Шефа',done:()=>currentLevel()>=13}
 ];
-const outfits=levels.map((level,index)=>({id:`level-${index+1}`,name:level.name,img:level.img,unlock:index}));
+const outfits=levels.map((level,index)=>({id:`level-${index+1}`,name:level.name,img:level.img,scale:level.scale,filter:level.filter||'',unlock:index}));
 const rooms=[
   'assets/images/rooms/room-stage-1.webp',
   'assets/images/rooms/room-stage-2.webp',
@@ -115,7 +115,8 @@ function render(updatePanels=false){
   if($('catBody').getAttribute('src')!==catImage)$('catBody').src=catImage;
   const bowlImage=bowlImages[Math.min(li,bowlImages.length-1)];
   if($('bowl').getAttribute('src')!==bowlImage)$('bowl').src=bowlImage;
-  $('catBody').style.transform=`scale(${level.scale})`;
+  $('catBody').style.transform=`scale(${chosen?.scale??level.scale})`;
+  $('catBody').style.filter=chosen?.filter??level.filter??'';
   $('levelProgress').style.width=next?`${Math.min(100,(state.total-level.at)/(next.at-level.at)*100)}%`:'100%';
   if(updatePanels)$('upgrades').innerHTML=upgrades.map(u=>`<button class="upgrade ${state.food<price(u)?'locked':''}" data-id="${u.id}"><span class="icon">${u.icon}</span><span><b>${u.name} · ${state.counts[u.id]}</b><small>${u.desc}</small></span><span class="price">🐟 ${format(price(u))}</span></button>`).join('');
   $('bowl').classList.toggle('upgraded',state.counts.bowl>0);
