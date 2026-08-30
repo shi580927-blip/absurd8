@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#ffb84d">
   <title>Кот, который слишком хорошо живёт</title>
-  <link rel="stylesheet" href="style.css?v=20260830-5">
+  <link rel="stylesheet" href="style.css?v=20260830-6">
 </head>
 <body>
   <main class="game">
@@ -30,9 +30,11 @@
       </button>
       <img id="bowl" data-layout-name="Миска" data-layout-mode="offset" class="bowl layout-item" src="assets/images/bowl-empty.png" alt="Пустая миска">
       <button id="roomEvent" class="room-event" aria-label="Собрать случайный бонус"></button>
-      <button id="feed" class="feed">🐟 ПОКОРМИТЬ <small id="perClick">+1 рыбов</small></button>
-      <button id="rewardedAd" class="rewarded-ad-pill">🎬 Ускорить наедание ×3</button>
-      <span id="adStatus" class="sr-status" aria-live="polite"></span>
+      <div class="action-dock">
+        <button id="feed" class="feed">🐟 ПОКОРМИТЬ <small id="perClick">+1 рыбов</small></button>
+        <button id="rewardedAd" class="rewarded-ad-pill"><span>🎬 Посмотреть рекламу</span><small>Наедание ×3 на 5 минут</small></button>
+        <span id="adStatus" class="sr-status" aria-live="polite"></span>
+      </div>
       <p class="hint">Можно нажимать на кота или на кнопку</p>
     </section>
 
@@ -88,6 +90,6 @@
   </main>
   <div id="floaters" aria-hidden="true"></div>
   <script src="https://sdk.games.s3.yandex.net/sdk.js"></script>
-  <script src="game.js?v=20260830-11"></script>
+  <script src="game.js?v=20260830-12"></script>
 </body>
 </html>
