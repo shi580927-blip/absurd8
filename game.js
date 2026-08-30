@@ -104,7 +104,7 @@ function renderCare(){updateCare();['hunger','mood','rest'].forEach(key=>{const 
 function currentLevel(){let i=0;levels.forEach((l,n)=>{if(state.total>=l.at)i=n});return i}
 let renderedLevel=currentLevel();
 function render(updatePanels=false){
-  $('food').textContent=`${format(state.food)} рыбов`; $('perClick').textContent=`+${format(perClick())} рыбов`;
+  $('food').textContent=format(state.food); $('perClick').textContent=`+${format(perClick())} рыбов`;
   renderAd();
   $('income').textContent=format(cps()); const li=currentLevel();
   if(li>renderedLevel){state.outfit=null;renderedLevel=li;save();updatePanels=true}
@@ -162,7 +162,7 @@ const roomEvents=[
   {img:'assets/images/events/yarn.png',phrase:'Клубок обезврежен. Он слишком много знал.'},
   {img:'assets/images/events/mouse.png',phrase:'Мышь внесла добровольный взнос и скрылась.'},
   {img:'assets/images/events/slipper.png',phrase:'Найден тапок. Второй объявлен в розыск.'},
-  {img:'assets/images/events/feather.png',phrase:'Перо поймано. Шеф утверждает, что это была охота.'},
+  {img:'assets/images/events/feather-v2.png',phrase:'Перо поймано. Шеф утверждает, что это была охота.'},
   {img:'assets/images/events/fish.png',phrase:'Рыбка сама пришла устраиваться на работу.'}
 ];
 let roomEventTimer;
