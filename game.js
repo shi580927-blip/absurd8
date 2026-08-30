@@ -69,6 +69,9 @@ function render(updatePanels=false){
   if(updatePanels)$('upgrades').innerHTML=upgrades.map(u=>`<button class="upgrade ${state.food<price(u)?'locked':''}" data-id="${u.id}"><span class="icon">${u.icon}</span><span><b>${u.name} · ${state.counts[u.id]}</b><small>${u.desc}</small></span><span class="price">🐟 ${format(price(u))}</span></button>`).join('');
   $('bowl').classList.toggle('upgraded',state.counts.bowl>0);
   $('grandmaHelper').classList.toggle('visible',(state.helperUntil.grandma||0)>Date.now());
+  const chefStage=state.counts.chef>=10?4:state.counts.chef>=6?3:state.counts.chef>=3?2:1;
+  const chefImage=`assets/images/helpers/chef-stage-${chefStage}.png`;
+  if($('chefHelper').getAttribute('src')!==chefImage)$('chefHelper').src=chefImage;
   $('chefHelper').classList.toggle('visible',(state.helperUntil.chef||0)>Date.now());
   $('deliveryHelper').classList.toggle('visible',(state.helperUntil.delivery||0)>Date.now());
   $('mouseDecor').classList.toggle('visible',state.counts.mouse>0);
