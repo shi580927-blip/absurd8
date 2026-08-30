@@ -193,3 +193,10 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 .layout-mode .food-decor{z-index:11;overflow:visible;pointer-events:auto}.layout-mode .food-prop{transform:none!important;pointer-events:auto!important}
 @media(max-width:759px){.topbar{height:54px}.counter-copy{height:48px;align-self:auto;border-width:3px;border-radius:15px}.top-actions{height:54px}.round{width:40px;height:40px;border-width:3px;border-radius:13px;font-size:1.05rem}.scene{top:calc(max(8px,env(safe-area-inset-top)) + 62px)}.layout-tools{top:66px}}
 @media(max-width:420px){.counter-copy{height:46px}.topbar h1{font-size:.98rem}}
+
+/* Compact primary action and a separate income column. */
+.action-dock .feed{right:28%;left:28%;grid-template-columns:22% minmax(0,1fr);padding-right:5%}.action-dock .feed .action-copy b{font-size:1rem}
+.status{display:grid;grid-template-columns:minmax(0,2.5fr) minmax(92px,1fr);grid-template-rows:25px 10px;column-gap:10px;align-content:center}
+.status>div:first-child{grid-column:1;grid-row:1;min-width:0;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.meter{grid-column:1;grid-row:2;margin:0}.income{position:static;grid-column:2;grid-row:1/3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;padding-left:8px;border-left:1px solid #a9682d;line-height:1.05}.income span{display:block;color:#d8b58b;font-size:.58rem;text-transform:uppercase}.income b{font-size:.9rem;color:#fff0bf}.income small{font-size:.58rem;color:#d8b58b}
+@media(max-width:759px){.action-dock .feed{right:28%;left:28%;min-height:58px;padding-right:3%}.action-dock .feed .action-copy b{font-size:.82rem}.action-dock .feed .action-copy small{font-size:.58rem}.status{grid-template-columns:minmax(0,2.15fr) minmax(86px,1fr);grid-template-rows:22px 8px}.income>span{display:block}.income b{font-size:.78rem}.income small{font-size:.54rem}}
+@media(max-width:420px){.action-dock .feed{right:27%;left:27%}.action-dock .feed .action-copy b{font-size:.76rem}}
