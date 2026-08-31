@@ -24,8 +24,17 @@ The audio was converted to OGG and MP3 for browser compatibility and normalized 
 ## Cat sounds
 
 - Source: original recordings of the cat Baun, supplied by the game owner.
-- Files adapted: feeding, short reactions and the 15-second purr.
+- Files adapted: short reactions and the 15-second purr.
 - The recordings were cleaned, leveled and converted to MP3 and OGG for use in the game.
+
+## Feeding sound
+
+- Track: Old Cat Eating
+- Contributor: freesound_community
+- Page: https://pixabay.com/sound-effects/old-cat-eating-31586/
+- License: Pixabay Content License
+- License summary: https://pixabay.com/service/license-summary/
+- A short fragment was edited, leveled and converted to MP3 and OGG for use during feeding.
 
 ## Toy interaction sounds
 

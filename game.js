@@ -57,7 +57,7 @@ const bowlImages=[
   'assets/images/bowl-stage-9.png'
 ];
 const carpetFood=[
-  {img:15,unlock:1,x:3,y:68,w:15},
+  {img:4,unlock:1,x:3,y:68,w:13},
   {img:16,unlock:2,x:82,y:69,w:13},
   {img:12,unlock:3,x:15,y:76,w:12},
   {img:11,unlock:4,x:70,y:77,w:16},
@@ -65,14 +65,7 @@ const carpetFood=[
   {img:10,unlock:6,x:85,y:53,w:12},
   {img:3,unlock:8,x:24,y:66,w:11},
   {img:8,unlock:10,x:63,y:65,w:14},
-  {img:1,unlock:2,x:9,y:60,w:11},
-  {img:2,unlock:3,x:76,y:61,w:12},
-  {img:4,unlock:5,x:30,y:75,w:13},
-  {img:5,unlock:6,x:54,y:76,w:13},
-  {img:7,unlock:7,x:40,y:67,w:12},
-  {img:9,unlock:9,x:87,y:78,w:12},
-  {img:13,unlock:11,x:18,y:52,w:13},
-  {img:14,unlock:12,x:68,y:51,w:13}
+  {img:9,unlock:12,x:40,y:74,w:13}
 ];
 let state={food:0,total:0,counts:{},helperUntil:{},sound:true,last:Date.now(),outfit:null,care:null,adBonusUntil:0};
 try{state={...state,...JSON.parse(localStorage.getItem('absurd8-save')||'{}')}}catch(e){}
@@ -92,7 +85,7 @@ let ysdk=null;
 let adPlaying=false,adRequestPending=false;
 const soundExt=(()=>{const audio=document.createElement('audio');return audio.canPlayType('audio/ogg; codecs="vorbis"')?'ogg':'mp3'})();
 const soundNames=['ui-click','feed','buy','error','level','reward','cat-food','cat-happy','cat-happy-2','cat-soft','cat-purr-15','toy-yarn','toy-mouse','toy-slipper','toy-feather','toy-fish'];
-const soundBank=Object.fromEntries(soundNames.map(name=>{const audio=new Audio(`assets/audio/${name}.${soundExt}?v=20260831-5`);audio.preload='auto';return[name,audio]}));
+const soundBank=Object.fromEntries(soundNames.map(name=>{const audio=new Audio(`assets/audio/${name}.${soundExt}?v=20260831-6`);audio.preload='auto';return[name,audio]}));
 const backgroundMusic=new Audio(`assets/audio/chef-theme.${soundExt}?v=20260831-2`);backgroundMusic.loop=true;backgroundMusic.preload='auto';backgroundMusic.volume=.16;
 const activeSounds=new Set();
 const MUSIC_VOLUME=.16,MUSIC_DUCK_VOLUME=.045;
@@ -102,7 +95,7 @@ function duckMusic(duration){duckUntil=Math.max(duckUntil,Date.now()+duration);r
 function ensureMusic(){if(state.sound&&!adPlaying&&document.visibilityState!=='hidden'&&backgroundMusic.paused)backgroundMusic.play().catch(()=>{})}
 function playSound(name,volume=1){if(!state.sound||adPlaying)return;ensureMusic();const source=soundBank[name];if(!source)return;if(name.startsWith('cat-')&&name!=='cat-food')duckMusic(name==='cat-purr-15'?15000:2200);const player=source.cloneNode();player.volume=volume;activeSounds.add(player);const done=()=>activeSounds.delete(player);player.addEventListener('ended',done,{once:true});player.addEventListener('error',done,{once:true});player.play().catch(done)}
 let lastFeedSound=0;
-function playFeedSound(){if(Date.now()-lastFeedSound<340)return;lastFeedSound=Date.now();playSound('feed',.82)}
+function playFeedSound(){if(Date.now()-lastFeedSound<1250)return;lastFeedSound=Date.now();playSound('feed',.9)}
 let lastPurr=0;
 function playPurr(){if(Date.now()-lastPurr<18000)return;lastPurr=Date.now();playSound('cat-purr-15',.82)}
 function stopAllSounds(){backgroundMusic.pause();activeSounds.forEach(audio=>{audio.pause();audio.currentTime=0});activeSounds.clear()}
