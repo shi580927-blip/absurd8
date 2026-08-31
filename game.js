@@ -133,12 +133,13 @@ function showNextAchievement(){if(achievementShowing||!achievementQueue.length)r
 function checkAchievements(){achievements.forEach(award=>{if(award.done()&&!state.earnedAchievements.includes(award.name)){state.earnedAchievements.push(award.name);achievementQueue.push(award);trackEvent('achievement_unlocked',{achievement:award.name})}});if(achievementQueue.length){save();showNextAchievement()}}
 let levelCelebrationTimer;
 function showLevelCelebration(levelIndex){clearTimeout(levelCelebrationTimer);$('levelCelebrationTitle').textContent=`${levelIndex+1} · ${levels[levelIndex].name}`;$('levelCelebration').classList.remove('show');void $('levelCelebration').offsetWidth;$('levelCelebration').classList.add('show');levelCelebrationTimer=setTimeout(()=>$('levelCelebration').classList.remove('show'),2700)}
+function returnToSceneForLevel(levelIndex){document.querySelectorAll('.shop.open').forEach(panel=>{panel.classList.remove('open');panel.setAttribute('aria-hidden','true')});document.querySelectorAll('.nav-button').forEach(button=>button.classList.toggle('active',button.id==='openFeed'));playSound('level',.9);showLevelCelebration(levelIndex);setTimeout(()=>playPurr(true),2100)}
 let renderedLevel=currentLevel();
 function render(updatePanels=false){
   $('food').textContent=format(state.food); $('perClick').textContent=`+${format(perClick())} рыбов`;
   renderAd();
   $('income').textContent=format(cps()); const li=currentLevel();
-  if(li>renderedLevel){state.outfit=null;renderedLevel=li;trackEvent(`level_${li+1}`);save();updatePanels=true}
+  if(li>renderedLevel){state.outfit=null;renderedLevel=li;returnToSceneForLevel(li);trackEvent(`level_${li+1}`);save();updatePanels=true}
   const level=levels[li],next=levels[li+1];
   const roomStage=li>=10?3:li>=8?2:li>=4?1:0;
   document.querySelector('.game').style.setProperty('--room-bg',`url("${rooms[roomStage]}")`);
@@ -172,7 +173,7 @@ function render(updatePanels=false){
   checkAchievements();
 }
 let lastClickPhrase=0;
-function feed(e){if(adPlaying||document.querySelector('.game').classList.contains('layout-mode'))return;const before=currentLevel();state.food+=perClick();state.total+=perClick();const after=currentLevel();if(after>before){playSound('level',.9);showLevelCelebration(after);setTimeout(()=>playPurr(true),2100)}else{playFeedSound();if(after===levels.length-1)playPurr()}const cat=$('cat'),bowl=$('bowl');cat.classList.add('bop');bowl.classList.add('served');setTimeout(()=>{cat.classList.remove('bop');bowl.classList.remove('served')},180);if(after>before){$('phrase').textContent=after===12?'Шеф устал. Государственные дела и рыбов лучше продолжить после отдыха.':after===13?'Шеф наконец наелся. Тишина: руководитель спит.':`Новый статус: «${levels[after].name}». Шеф ожидал этого раньше.`;lastClickPhrase=Date.now()}else if(Date.now()-lastClickPhrase>18000&&Math.random()<.06){$('phrase').textContent=phrases[Math.floor(Math.random()*phrases.length)];lastClickPhrase=Date.now()}const f=document.createElement('span');f.className='floater';f.textContent=`+${format(perClick())} 🐟`;f.style.left=`${e?.clientX||innerWidth/2}px`;f.style.top=`${e?.clientY||innerHeight/2}px`;$('floaters').append(f);setTimeout(()=>f.remove(),850);render(after>before)}
+function feed(e){if(adPlaying||document.querySelector('.game').classList.contains('layout-mode'))return;const before=currentLevel();state.food+=perClick();state.total+=perClick();const after=currentLevel();if(after<=before){playFeedSound();if(after===levels.length-1)playPurr()}const cat=$('cat'),bowl=$('bowl');cat.classList.add('bop');bowl.classList.add('served');setTimeout(()=>{cat.classList.remove('bop');bowl.classList.remove('served')},180);if(after>before){$('phrase').textContent=after===12?'Шеф устал. Государственные дела и рыбов лучше продолжить после отдыха.':after===13?'Шеф наконец наелся. Тишина: руководитель спит.':`Новый статус: «${levels[after].name}». Шеф ожидал этого раньше.`;lastClickPhrase=Date.now()}else if(Date.now()-lastClickPhrase>18000&&Math.random()<.06){$('phrase').textContent=phrases[Math.floor(Math.random()*phrases.length)];lastClickPhrase=Date.now()}const f=document.createElement('span');f.className='floater';f.textContent=`+${format(perClick())} 🐟`;f.style.left=`${e?.clientX||innerWidth/2}px`;f.style.top=`${e?.clientY||innerHeight/2}px`;$('floaters').append(f);setTimeout(()=>f.remove(),850);render(after>before)}
 $('cat').addEventListener('click',feed);$('feed').addEventListener('click',feed);
 $('cat').addEventListener('contextmenu',e=>e.preventDefault());
 const panels=['shop','wardrobe','awards','care','settings'];
