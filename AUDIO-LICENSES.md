@@ -29,12 +29,13 @@ The audio was converted to OGG and MP3 for browser compatibility and normalized 
 
 ## Feeding sound
 
-- Track: Old Cat Eating
+- Track: Two Cats Eating Soft Food
 - Contributor: freesound_community
-- Page: https://pixabay.com/sound-effects/old-cat-eating-31586/
+- Pixabay page: https://pixabay.com/ru/sound-effects/природа-two-cats-eating-soft-food-34158/
 - License: Pixabay Content License
 - License summary: https://pixabay.com/service/license-summary/
-- A short fragment was edited, leveled and converted to MP3 and OGG for use during feeding.
+- Original recording: bmechtley, Freesound sound 159746, Creative Commons 0.
+- The first short fragment was leveled and converted to MP3 and OGG for use during feeding. It is not mixed with other recordings.
 
 ## Toy interaction sounds
 

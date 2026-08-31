@@ -85,7 +85,7 @@ let ysdk=null;
 let adPlaying=false,adRequestPending=false;
 const soundExt=(()=>{const audio=document.createElement('audio');return audio.canPlayType('audio/ogg; codecs="vorbis"')?'ogg':'mp3'})();
 const soundNames=['ui-click','feed','buy','error','level','reward','cat-food','cat-happy','cat-happy-2','cat-soft','cat-purr-15','toy-yarn','toy-mouse','toy-slipper','toy-feather','toy-fish'];
-const soundBank=Object.fromEntries(soundNames.map(name=>{const audio=new Audio(`assets/audio/${name}.${soundExt}?v=20260831-8`);audio.preload='auto';return[name,audio]}));
+const soundBank=Object.fromEntries(soundNames.map(name=>{const audio=new Audio(`assets/audio/${name}.${soundExt}?v=20260831-9`);audio.preload='auto';return[name,audio]}));
 const backgroundMusic=new Audio(`assets/audio/chef-theme.${soundExt}?v=20260831-2`);backgroundMusic.loop=true;backgroundMusic.preload='auto';backgroundMusic.volume=.16;
 const activeSounds=new Set();
 const MUSIC_VOLUME=.16,MUSIC_DUCK_VOLUME=.045;
@@ -95,7 +95,7 @@ function duckMusic(duration){duckUntil=Math.max(duckUntil,Date.now()+duration);r
 function ensureMusic(){if(state.sound&&!adPlaying&&document.visibilityState!=='hidden'&&backgroundMusic.paused)backgroundMusic.play().catch(()=>{})}
 function playSound(name,volume=1){if(!state.sound||adPlaying)return;ensureMusic();const source=soundBank[name];if(!source)return;if(name.startsWith('cat-')&&name!=='cat-food')duckMusic(name==='cat-purr-15'?15000:2200);const player=source.cloneNode();player.volume=volume;activeSounds.add(player);const done=()=>activeSounds.delete(player);player.addEventListener('ended',done,{once:true});player.addEventListener('error',done,{once:true});player.play().catch(done)}
 let lastFeedSound=0;
-function playFeedSound(){if(Date.now()-lastFeedSound<1250)return;lastFeedSound=Date.now();playSound('feed',.9)}
+function playFeedSound(){if(Date.now()-lastFeedSound<3200)return;lastFeedSound=Date.now();playSound('feed',.72)}
 let lastPurr=0;
 function playPurr(force=false){if(!force&&Date.now()-lastPurr<18000)return;lastPurr=Date.now();playSound('cat-purr-15',.82)}
 function stopAllSounds(){backgroundMusic.pause();activeSounds.forEach(audio=>{audio.pause();audio.currentTime=0});activeSounds.clear()}
