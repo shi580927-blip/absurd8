@@ -20,3 +20,15 @@
 - Commercial use, redistribution with the game and modification are permitted.
 
 The audio was converted to OGG and MP3 for browser compatibility and normalized for use in the game.
+
+## Cat sounds
+
+- Source: Kerzoven, Cat Purr & Meow
+- Page: https://opengameart.org/content/cat-purr-meow
+- License: Creative Commons CC0 1.0
+- Files adapted: cat_mewfood, cat_mewpurr, cat_mewpurr2 and cat_softmew.
+- Commercial use, redistribution with the game and modification are permitted; attribution is not required.
+
+## Toy interaction sounds
+
+The yarn, mouse, slipper, feather and fish interaction sounds were synthesized specifically for this game and may be distributed with it.
