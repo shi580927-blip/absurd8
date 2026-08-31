@@ -18,7 +18,7 @@ const levels=[
   {at:300000,name:'Его Рыбное Величество',scale:1,img:'assets/images/cat-level-07.png'},
   {at:1500000,name:'Лососевый барон',scale:1,img:'assets/images/cat-level-08.png'},
   {at:8000000,name:'Министр полной миски',scale:1,img:'assets/images/cat-level-09.png'},
-  {at:40000000,name:'Император квартиры',scale:1,img:'assets/images/cat-level-10.png'},
+  {at:40000000,name:'Император квартиры',scale:1,img:'assets/images/cat-level-10.png?v=20260831-2'},
   {at:200000000,name:'Кот, купивший Луну',scale:1,img:'assets/images/cat-level-11.png'},
   {at:1000000000,name:'Хозяин Вселенной',scale:1,img:'assets/images/cat-level-12.png'},
   {at:5000000000,name:'Шефу пора отдохнуть',scale:1,img:'assets/images/cat-level-13.png'},
@@ -85,7 +85,7 @@ let ysdk=null;
 let adPlaying=false,adRequestPending=false;
 const soundExt=(()=>{const audio=document.createElement('audio');return audio.canPlayType('audio/ogg; codecs="vorbis"')?'ogg':'mp3'})();
 const soundNames=['ui-click','feed','buy','error','level','reward','cat-food','cat-happy','cat-happy-2','cat-soft','cat-purr-15','toy-yarn','toy-mouse','toy-slipper','toy-feather','toy-fish'];
-const soundBank=Object.fromEntries(soundNames.map(name=>{const audio=new Audio(`assets/audio/${name}.${soundExt}?v=20260831-7`);audio.preload='auto';return[name,audio]}));
+const soundBank=Object.fromEntries(soundNames.map(name=>{const audio=new Audio(`assets/audio/${name}.${soundExt}?v=20260831-8`);audio.preload='auto';return[name,audio]}));
 const backgroundMusic=new Audio(`assets/audio/chef-theme.${soundExt}?v=20260831-2`);backgroundMusic.loop=true;backgroundMusic.preload='auto';backgroundMusic.volume=.16;
 const activeSounds=new Set();
 const MUSIC_VOLUME=.16,MUSIC_DUCK_VOLUME=.045;
@@ -107,8 +107,8 @@ const careRequests={
   rest:{icon:'💤',title:'Шеф устал руководить',text:'Нужно обеспечить тишину государственного значения.',action:'Уложить Шефа'}
 };
 function updateCare(){const now=Date.now(),hours=Math.min(24,Math.max(0,now-state.care.last)/3600000);state.care.hunger=Math.max(18,state.care.hunger-hours*3);state.care.mood=Math.max(18,state.care.mood-hours*2);state.care.rest=Math.max(18,state.care.rest-hours*2.5);state.care.last=now;if(!state.care.request&&now>=state.care.nextRequest){const types=Object.keys(careRequests);state.care.request=types[Math.floor(Math.random()*types.length)]}}
-function adButton(icon,title,subtitle){return `<span class="action-icon" aria-hidden="true">${icon}</span><span class="action-copy"><b>${title}</b><small>${subtitle}</small></span>`}
-function renderAd(){const remaining=Math.max(0,state.adBonusUntil-Date.now()),button=$('rewardedAd');button.classList.toggle('active',remaining>0);button.disabled=remaining>0||adRequestPending;if(remaining>0)button.innerHTML=adButton('🐟','Наедание ×3',`Осталось ${Math.ceil(remaining/60000)} мин.`);else if(adRequestPending)button.innerHTML=adButton('🎬','Загружаем рекламу…','Награда после просмотра');else button.innerHTML=adButton('🎬','Посмотреть рекламу','Наедание ×3 на 5 минут')}
+function adButton(title,subtitle){return `<span class="action-copy"><b>${title}</b><small>${subtitle}</small></span>`}
+function renderAd(){const remaining=Math.max(0,state.adBonusUntil-Date.now()),button=$('rewardedAd');button.classList.toggle('active',remaining>0);button.disabled=remaining>0||adRequestPending;if(remaining>0)button.innerHTML=adButton('Наедание ×3',`Осталось ${Math.ceil(remaining/60000)} мин.`);else if(adRequestPending)button.innerHTML=adButton('Загружаем рекламу…','Награда после просмотра');else button.innerHTML=adButton('Посмотреть рекламу','Наедание ×3 на 5 минут')}
 function renderCare(){updateCare();['hunger','mood','rest'].forEach(key=>{const value=Math.round(state.care[key]);$(`${key}Bar`).style.width=`${value}%`;$(`${key}Value`).textContent=`${value}%`});const request=state.care.request?careRequests[state.care.request]:null;$('openCare').classList.toggle('has-request',!!request);$('careRequestIcon').textContent=request?.icon||'🐾';$('careRequestTitle').textContent=request?.title||'Шеф обдумывает пожелания';$('careRequestText').textContent=request?.text||'Он сообщит, когда потребуется персонал.';$('careAction').textContent=request?.action||'Ожидаем распоряжений';$('careAction').disabled=!request;const remaining=Math.max(0,state.care.bonusUntil-Date.now());$('careBonus').classList.toggle('active',remaining>0);$('careBonus').textContent=remaining>0?`Забота одобрена: доход ×2 ещё ${Math.ceil(remaining/60000)} мин.`:'Бонус заботы пока не действует.'}
 function currentLevel(){let i=0;levels.forEach((l,n)=>{if(state.total>=l.at)i=n});return i}
 let renderedLevel=currentLevel();
@@ -217,4 +217,4 @@ $('copyLayout').addEventListener('click',async()=>{const value=JSON.stringify({d
 $('resetLayout').addEventListener('click',()=>{localStorage.removeItem(layoutKey());layoutItems.forEach(item=>{['left','top','right','bottom','width','height'].forEach(prop=>item.style.removeProperty(prop));['--layout-x','--layout-y','--layout-scale'].forEach(prop=>item.style.removeProperty(prop))});applyLayout();selectLayoutItem(null);$('layoutStatus').textContent='возвращена стандартная расстановка'});
 function save(){state.last=Date.now();localStorage.setItem('absurd8-save',JSON.stringify(state))}
 const away=Math.min(4*3600,Math.max(0,(Date.now()-(state.last||Date.now()))/1000));if(away>10&&cps()>0){const bonus=Math.floor(away*cps());state.food+=bonus;state.total+=bonus;$('phrase').textContent=`Пока тебя не было, Шеф получил ${format(bonus)} рыбов.`}
-setInterval(()=>{if(adPlaying)return;const gain=cps()/10;state.food+=gain;state.total+=gain;render()},100);setInterval(()=>{if(adPlaying)return;updateCare();save();if($('care').classList.contains('open'))renderCare();else $('openCare').classList.toggle('has-request',!!state.care.request)},60000);setInterval(save,5000);addEventListener('beforeunload',save);updateCare();render(true);applyLayout();scheduleRoomEvent(true);scheduleAdDrawer();
+setInterval(()=>{if(adPlaying)return;const gain=cps()/10;state.food+=gain;state.total+=gain;render()},100);setInterval(()=>{if(adPlaying)return;updateCare();save();if($('care').classList.contains('open'))renderCare();else $('openCare').classList.toggle('has-request',!!state.care.request)},60000);setInterval(save,5000);addEventListener('beforeunload',save);updateCare();render(true);applyLayout();scheduleRoomEvent(true);scheduleAdDrawer();setTimeout(()=>$('introSplash').classList.add('hide'),3000);setTimeout(()=>$('introSplash').remove(),3900);

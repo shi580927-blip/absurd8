@@ -34,7 +34,7 @@ The audio was converted to OGG and MP3 for browser compatibility and normalized 
 - Page: https://pixabay.com/sound-effects/old-cat-eating-31586/
 - License: Pixabay Content License
 - License summary: https://pixabay.com/service/license-summary/
-- A short fragment was combined with an original owner-supplied vocal performance, edited, leveled and converted to MP3 and OGG for use during feeding.
+- A short fragment was edited, leveled and converted to MP3 and OGG for use during feeding.
 
 ## Toy interaction sounds
 
