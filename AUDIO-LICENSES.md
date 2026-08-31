@@ -26,7 +26,7 @@ The audio was converted to OGG and MP3 for browser compatibility and normalized 
 - Source: Kerzoven, Cat Purr & Meow
 - Page: https://opengameart.org/content/cat-purr-meow
 - License: Creative Commons CC0 1.0
-- Files adapted: cat_mewfood, cat_mewpurr, cat_mewpurr2 and cat_softmew.
+- Files adapted: cat_mewfood, cat_mewpurr, cat_mewpurr2, cat_softmew and cat_purractive_loop.
 - Commercial use, redistribution with the game and modification are permitted; attribution is not required.
 
 ## Toy interaction sounds
