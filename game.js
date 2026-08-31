@@ -84,7 +84,7 @@ let ysdk=null;
 let adPlaying=false,adRequestPending=false;
 const soundExt=(()=>{const audio=document.createElement('audio');return audio.canPlayType('audio/ogg; codecs="vorbis"')?'ogg':'mp3'})();
 const soundBank=Object.fromEntries(['ui-click','feed','buy','error','level','reward'].map(name=>{const audio=new Audio(`assets/audio/${name}.${soundExt}`);audio.preload='auto';return[name,audio]}));
-const backgroundMusic=new Audio(`assets/audio/chef-theme.${soundExt}`);backgroundMusic.loop=true;backgroundMusic.preload='auto';backgroundMusic.volume=.16;
+const backgroundMusic=new Audio(`assets/audio/chef-theme.${soundExt}?v=20260831-2`);backgroundMusic.loop=true;backgroundMusic.preload='auto';backgroundMusic.volume=.16;
 const activeSounds=new Set();
 function ensureMusic(){if(state.sound&&!adPlaying&&document.visibilityState!=='hidden'&&backgroundMusic.paused)backgroundMusic.play().catch(()=>{})}
 function playSound(name,volume=1){if(!state.sound||adPlaying)return;ensureMusic();const source=soundBank[name];if(!source)return;const player=source.cloneNode();player.volume=volume;activeSounds.add(player);const done=()=>activeSounds.delete(player);player.addEventListener('ended',done,{once:true});player.addEventListener('error',done,{once:true});player.play().catch(done)}
