@@ -178,12 +178,12 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 @media(max-width:420px){.counter-copy{max-width:57%}.counter-copy .eyebrow{font-size:.54rem;letter-spacing:.07em}.counter-fish{font-size:1.15rem}.topbar h1{font-size:1.12rem}.round{width:42px;height:42px}.top-actions{gap:4px}.action-dock .feed{right:10%;left:10%}.rewarded-ad-pill{width:46%}.status{width:82%}.bottom-nav{gap:4px}.nav-button span{font-size:.55rem}}
 
 /* Rewarded ad drawer: always-visible edge tab with a two-minute cooldown. */
-.ad-drawer{position:fixed;z-index:70;top:46%;right:0;width:min(78vw,310px);padding:8px 8px 8px 52px;border:3px solid #dca02b;border-right:0;border-radius:18px 0 0 18px;background:linear-gradient(145deg,rgba(229,233,255,.98),rgba(121,135,222,.98));box-shadow:inset 0 0 0 2px #f4f5ff,0 5px 16px rgba(30,12,48,.5);transform:translateX(0);transition:transform .38s cubic-bezier(.2,.8,.25,1)}
+.ad-drawer{position:absolute;z-index:70;top:46%;right:0;width:min(78%,310px);padding:8px 8px 8px 52px;border:3px solid #dca02b;border-right:0;border-radius:18px 0 0 18px;background:linear-gradient(145deg,rgba(229,233,255,.98),rgba(121,135,222,.98));box-shadow:inset 0 0 0 2px #f4f5ff,0 5px 16px rgba(30,12,48,.5);transform:translateX(0);transition:transform .38s cubic-bezier(.2,.8,.25,1)}
 .ad-drawer.peek{transform:translateX(calc(100% - 48px))}
 .ad-drawer .rewarded-ad-pill{position:static;width:100%;min-height:54px;grid-template-columns:46px minmax(0,1fr);border:0;background:none;box-shadow:none}
 .ad-peek{position:absolute;left:5px;top:50%;width:40px;height:48px;transform:translateY(-50%);border:0;border-radius:12px;background:linear-gradient(#fff08b,#eda21e);box-shadow:0 3px 0 #6d310d;font-size:1.35rem;cursor:pointer}
 .ad-close{position:absolute;top:4px;right:5px;width:25px;height:25px;border:2px solid #4b244b;border-radius:50%;background:#fff4e2;color:#4b244b;font-size:1rem;font-weight:1000;line-height:18px;cursor:pointer}
-@media(max-width:420px){.ad-drawer{top:42%;width:min(84vw,290px)}}
+@media(max-width:420px){.ad-drawer{top:42%;width:min(84%,290px)}}
 
 /* Compact counter, reliable feed CTA and platform-independent nav icons. */
 .counter-copy{display:flex;align-items:center;max-width:45%;padding:7px 14px}.counter-value{width:100%}.topbar h1{font-size:clamp(1.45rem,4.3vw,2.05rem)}

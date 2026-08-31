@@ -92,7 +92,7 @@ let ysdk=null;
 let adPlaying=false,adRequestPending=false;
 const soundExt=(()=>{const audio=document.createElement('audio');return audio.canPlayType('audio/ogg; codecs="vorbis"')?'ogg':'mp3'})();
 const soundNames=['ui-click','feed','buy','error','level','reward','cat-food','cat-happy','cat-happy-2','cat-soft','cat-purr-15','toy-yarn','toy-mouse','toy-slipper','toy-feather','toy-fish'];
-const soundBank=Object.fromEntries(soundNames.map(name=>{const audio=new Audio(`assets/audio/${name}.${soundExt}?v=20260831-4`);audio.preload='auto';return[name,audio]}));
+const soundBank=Object.fromEntries(soundNames.map(name=>{const audio=new Audio(`assets/audio/${name}.${soundExt}?v=20260831-5`);audio.preload='auto';return[name,audio]}));
 const backgroundMusic=new Audio(`assets/audio/chef-theme.${soundExt}?v=20260831-2`);backgroundMusic.loop=true;backgroundMusic.preload='auto';backgroundMusic.volume=.16;
 const activeSounds=new Set();
 const MUSIC_VOLUME=.16,MUSIC_DUCK_VOLUME=.045;

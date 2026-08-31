@@ -23,11 +23,9 @@ The audio was converted to OGG and MP3 for browser compatibility and normalized 
 
 ## Cat sounds
 
-- Source: Kerzoven, Cat Purr & Meow
-- Page: https://opengameart.org/content/cat-purr-meow
-- License: Creative Commons CC0 1.0
-- Files adapted: cat_mewfood, cat_mewpurr, cat_mewpurr2, cat_softmew and cat_purractive_loop.
-- Commercial use, redistribution with the game and modification are permitted; attribution is not required.
+- Source: original recordings of the cat Baun, supplied by the game owner.
+- Files adapted: feeding, short reactions and the 15-second purr.
+- The recordings were cleaned, leveled and converted to MP3 and OGG for use in the game.
 
 ## Toy interaction sounds
 

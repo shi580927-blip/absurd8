@@ -18,9 +18,9 @@
       <div id="phrase" class="speech">В этой миске подозрительно видно дно.</div>
       <div id="foodDecor" class="food-decor" aria-hidden="true"></div>
       <div class="helper-stage" aria-hidden="true">
-        <img id="sloganDecor" data-layout-name="Слоган" class="scene-branding slogan-decor layout-item" src="assets/images/slogan.png" alt="">
-        <img id="certificateDecor" data-layout-name="Сертификат" class="scene-branding certificate-decor layout-item" src="assets/images/certificate.png" alt="">
-        <img id="foodPileDecor" data-layout-name="Гора еды" class="scene-food-pile layout-item" src="assets/images/food-pile.png" alt="">
+        <img id="sloganDecor" data-layout-name="Слоган" class="scene-branding slogan-decor layout-item" src="assets/images/slogan.png?v=20260831-2" alt="">
+        <img id="certificateDecor" data-layout-name="Сертификат" class="scene-branding certificate-decor layout-item" src="assets/images/certificate.png?v=20260831-2" alt="">
+        <img id="foodPileDecor" data-layout-name="Гора еды" class="scene-food-pile layout-item" src="assets/images/food-pile.png?v=20260831-2" alt="">
         <img id="grandmaHelper" data-layout-name="Бабушка" class="room-helper grandma-helper layout-item" src="assets/images/helpers/grandma-v2.png" alt="">
         <img id="chefHelper" data-layout-name="Повар" class="room-helper chef-helper layout-item" src="assets/images/helpers/chef-stage-1.png" alt="">
         <img id="deliveryHelper" data-layout-name="Курьер" class="room-helper delivery-helper layout-item" src="assets/images/helpers/delivery-v2.png" alt="">
@@ -33,13 +33,13 @@
       </button>
       <img id="bowl" data-layout-name="Миска" data-layout-mode="offset" class="bowl layout-item" src="assets/images/bowl-empty.png" alt="Пустая миска">
       <button id="roomEvent" class="room-event" aria-label="Собрать случайный бонус"></button>
+      <div id="adDrawer" class="ad-drawer peek">
+        <button id="adPeek" class="ad-peek" aria-label="Показать предложение">🎬</button>
+        <button id="adClose" class="ad-close" aria-label="Скрыть предложение">×</button>
+        <button id="rewardedAd" class="rewarded-ad-pill"><span class="action-icon" aria-hidden="true">🐟</span><span class="action-copy"><b>Посмотреть рекламу</b><small>Наедание ×3 на 5 минут</small></span></button>
+      </div>
       <div class="action-dock">
         <button id="feed" class="feed"><span class="action-icon" aria-hidden="true">🐟</span><span class="action-copy"><b>ПОКОРМИТЬ</b><small id="perClick">+1 рыбов</small></span></button>
-        <div id="adDrawer" class="ad-drawer peek">
-          <button id="adPeek" class="ad-peek" aria-label="Показать предложение">🎬</button>
-          <button id="adClose" class="ad-close" aria-label="Скрыть предложение">×</button>
-          <button id="rewardedAd" class="rewarded-ad-pill"><span class="action-icon" aria-hidden="true">🐟</span><span class="action-copy"><b>Посмотреть рекламу</b><small>Наедание ×3 на 5 минут</small></span></button>
-        </div>
         <span id="adStatus" class="sr-status" aria-live="polite"></span>
       </div>
       <p class="hint">Можно нажимать на кота или на кнопку</p>
@@ -97,6 +97,6 @@
   </main>
   <div id="floaters" aria-hidden="true"></div>
   <script src="https://sdk.games.s3.yandex.net/sdk.js"></script>
-  <script src="game.js?v=20260831-29"></script>
+  <script src="game.js?v=20260831-30"></script>
 </body>
 </html>
