@@ -57,20 +57,23 @@ const bowlImages=[
   'assets/images/bowl-stage-9.png'
 ];
 const carpetFood=[
-  {img:4,unlock:1,x:3,y:68,w:13},
-  {img:16,unlock:2,x:82,y:69,w:13},
-  {img:12,unlock:3,x:15,y:76,w:12},
-  {img:11,unlock:4,x:70,y:77,w:16},
-  {img:6,unlock:5,x:2,y:52,w:14},
-  {img:10,unlock:6,x:85,y:53,w:12},
-  {img:3,unlock:8,x:24,y:66,w:11},
-  {img:8,unlock:10,x:63,y:65,w:14},
-  {img:9,unlock:12,x:40,y:74,w:13}
+  {img:4,name:'Икра для важных переговоров',minutes:3,cost:14,x:3,y:68,w:13},
+  {img:16,name:'Стратегический запас консервов',minutes:4,cost:20,x:82,y:69,w:13},
+  {img:12,name:'Консерва особой важности',minutes:4,cost:24,x:15,y:76,w:12},
+  {img:11,name:'Дорада по высшему разряду',minutes:5,cost:32,x:70,y:77,w:16},
+  {img:6,name:'Парадная курица',minutes:5,cost:38,x:2,y:52,w:14},
+  {img:10,name:'Большая рыбная тарелка',minutes:6,cost:48,x:85,y:53,w:12},
+  {img:3,name:'Фиолетовая консерва',minutes:4,cost:28,x:24,y:66,w:11},
+  {img:8,name:'Лосось для руководства',minutes:6,cost:60,x:63,y:65,w:14},
+  {img:9,name:'Фуршет «Девять жизней»',minutes:7,cost:75,x:40,y:74,w:13}
 ];
-let state={food:0,total:0,counts:{},helperUntil:{},sound:true,last:Date.now(),outfit:null,care:null,adBonusUntil:0};
+let state={saveVersion:3,food:0,total:0,counts:{},helperUntil:{},treatUntil:{},sound:true,last:Date.now(),outfit:null,care:null,adBonusUntil:0};
 try{state={...state,...JSON.parse(localStorage.getItem('absurd8-save')||'{}')}}catch(e){}
 upgrades.forEach(u=>state.counts[u.id]??=0);
 state.helperUntil??={};
+state.treatUntil??={};
+if((state.saveVersion||0)<3&&state.counts.ministry>0)state.helperUntil.ministry=Date.now()+15*60*1000;
+state.saveVersion=3;
 const freshCare={hunger:82,mood:78,rest:80,last:Date.now(),nextRequest:Date.now(),request:null,bonusUntil:0};
 state.care={...freshCare,...(state.care||{})};
 if(state.artVersion!==2){state.outfit=null;state.artVersion=2}
@@ -79,9 +82,11 @@ $('foodDecor').innerHTML=carpetFood.map((item,index)=>`<img id="foodProp${index+
 const format=n=>Math.floor(n).toLocaleString('ru-RU');
 const price=u=>Math.floor(u.base*Math.pow(1.55,state.counts[u.id]));
 const boostMultiplier=()=>Math.max(state.care.bonusUntil>Date.now()?2:1,state.adBonusUntil>Date.now()?3:1);
-const perClick=()=>Math.floor((1+upgrades.reduce((n,u)=>n+(u.click||0)*state.counts[u.id],0))*boostMultiplier());
+const rawPerClick=()=>1+upgrades.reduce((n,u)=>n+(u.click||0)*state.counts[u.id],0);
+const perClick=()=>Math.floor(rawPerClick()*boostMultiplier());
+const treatPrice=treat=>Math.max(12,Math.floor(rawPerClick()*treat.cost));
 const cps=()=>upgrades.reduce((n,u)=>n+(u.cps||0)*state.counts[u.id],0)*boostMultiplier();
-let ysdk=null;
+let ysdk=null,gameplayActive=false,loadingReady=false;
 let adPlaying=false,adRequestPending=false;
 const soundExt=(()=>{const audio=document.createElement('audio');return audio.canPlayType('audio/ogg; codecs="vorbis"')?'ogg':'mp3'})();
 const soundNames=['ui-click','feed','buy','error','level','reward','cat-food','cat-happy','cat-happy-2','cat-soft','cat-purr-15','toy-yarn','toy-mouse','toy-slipper','toy-feather','toy-fish'];
@@ -99,7 +104,10 @@ function playFeedSound(){if(Date.now()-lastFeedSound<3200)return;lastFeedSound=D
 let lastPurr=0;
 function playPurr(force=false){if(!force&&Date.now()-lastPurr<18000)return;lastPurr=Date.now();playSound('cat-purr-15',.82)}
 function stopAllSounds(){backgroundMusic.pause();activeSounds.forEach(audio=>{audio.pause();audio.currentTime=0});activeSounds.clear()}
-async function initYandexSDK(){try{if(window.YaGames)ysdk=await YaGames.init()}catch(error){ysdk=null}}
+function trackEvent(name,params={}){try{window.dataLayer?.push({event:name,...params});if(window.YM_COUNTER_ID&&typeof window.ym==='function')window.ym(window.YM_COUNTER_ID,'reachGoal',name,params)}catch(error){}}
+function startGameplay(){if(gameplayActive||adPlaying||document.visibilityState==='hidden')return;gameplayActive=true;ysdk?.features?.GameplayAPI?.start?.()}
+function stopGameplay(){if(!gameplayActive)return;gameplayActive=false;ysdk?.features?.GameplayAPI?.stop?.()}
+async function initYandexSDK(){try{if(window.YaGames){ysdk=await YaGames.init();if(!loadingReady){ysdk?.features?.LoadingAPI?.ready?.();loadingReady=true}startGameplay()}}catch(error){ysdk=null}}
 initYandexSDK();
 const careRequests={
   hunger:{icon:'🐟',title:'Шеф требует особый перекус',text:'Обычное кормление считается работой. А это — забота.',action:'Подать особый перекус'},
@@ -109,14 +117,14 @@ const careRequests={
 function updateCare(){const now=Date.now(),hours=Math.min(24,Math.max(0,now-state.care.last)/3600000);state.care.hunger=Math.max(18,state.care.hunger-hours*3);state.care.mood=Math.max(18,state.care.mood-hours*2);state.care.rest=Math.max(18,state.care.rest-hours*2.5);state.care.last=now;if(!state.care.request&&now>=state.care.nextRequest){const types=Object.keys(careRequests);state.care.request=types[Math.floor(Math.random()*types.length)]}}
 function adButton(title,subtitle){return `<span class="action-copy"><b>${title}</b><small>${subtitle}</small></span>`}
 function renderAd(){const remaining=Math.max(0,state.adBonusUntil-Date.now()),button=$('rewardedAd');button.classList.toggle('active',remaining>0);button.disabled=remaining>0||adRequestPending;if(remaining>0)button.innerHTML=adButton('Наедание ×3',`Осталось ${Math.ceil(remaining/60000)} мин.`);else if(adRequestPending)button.innerHTML=adButton('Загружаем рекламу…','Награда после просмотра');else button.innerHTML=adButton('Посмотреть рекламу','Наедание ×3 на 5 минут')}
-function renderCare(){updateCare();['hunger','mood','rest'].forEach(key=>{const value=Math.round(state.care[key]);$(`${key}Bar`).style.width=`${value}%`;$(`${key}Value`).textContent=`${value}%`});const request=state.care.request?careRequests[state.care.request]:null;$('openCare').classList.toggle('has-request',!!request);$('careRequestIcon').textContent=request?.icon||'🐾';$('careRequestTitle').textContent=request?.title||'Шеф обдумывает пожелания';$('careRequestText').textContent=request?.text||'Он сообщит, когда потребуется персонал.';$('careAction').textContent=request?.action||'Ожидаем распоряжений';$('careAction').disabled=!request;const remaining=Math.max(0,state.care.bonusUntil-Date.now());$('careBonus').classList.toggle('active',remaining>0);$('careBonus').textContent=remaining>0?`Забота одобрена: доход ×2 ещё ${Math.ceil(remaining/60000)} мин.`:'Бонус заботы пока не действует.'}
+function renderCare(){updateCare();['hunger','mood','rest'].forEach(key=>{const value=Math.round(state.care[key]);$(`${key}Bar`).style.width=`${value}%`;$(`${key}Value`).textContent=`${value}%`});const request=state.care.request?careRequests[state.care.request]:null;$('openCare').classList.toggle('has-request',!!request);$('careRequestIcon').textContent=request?.icon||'🐾';$('careRequestTitle').textContent=request?.title||'Шеф обдумывает пожелания';$('careRequestText').textContent=request?.text||'Он сообщит, когда потребуется персонал.';$('careAction').textContent=request?.action||'Ожидаем распоряжений';$('careAction').disabled=!request;const remaining=Math.max(0,state.care.bonusUntil-Date.now());$('careBonus').classList.toggle('active',remaining>0);$('careBonus').textContent=remaining>0?`Забота одобрена: доход ×2 ещё ${Math.ceil(remaining/60000)} мин.`:'Бонус заботы пока не действует.';$('treats').innerHTML=carpetFood.map((treat,index)=>{const left=Math.max(0,(state.treatUntil[index]||0)-Date.now()),cost=treatPrice(treat);return `<button class="treat-card ${state.food<cost?'locked':''}" data-treat="${index}"><img src="assets/images/food-${treat.img}.png" alt=""><span><b>${treat.name}</b><small>${left?`На ковре ещё ${Math.ceil(left/60000)} мин.`:`Эффект на ${treat.minutes} мин.`}</small></span><strong>🐟 ${format(cost)}</strong></button>`}).join('')}
 function currentLevel(){let i=0;levels.forEach((l,n)=>{if(state.total>=l.at)i=n});return i}
 let renderedLevel=currentLevel();
 function render(updatePanels=false){
   $('food').textContent=format(state.food); $('perClick').textContent=`+${format(perClick())} рыбов`;
   renderAd();
   $('income').textContent=format(cps()); const li=currentLevel();
-  if(li>renderedLevel){state.outfit=null;renderedLevel=li;save();updatePanels=true}
+  if(li>renderedLevel){state.outfit=null;renderedLevel=li;trackEvent(`level_${li+1}`);save();updatePanels=true}
   const level=levels[li],next=levels[li+1];
   const roomStage=li>=10?3:li>=8?2:li>=4?1:0;
   document.querySelector('.game').style.setProperty('--room-bg',`url("${rooms[roomStage]}")`);
@@ -131,7 +139,7 @@ function render(updatePanels=false){
   $('levelProgress').style.width=next?`${Math.min(100,(state.total-level.at)/(next.at-level.at)*100)}%`:'100%';
   if(updatePanels)$('upgrades').innerHTML=upgrades.map(u=>`<button class="upgrade ${state.food<price(u)?'locked':''}" data-id="${u.id}"><span class="icon">${u.icon}</span><span><b>${u.name} · ${state.counts[u.id]}</b><small>${u.desc}</small></span><span class="price">🐟 ${format(price(u))}</span></button>`).join('');
   $('bowl').classList.toggle('upgraded',state.counts.bowl>0);
-  [...$('foodDecor').children].forEach((item,index)=>item.classList.toggle('visible',li>=carpetFood[index].unlock));
+  [...$('foodDecor').children].forEach((item,index)=>item.classList.toggle('visible',(state.treatUntil[index]||0)>Date.now()));
   $('grandmaHelper').classList.toggle('visible',(state.helperUntil.grandma||0)>Date.now());
   const chefStage=state.counts.chef>=10?4:state.counts.chef>=6?3:state.counts.chef>=3?2:1;
   const chefImage=`assets/images/helpers/chef-stage-${chefStage}.png`;
@@ -141,7 +149,7 @@ function render(updatePanels=false){
   $('mouseDecor').classList.toggle('visible',state.counts.mouse>0);
   $('boxDecor').classList.toggle('visible',state.counts.box>0);
   $('laserDecor').classList.toggle('visible',state.counts.laser>0);
-  const hasMinistry=state.counts.ministry>0;
+  const hasMinistry=(state.helperUntil.ministry||0)>Date.now();
   $('certificateDecor').classList.toggle('visible',hasMinistry);
   $('foodPileDecor').classList.toggle('visible',hasMinistry);
   if(updatePanels)$('outfits').innerHTML=outfits.map(o=>{const unlocked=li>=o.unlock,active=(chosen?chosen.id:null)===o.id;return `<button class="outfit-card ${unlocked?'':'locked'} ${active?'selected':''}" data-outfit="${o.id}"><img src="${o.img}" alt=""><b>${unlocked?o.name:'Секретный образ'}</b><small>${unlocked?(active?'Надето':'Надеть'):`Откроется на уровне ${o.unlock+1}`}</small></button>`}).join('');
@@ -164,6 +172,7 @@ $('openAwards').addEventListener('click',()=>showPanel('awards','openAwards'));
 $('closeAwards').addEventListener('click',()=>showPanel(null,'openFeed'));
 $('openCare').addEventListener('click',()=>showPanel('care'));
 $('closeCare').addEventListener('click',()=>showPanel(null,'openFeed'));
+$('treats').addEventListener('click',e=>{const button=e.target.closest('.treat-card');if(!button)return;updateCare();const index=+button.dataset.treat,treat=carpetFood[index],cost=treatPrice(treat);if(state.food<cost){playSound('error',.45);$('phrase').textContent=`Для «${treat.name}» не хватает ${format(cost-state.food)} рыбов.`;return}if(state.care.hunger>75&&Math.random()<.18){playSound('cat-soft',.6);$('cat').classList.add('refuses');$('bowl').classList.add('refused');$('phrase').textContent='Шеф отвернулся: сейчас он сыт даже для собственного аппетита. Рыбовы не списаны.';setTimeout(()=>{$('cat').classList.remove('refuses');$('bowl').classList.remove('refused')},850);trackEvent('treat_refused',{treat:treat.name});return}state.food-=cost;state.care.hunger=Math.min(100,state.care.hunger+10);state.care.mood=Math.min(100,state.care.mood+4);state.treatUntil[index]=Math.max(Date.now(),state.treatUntil[index]||0)+treat.minutes*60000;$('cat').classList.add('feasting');$('bowl').classList.add('served');setTimeout(()=>{$('cat').classList.remove('feasting');$('bowl').classList.remove('served')},650);playFeedSound();setTimeout(()=>playPurr(),450);$('phrase').textContent=`«${treat.name}» подано. Ковёр временно стал фуршетным залом.`;trackEvent('treat_served',{treat:treat.name,minutes:treat.minutes});save();render(true)});
 $('careAction').addEventListener('click',()=>{updateCare();const type=state.care.request;if(!type)return;if(type==='hunger'){const cost=Math.max(10,perClick()*8);if(state.food<cost){playSound('error');$('careRequestText').textContent=`Для особого перекуса не хватает ${format(cost-state.food)} рыбов.`;return}state.food-=cost}state.care[type]=Math.min(100,state.care[type]+32);state.care.request=null;state.care.bonusUntil=Date.now()+5*60*1000;state.care.nextRequest=Date.now()+(2+Math.random())*3600000;playSound('reward',.75);if(type==='hunger')playPurr();else playSound(type==='mood'?'cat-happy-2':'cat-soft',.72);$('phrase').textContent=type==='hunger'?'Особый перекус принят. Шеф великодушно не оставил ни крошки.':type==='mood'?'Перо побеждено. Настроение руководства улучшилось.':'Тишина объявлена государственной необходимостью.';save();render(true)});
 const AD_WATCH_COOLDOWN=120000,AD_DRAWER_INTERVAL=300000;
 let lastAdWatch=+(localStorage.getItem('absurd8-last-ad-watch')||0),adDrawerTimer,adAutoPeekTimer;
@@ -174,7 +183,7 @@ $('rewardedAd').addEventListener('click',()=>{if(state.adBonusUntil>Date.now()||
 $('adClose').addEventListener('click',e=>{e.stopPropagation();peekAdDrawer()});
 $('adPeek').addEventListener('click',()=>{$('adDrawer').classList.contains('peek')?showAdDrawer():peekAdDrawer()});
 $('outfits').addEventListener('click',e=>{const card=e.target.closest('.outfit-card');if(!card)return;const outfit=outfits.find(o=>o.id===card.dataset.outfit);if(currentLevel()<outfit.unlock){$('phrase').textContent='Шеф ещё не заслужил этот наряд. Хотя он с этим не согласен.';return}state.outfit=outfit.id;$('phrase').textContent=`Шеф выбрал: «${outfit.name}». Публика может аплодировать.`;save();render(true)});
-$('upgrades').addEventListener('click',e=>{const b=e.target.closest('.upgrade');if(!b)return;const u=upgrades.find(x=>x.id===b.dataset.id),p=price(u);if(state.food>=p){state.food-=p;state.counts[u.id]++;playSound('buy',.7);if(['grandma','chef','delivery'].includes(u.id))state.helperUntil[u.id]=Date.now()+5*60*1000;const message=`Куплено: «${u.name}» · уровень ${state.counts[u.id]}.`;$('phrase').textContent=message;$('shopMessage').textContent=message;$('shopMessage').className='panel-message success';save();render(true);if(['grandma','chef','delivery'].includes(u.id)){$('shop').classList.remove('open');$('shop').setAttribute('aria-hidden','true')}}else{playSound('error');const message=`Не хватает ${format(p-state.food)} рыбов.`;$('phrase').textContent=message;$('shopMessage').textContent=message;$('shopMessage').className='panel-message warning';b.classList.add('nope');setTimeout(()=>b.classList.remove('nope'),300)}});
+$('upgrades').addEventListener('click',e=>{const b=e.target.closest('.upgrade');if(!b)return;const u=upgrades.find(x=>x.id===b.dataset.id),p=price(u);if(state.food>=p){state.food-=p;state.counts[u.id]++;playSound('buy',.7);if(['grandma','chef','delivery'].includes(u.id))state.helperUntil[u.id]=Date.now()+5*60*1000;if(u.id==='ministry')state.helperUntil.ministry=Math.max(Date.now(),state.helperUntil.ministry||0)+15*60*1000;const message=u.id==='ministry'?`Министерский запас и сертификат выданы на ${Math.ceil((state.helperUntil.ministry-Date.now())/60000)} мин.`:`Куплено: «${u.name}» · уровень ${state.counts[u.id]}.`;$('phrase').textContent=message;$('shopMessage').textContent=message;$('shopMessage').className='panel-message success';trackEvent('upgrade_bought',{upgrade:u.id,level:state.counts[u.id]});save();render(true);if(['grandma','chef','delivery'].includes(u.id)){$('shop').classList.remove('open');$('shop').setAttribute('aria-hidden','true')}}else{playSound('error');const message=`Не хватает ${format(p-state.food)} рыбов.`;$('phrase').textContent=message;$('shopMessage').textContent=message;$('shopMessage').className='panel-message warning';b.classList.add('nope');setTimeout(()=>b.classList.remove('nope'),300)}});
 $('roomEvent').addEventListener('click',()=>{const toy=$('roomEvent');if(!toy.classList.contains('show'))return;const reward=Math.max(10,perClick()*12);state.food+=reward;state.total+=reward;playSound(toy.dataset.sound||'reward',.9);if(Math.random()<.45)playSound(Math.random()<.5?'cat-happy-2':'cat-soft',.68);$('phrase').textContent=toy.dataset.phrase;toy.classList.remove('show');save();render();scheduleRoomEvent()});
 $('roomEvent').addEventListener('contextmenu',e=>e.preventDefault());
 const roomEvents=[
@@ -185,11 +194,12 @@ const roomEvents=[
   {img:'assets/images/events/fish.png',sound:'toy-fish',phrase:'Рыбка сама пришла устраиваться на работу.'}
 ];
 let roomEventTimer;
-function pauseGameForAd(){adPlaying=true;stopAllSounds();clearTimeout(roomEventTimer);$('roomEvent').classList.remove('show')}
-function resumeGameAfterAd(){if(!adPlaying)return;adPlaying=false;ensureMusic();scheduleRoomEvent()}
+function pauseGameForAd(){adPlaying=true;stopGameplay();stopAllSounds();clearTimeout(roomEventTimer);$('roomEvent').classList.remove('show')}
+function resumeGameAfterAd(){if(!adPlaying)return;adPlaying=false;startGameplay();ensureMusic();scheduleRoomEvent()}
 function scheduleRoomEvent(first=false){clearTimeout(roomEventTimer);roomEventTimer=setTimeout(()=>{const event=roomEvents[Math.floor(Math.random()*roomEvents.length)],toy=$('roomEvent');toy.innerHTML=`<img src="${event.img}" alt="">`;toy.dataset.phrase=event.phrase;toy.dataset.sound=event.sound;toy.style.setProperty('--event-x',`${12+Math.random()*72}%`);toy.style.setProperty('--event-y',`${30+Math.random()*38}%`);toy.classList.add('show');setTimeout(()=>{if(toy.classList.contains('show')){toy.classList.remove('show');scheduleRoomEvent()}},9000)},first?5000:18000+Math.random()*18000)}
 $('sound').addEventListener('click',()=>{state.sound=!state.sound;$('sound').textContent=state.sound?'🔊':'🔇';if(state.sound){ensureMusic();playSound('ui-click')}else stopAllSounds();save()});
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')stopAllSounds();else ensureMusic()});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){trackEvent('game_hidden',{level:currentLevel()+1,total:Math.floor(state.total)});stopGameplay();stopAllSounds()}else{startGameplay();ensureMusic()}});
+document.addEventListener('contextmenu',e=>e.preventDefault());
 const layoutItems=[...document.querySelectorAll('.layout-item')];
 const layoutStage=document.querySelector('.helper-stage');
 function layoutProfile(){if(innerWidth>=1100)return'desktop';if(innerWidth>=760)return'tablet';if(innerWidth<=390)return'mobile-small';return'mobile-large'}
@@ -217,4 +227,4 @@ $('copyLayout').addEventListener('click',async()=>{const value=JSON.stringify({d
 $('resetLayout').addEventListener('click',()=>{localStorage.removeItem(layoutKey());layoutItems.forEach(item=>{['left','top','right','bottom','width','height'].forEach(prop=>item.style.removeProperty(prop));['--layout-x','--layout-y','--layout-scale'].forEach(prop=>item.style.removeProperty(prop))});applyLayout();selectLayoutItem(null);$('layoutStatus').textContent='возвращена стандартная расстановка'});
 function save(){state.last=Date.now();localStorage.setItem('absurd8-save',JSON.stringify(state))}
 const away=Math.min(4*3600,Math.max(0,(Date.now()-(state.last||Date.now()))/1000));if(away>10&&cps()>0){const bonus=Math.floor(away*cps());state.food+=bonus;state.total+=bonus;$('phrase').textContent=`Пока тебя не было, Шеф получил ${format(bonus)} рыбов.`}
-setInterval(()=>{if(adPlaying)return;const gain=cps()/10;state.food+=gain;state.total+=gain;render()},100);setInterval(()=>{if(adPlaying)return;updateCare();save();if($('care').classList.contains('open'))renderCare();else $('openCare').classList.toggle('has-request',!!state.care.request)},60000);setInterval(save,5000);addEventListener('beforeunload',save);updateCare();render(true);applyLayout();scheduleRoomEvent(true);scheduleAdDrawer();setTimeout(()=>$('introSplash').classList.add('hide'),3000);setTimeout(()=>$('introSplash').remove(),3900);
+setInterval(()=>{if(adPlaying)return;const gain=cps()/10;state.food+=gain;state.total+=gain;render()},100);setInterval(()=>{if(adPlaying)return;updateCare();save();if($('care').classList.contains('open'))renderCare();else $('openCare').classList.toggle('has-request',!!state.care.request)},60000);setInterval(save,5000);addEventListener('beforeunload',save);updateCare();render(true);applyLayout();scheduleRoomEvent(true);scheduleAdDrawer();trackEvent('game_start',{level:currentLevel()+1});setTimeout(()=>trackEvent('session_30_sec'),30000);setTimeout(()=>trackEvent('session_1_min'),60000);setTimeout(()=>trackEvent('session_3_min'),180000);setTimeout(()=>trackEvent('session_5_min'),300000);setTimeout(()=>$('introSplash').classList.add('hide'),3000);setTimeout(()=>$('introSplash').remove(),3900);
