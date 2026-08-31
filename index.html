@@ -11,7 +11,7 @@
   <main class="game">
     <header class="topbar">
       <div class="counter-copy"><div class="counter-value"><span class="counter-fish" aria-hidden="true">🐟</span><h1 id="food">0</h1></div></div>
-      <div class="top-actions"><button id="openCare" class="round care-button" aria-label="Состояние Шефа">🐾</button><button id="layoutToggle" class="round" aria-label="Режим расстановки">🛠️</button><button id="sound" class="round" aria-label="Звук">🔊</button></div>
+      <div class="top-actions"><button id="openCare" class="round care-button" aria-label="Состояние Шефа">🐾</button><button id="openSettings" class="round" aria-label="Настройки">⚙️</button><button id="layoutToggle" hidden aria-hidden="true">🛠️</button><button id="sound" hidden aria-hidden="true">🔊</button></div>
     </header>
 
     <section class="scene">
@@ -98,6 +98,14 @@
       </section>
       <p class="care-note">Показатели снижаются очень медленно. Шеф не болеет, не убегает и никого не наказывает. Почти.</p>
     </section>
+    <section id="settings" class="shop settings" aria-hidden="true">
+      <div class="shop-head"><h2>⚙️ Настройки</h2><button id="closeSettings" class="close" aria-label="Закрыть">×</button></div>
+      <div class="panel-message">Шеф разрешает настроить акустику кабинета.</div>
+      <div class="settings-list">
+        <button id="toggleMusic" class="setting-toggle"><span>🎵</span><div><b>Фоновая музыка</b><small>Музыка играет во время кормления</small></div><strong></strong></button>
+        <button id="toggleEffects" class="setting-toggle"><span>🔔</span><div><b>Звуки игры</b><small>Кормление, кот, награды и игрушки</small></div><strong></strong></button>
+      </div>
+    </section>
   </main>
   <div id="introSplash" class="intro-splash" aria-label="Кот, который слишком хорошо живёт">
     <img src="assets/images/slogan.png?v=20260831-3" alt="Кот, который слишком хорошо живёт">
@@ -113,6 +121,6 @@
     <div><small>НАГРАДА ПОЛУЧЕНА</small><strong id="achievementToastTitle"></strong><p id="achievementToastText"></p></div>
   </div>
   <script src="/sdk.js"></script>
-  <script src="game.js?v=20260831-39"></script>
+  <script src="game.js?v=20260831-40"></script>
 </body>
 </html>

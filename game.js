@@ -67,14 +67,17 @@ const carpetFood=[
   {img:8,name:'Лосось для руководства',minutes:6,cost:60,x:63,y:65,w:14},
   {img:9,name:'Фуршет «Девять жизней»',minutes:7,cost:75,x:40,y:74,w:13}
 ];
-let state={saveVersion:4,food:0,total:0,counts:{},helperUntil:{},treatUntil:{},earnedAchievements:null,sound:true,last:Date.now(),outfit:null,care:null,adBonusUntil:0};
+let state={saveVersion:5,food:0,total:0,counts:{},helperUntil:{},treatUntil:{},earnedAchievements:null,music:true,sfx:true,last:Date.now(),outfit:null,care:null,adBonusUntil:0};
 try{state={...state,...JSON.parse(localStorage.getItem('absurd8-save')||'{}')}}catch(e){}
 upgrades.forEach(u=>state.counts[u.id]??=0);
 state.helperUntil??={};
 state.treatUntil??={};
 if((state.saveVersion||0)<3&&state.counts.ministry>0)state.helperUntil.ministry=Date.now()+15*60*1000;
 if((state.saveVersion||0)<4&&state.counts.mouse>0)state.helperUntil.mouse=Date.now()+5*60*1000;
-state.saveVersion=4;
+if((state.saveVersion||0)<5&&state.counts.laser>0)state.helperUntil.laser=Date.now()+5*60*1000;
+if(typeof state.music!=='boolean')state.music=state.sound!==false;
+if(typeof state.sfx!=='boolean')state.sfx=state.sound!==false;
+state.saveVersion=5;
 const freshCare={hunger:82,mood:78,rest:80,last:Date.now(),nextRequest:Date.now(),request:null,bonusUntil:0};
 state.care={...freshCare,...(state.care||{})};
 if(state.artVersion!==2){state.outfit=null;state.artVersion=2}
@@ -99,12 +102,13 @@ const MUSIC_VOLUME=.16,MUSIC_DUCK_VOLUME=.045;
 let musicRampTimer,duckRestoreTimer,duckUntil=0;
 function rampMusic(target,duration=220){clearInterval(musicRampTimer);const start=backgroundMusic.volume,steps=10,delta=(target-start)/steps;let step=0;musicRampTimer=setInterval(()=>{step++;backgroundMusic.volume=Math.max(0,Math.min(1,start+delta*step));if(step>=steps)clearInterval(musicRampTimer)},duration/steps)}
 function duckMusic(duration){duckUntil=Math.max(duckUntil,Date.now()+duration);rampMusic(MUSIC_DUCK_VOLUME);clearTimeout(duckRestoreTimer);duckRestoreTimer=setTimeout(()=>{const wait=duckUntil-Date.now();if(wait>20)duckRestoreTimer=setTimeout(()=>rampMusic(MUSIC_VOLUME,500),wait);else rampMusic(MUSIC_VOLUME,500)},duration)}
-function ensureMusic(){if(state.sound&&!adPlaying&&document.visibilityState!=='hidden'&&backgroundMusic.paused)backgroundMusic.play().catch(()=>{})}
-function playSound(name,volume=1){if(!state.sound||adPlaying)return;ensureMusic();const source=soundBank[name];if(!source)return;if(name.startsWith('cat-')&&name!=='cat-food')duckMusic(name==='cat-purr-15'?15000:2200);const player=source.cloneNode();player.volume=volume;activeSounds.add(player);const done=()=>activeSounds.delete(player);player.addEventListener('ended',done,{once:true});player.addEventListener('error',done,{once:true});player.play().catch(done)}
+function ensureMusic(){if(state.music&&!adPlaying&&document.visibilityState!=='hidden'&&backgroundMusic.paused)backgroundMusic.play().catch(()=>{})}
+function playSound(name,volume=1){if(!state.sfx||adPlaying)return;ensureMusic();const source=soundBank[name];if(!source)return;if(name.startsWith('cat-')&&name!=='cat-food')duckMusic(name==='cat-purr-15'?15000:2200);const player=source.cloneNode();player.volume=volume;activeSounds.add(player);const done=()=>activeSounds.delete(player);player.addEventListener('ended',done,{once:true});player.addEventListener('error',done,{once:true});player.play().catch(done)}
 let lastFeedSound=0;
 function playFeedSound(){if(Date.now()-lastFeedSound<3200)return;lastFeedSound=Date.now();playSound('feed',.72)}
 let lastPurr=0;
 function playPurr(force=false){if(!force&&Date.now()-lastPurr<18000)return;lastPurr=Date.now();playSound('cat-purr-15',.82)}
+function stopEffects(){activeSounds.forEach(audio=>{audio.pause();audio.currentTime=0});activeSounds.clear()}
 function stopAllSounds(){backgroundMusic.pause();activeSounds.forEach(audio=>{audio.pause();audio.currentTime=0});activeSounds.clear()}
 function trackEvent(name,params={}){try{window.dataLayer?.push({event:name,...params});if(window.YM_COUNTER_ID&&typeof window.ym==='function')window.ym(window.YM_COUNTER_ID,'reachGoal',name,params)}catch(error){}}
 function startGameplay(){if(gameplayActive||adPlaying||document.visibilityState==='hidden')return;gameplayActive=true;ysdk?.features?.GameplayAPI?.start?.()}
@@ -156,7 +160,7 @@ function render(updatePanels=false){
   $('deliveryHelper').classList.toggle('visible',(state.helperUntil.delivery||0)>Date.now());
   $('mouseDecor').classList.toggle('visible',(state.helperUntil.mouse||0)>Date.now());
   $('boxDecor').classList.toggle('visible',state.counts.box>0);
-  $('laserDecor').classList.toggle('visible',state.counts.laser>0);
+  $('laserDecor').classList.toggle('visible',(state.helperUntil.laser||0)>Date.now());
   const hasMinistry=(state.helperUntil.ministry||0)>Date.now();
   $('certificateDecor').classList.toggle('visible',hasMinistry);
   $('foodPileDecor').classList.toggle('visible',hasMinistry);
@@ -169,7 +173,7 @@ let lastClickPhrase=0;
 function feed(e){if(adPlaying||document.querySelector('.game').classList.contains('layout-mode'))return;const before=currentLevel();state.food+=perClick();state.total+=perClick();const after=currentLevel();if(after>before){playSound('level',.9);showLevelCelebration(after);setTimeout(()=>playPurr(true),2100)}else{playFeedSound();if(after===levels.length-1)playPurr()}const cat=$('cat'),bowl=$('bowl');cat.classList.add('bop');bowl.classList.add('served');setTimeout(()=>{cat.classList.remove('bop');bowl.classList.remove('served')},180);if(after>before){$('phrase').textContent=after===12?'Шеф устал. Государственные дела и рыбов лучше продолжить после отдыха.':after===13?'Шеф наконец наелся. Тишина: руководитель спит.':`Новый статус: «${levels[after].name}». Шеф ожидал этого раньше.`;lastClickPhrase=Date.now()}else if(Date.now()-lastClickPhrase>18000&&Math.random()<.06){$('phrase').textContent=phrases[Math.floor(Math.random()*phrases.length)];lastClickPhrase=Date.now()}const f=document.createElement('span');f.className='floater';f.textContent=`+${format(perClick())} 🐟`;f.style.left=`${e?.clientX||innerWidth/2}px`;f.style.top=`${e?.clientY||innerHeight/2}px`;$('floaters').append(f);setTimeout(()=>f.remove(),850);render(after>before)}
 $('cat').addEventListener('click',feed);$('feed').addEventListener('click',feed);
 $('cat').addEventListener('contextmenu',e=>e.preventDefault());
-const panels=['shop','wardrobe','awards','care'];
+const panels=['shop','wardrobe','awards','care','settings'];
 const navButtons=['openFeed','openShop','openWardrobe','openAwards'];
 function showPanel(panelId,buttonId){playSound('ui-click',.65);panels.forEach(id=>{$(id).classList.toggle('open',id===panelId);$(id).setAttribute('aria-hidden',id===panelId?'false':'true')});navButtons.forEach(id=>$(id).classList.toggle('active',id===buttonId));if(panelId)render(true)}
 $('openFeed').addEventListener('click',()=>showPanel(null,'openFeed'));
@@ -181,6 +185,11 @@ $('openAwards').addEventListener('click',()=>showPanel('awards','openAwards'));
 $('closeAwards').addEventListener('click',()=>showPanel(null,'openFeed'));
 $('openCare').addEventListener('click',()=>showPanel('care'));
 $('closeCare').addEventListener('click',()=>showPanel(null,'openFeed'));
+function renderSettings(){const music=$('toggleMusic'),effects=$('toggleEffects');music.classList.toggle('enabled',state.music);effects.classList.toggle('enabled',state.sfx);music.querySelector('strong').textContent=state.music?'ВКЛ':'ВЫКЛ';effects.querySelector('strong').textContent=state.sfx?'ВКЛ':'ВЫКЛ'}
+$('openSettings').addEventListener('click',()=>{showPanel('settings');renderSettings()});
+$('closeSettings').addEventListener('click',()=>showPanel(null,'openFeed'));
+$('toggleMusic').addEventListener('click',()=>{state.music=!state.music;if(state.music){backgroundMusic.volume=MUSIC_VOLUME;ensureMusic()}else{clearInterval(musicRampTimer);clearTimeout(duckRestoreTimer);backgroundMusic.pause()}renderSettings();save()});
+$('toggleEffects').addEventListener('click',()=>{state.sfx=!state.sfx;if(!state.sfx)stopEffects();renderSettings();save()});
 $('treats').addEventListener('click',e=>{const button=e.target.closest('.treat-card');if(!button)return;updateCare();const index=+button.dataset.treat,treat=carpetFood[index],cost=treatPrice(treat);if(state.food<cost){playSound('error',.45);$('phrase').textContent=`Для «${treat.name}» не хватает ${format(cost-state.food)} рыбов.`;return}if(state.care.hunger>75&&Math.random()<.18){playSound('cat-soft',.6);$('cat').classList.add('refuses');$('bowl').classList.add('refused');$('phrase').textContent='Шеф отвернулся: сейчас он сыт даже для собственного аппетита. Рыбовы не списаны.';setTimeout(()=>{$('cat').classList.remove('refuses');$('bowl').classList.remove('refused')},850);trackEvent('treat_refused',{treat:treat.name});return}state.food-=cost;state.care.hunger=Math.min(100,state.care.hunger+10);state.care.mood=Math.min(100,state.care.mood+4);state.treatUntil[index]=Math.max(Date.now(),state.treatUntil[index]||0)+treat.minutes*60000;$('cat').classList.add('feasting');$('bowl').classList.add('served');setTimeout(()=>{$('cat').classList.remove('feasting');$('bowl').classList.remove('served')},650);playFeedSound();setTimeout(()=>playPurr(),450);$('phrase').textContent=`«${treat.name}» подано. Ковёр временно стал фуршетным залом.`;trackEvent('treat_served',{treat:treat.name,minutes:treat.minutes});save();render(true)});
 $('careAction').addEventListener('click',()=>{updateCare();const type=state.care.request;if(!type)return;if(type==='hunger'){const cost=Math.max(10,perClick()*8);if(state.food<cost){playSound('error');$('careRequestText').textContent=`Для особого перекуса не хватает ${format(cost-state.food)} рыбов.`;return}state.food-=cost}state.care[type]=Math.min(100,state.care[type]+32);state.care.request=null;state.care.bonusUntil=Date.now()+5*60*1000;state.care.nextRequest=Date.now()+(2+Math.random())*3600000;playSound('reward',.75);if(type==='hunger')playPurr();else playSound(type==='mood'?'cat-happy-2':'cat-soft',.72);$('phrase').textContent=type==='hunger'?'Особый перекус принят. Шеф великодушно не оставил ни крошки.':type==='mood'?'Перо побеждено. Настроение руководства улучшилось.':'Тишина объявлена государственной необходимостью.';save();render(true)});
 const AD_WATCH_COOLDOWN=120000,AD_DRAWER_INTERVAL=300000;
@@ -192,7 +201,7 @@ $('rewardedAd').addEventListener('click',()=>{if(state.adBonusUntil>Date.now()||
 $('adClose').addEventListener('click',e=>{e.stopPropagation();peekAdDrawer()});
 $('adPeek').addEventListener('click',()=>{$('adDrawer').classList.contains('peek')?showAdDrawer():peekAdDrawer()});
 $('outfits').addEventListener('click',e=>{const card=e.target.closest('.outfit-card');if(!card)return;const outfit=outfits.find(o=>o.id===card.dataset.outfit);if(currentLevel()<outfit.unlock){$('phrase').textContent='Шеф ещё не заслужил этот наряд. Хотя он с этим не согласен.';return}state.outfit=outfit.id;$('phrase').textContent=`Шеф выбрал: «${outfit.name}». Публика может аплодировать.`;save();render(true)});
-$('upgrades').addEventListener('click',e=>{const b=e.target.closest('.upgrade');if(!b)return;const u=upgrades.find(x=>x.id===b.dataset.id),p=price(u);if(state.food>=p){state.food-=p;state.counts[u.id]++;playSound('buy',.7);if(['grandma','chef','delivery','mouse'].includes(u.id))state.helperUntil[u.id]=Math.max(Date.now(),state.helperUntil[u.id]||0)+5*60*1000;if(u.id==='ministry')state.helperUntil.ministry=Math.max(Date.now(),state.helperUntil.ministry||0)+15*60*1000;const message=u.id==='ministry'?`Министерский запас и сертификат выданы на ${Math.ceil((state.helperUntil.ministry-Date.now())/60000)} мин.`:`Куплено: «${u.name}» · уровень ${state.counts[u.id]}.`;$('phrase').textContent=message;$('shopMessage').textContent=message;$('shopMessage').className='panel-message success';trackEvent('upgrade_bought',{upgrade:u.id,level:state.counts[u.id]});save();render(true);if(['grandma','chef','delivery'].includes(u.id)){$('shop').classList.remove('open');$('shop').setAttribute('aria-hidden','true')}}else{playSound('error');const message=`Не хватает ${format(p-state.food)} рыбов.`;$('phrase').textContent=message;$('shopMessage').textContent=message;$('shopMessage').className='panel-message warning';b.classList.add('nope');setTimeout(()=>b.classList.remove('nope'),300)}});
+$('upgrades').addEventListener('click',e=>{const b=e.target.closest('.upgrade');if(!b)return;const u=upgrades.find(x=>x.id===b.dataset.id),p=price(u);if(state.food>=p){state.food-=p;state.counts[u.id]++;playSound('buy',.7);if(['grandma','chef','delivery','mouse','laser'].includes(u.id))state.helperUntil[u.id]=Math.max(Date.now(),state.helperUntil[u.id]||0)+5*60*1000;if(u.id==='ministry')state.helperUntil.ministry=Math.max(Date.now(),state.helperUntil.ministry||0)+15*60*1000;const message=u.id==='ministry'?`Министерский запас и сертификат выданы на ${Math.ceil((state.helperUntil.ministry-Date.now())/60000)} мин.`:`Куплено: «${u.name}» · уровень ${state.counts[u.id]}.`;$('phrase').textContent=message;$('shopMessage').textContent=message;$('shopMessage').className='panel-message success';trackEvent('upgrade_bought',{upgrade:u.id,level:state.counts[u.id]});save();render(true);if(['grandma','chef','delivery'].includes(u.id)){$('shop').classList.remove('open');$('shop').setAttribute('aria-hidden','true')}}else{playSound('error');const message=`Не хватает ${format(p-state.food)} рыбов.`;$('phrase').textContent=message;$('shopMessage').textContent=message;$('shopMessage').className='panel-message warning';b.classList.add('nope');setTimeout(()=>b.classList.remove('nope'),300)}});
 $('roomEvent').addEventListener('click',()=>{const toy=$('roomEvent');if(!toy.classList.contains('show'))return;const reward=Math.max(10,perClick()*12);state.food+=reward;state.total+=reward;playSound(toy.dataset.sound||'reward',.9);if(Math.random()<.45)playSound(Math.random()<.5?'cat-happy-2':'cat-soft',.68);$('phrase').textContent=toy.dataset.phrase;toy.classList.remove('show');save();render();scheduleRoomEvent()});
 $('roomEvent').addEventListener('contextmenu',e=>e.preventDefault());
 const roomEvents=[
@@ -206,7 +215,6 @@ let roomEventTimer;
 function pauseGameForAd(){adPlaying=true;stopGameplay();stopAllSounds();clearTimeout(roomEventTimer);$('roomEvent').classList.remove('show')}
 function resumeGameAfterAd(){if(!adPlaying)return;adPlaying=false;startGameplay();ensureMusic();scheduleRoomEvent()}
 function scheduleRoomEvent(first=false){clearTimeout(roomEventTimer);roomEventTimer=setTimeout(()=>{const event=roomEvents[Math.floor(Math.random()*roomEvents.length)],toy=$('roomEvent');toy.innerHTML=`<img src="${event.img}" alt="">`;toy.dataset.phrase=event.phrase;toy.dataset.sound=event.sound;toy.style.setProperty('--event-x',`${12+Math.random()*72}%`);toy.style.setProperty('--event-y',`${30+Math.random()*38}%`);toy.classList.add('show');setTimeout(()=>{if(toy.classList.contains('show')){toy.classList.remove('show');scheduleRoomEvent()}},9000)},first?5000:18000+Math.random()*18000)}
-$('sound').addEventListener('click',()=>{state.sound=!state.sound;$('sound').textContent=state.sound?'🔊':'🔇';if(state.sound){ensureMusic();playSound('ui-click')}else stopAllSounds();save()});
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){trackEvent('game_hidden',{level:currentLevel()+1,total:Math.floor(state.total)});stopGameplay();stopAllSounds()}else{startGameplay();ensureMusic()}});
 document.addEventListener('contextmenu',e=>e.preventDefault());
 const layoutItems=[...document.querySelectorAll('.layout-item')];
