@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#ffb84d">
   <title>Кот, который слишком хорошо живёт</title>
-  <link rel="stylesheet" href="style.css?v=20260901-2">
+  <link rel="stylesheet" href="style.css?v=20260901-3">
 </head>
 <body>
   <main class="game">
@@ -120,6 +120,10 @@
     <span id="achievementToastIcon">🏆</span>
     <div><small>НАГРАДА ПОЛУЧЕНА</small><strong id="achievementToastTitle"></strong><p id="achievementToastText"></p></div>
   </div>
+  <div id="catThought" class="cat-thought" aria-live="polite">
+    <img id="catThoughtImage" src="" alt="">
+    <strong id="catThoughtText"></strong>
+  </div>
   <aside id="testPanel" class="test-panel" hidden>
     <div><b>🧪 Тест Шефа</b><button id="testClose" aria-label="Свернуть">−</button></div>
     <label>Уровень <select id="testLevel"></select></label>
@@ -133,6 +137,6 @@
     <button class="test-reset" data-test="reset">Сбросить тест</button>
   </aside>
   <script src="/sdk.js"></script>
-  <script src="game.js?v=20260901-2"></script>
+  <script src="game.js?v=20260901-3"></script>
 </body>
 </html>

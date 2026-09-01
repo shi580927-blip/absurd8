@@ -43,7 +43,8 @@ const rooms=[
   'assets/images/rooms/room-stage-1.webp',
   'assets/images/rooms/room-stage-2.webp',
   'assets/images/rooms/room-stage-3.webp',
-  'assets/images/rooms/room-stage-4.webp'
+  'assets/images/rooms/room-stage-4.webp',
+  'assets/images/rooms/room-stage-5.webp'
 ];
 const bowlImages=[
   'assets/images/bowl-empty.png',
@@ -115,6 +116,9 @@ let lastFeedSound=0;
 function playFeedSound(){if(Date.now()-lastFeedSound<3200)return;lastFeedSound=Date.now();playSound('feed',.72)}
 let lastPurr=0;
 function playPurr(force=false){if(!force&&Date.now()-lastPurr<18000)return;lastPurr=Date.now();playSound('cat-purr-15',.82)}
+let thoughtTimer,thoughtSide=false;
+function showCatThought(kind,text){clearTimeout(thoughtTimer);thoughtSide=!thoughtSide;const thought=$('catThought');$('catThoughtImage').src=kind==='happy'?'assets/images/reaction-happy.webp':'assets/images/reaction-fussy.webp';$('catThoughtImage').alt=kind==='happy'?'Довольный Шеф':'Привередливый Шеф';$('catThoughtText').textContent=text;thought.className=`cat-thought ${kind} ${thoughtSide?'from-left':'from-right'}`;void thought.offsetWidth;thought.classList.add('show');thoughtTimer=setTimeout(()=>thought.classList.remove('show'),3000)}
+function initCatThoughts(){let previous='';new MutationObserver(()=>{const message=$('phrase').textContent;if(message===previous)return;previous=message;if(message.startsWith('Шеф отвернулся')||message.startsWith('Шеф демонстративно')){const text=Math.random()<.22?'Ой, бабочка… Шеф уже забыл, что заказывал.':'Шеф передумал. Унесите это немедленно.';showCatThought('fussy',text)}else if(message.includes('подано. Ковёр')||message.startsWith('Шеф принял блюдо'))showCatThought('happy','Котик доволен. Можно продолжать обслуживание.')}).observe($('phrase'),{childList:true,characterData:true,subtree:true})}
 function stopEffects(){activeSounds.forEach(audio=>{audio.pause();audio.currentTime=0});activeSounds.clear()}
 function stopAllSounds(){backgroundMusic.pause();activeSounds.forEach(audio=>{audio.pause();audio.currentTime=0});activeSounds.clear()}
 function trackEvent(name,params={}){try{window.dataLayer?.push({event:name,...params});if(window.YM_COUNTER_ID&&typeof window.ym==='function')window.ym(window.YM_COUNTER_ID,'reachGoal',name,params)}catch(error){}}
@@ -150,7 +154,7 @@ function render(updatePanels=false){
   $('income').textContent=format(cps()); const li=currentLevel();
   if(li!==renderedLevel){state.outfit=null;const advanced=li>renderedLevel;renderedLevel=li;if(advanced)returnToSceneForLevel(li);trackEvent(`level_${li+1}`);save();updatePanels=true}
   const level=levels[li],next=levels[li+1];
-  const roomStage=li>=10?3:li>=8?2:li>=4?1:0;
+  const roomStage=li===levels.length-1?4:li>=10?3:li>=8?2:li>=4?1:0;
   document.querySelector('.game').style.setProperty('--room-bg',`url("${rooms[roomStage]}")`);
   $('level').textContent=`${li+1} · ${level.name}`;
   const chosen=outfits.find(o=>o.id===state.outfit&&li>=o.unlock);
@@ -261,4 +265,4 @@ function testDishReaction(refuse){showPanel(null,'openFeed');const cat=$('cat'),
 function initTestMode(){if(!testMode)return;const panel=$('testPanel'),select=$('testLevel');panel.hidden=false;select.innerHTML=levels.map((level,index)=>`<option value="${index}">${index+1} · ${level.name}</option>`).join('');select.value=String(currentLevel());$('testClose').addEventListener('click',()=>panel.classList.toggle('compact'));panel.addEventListener('click',e=>{const action=e.target.closest('[data-test]')?.dataset.test;if(!action)return;const selected=+select.value,now=Date.now();if(action==='set-level'){state.total=levels[selected].at;state.food=Math.max(state.food,levels[selected].at);renderedLevel=selected;render(true)}if(action==='next-level'){const next=Math.min(levels.length-1,currentLevel()+1);state.total=levels[next].at;state.food=Math.max(state.food,levels[next].at);render(true);select.value=String(next)}if(action==='fish'){const amount=Math.max(1000,levels[Math.min(levels.length-1,currentLevel()+1)].at-state.total);state.food+=amount;state.total+=amount;render(true)}if(action==='reward'){const award=achievements.find(item=>!state.earnedAchievements.includes(item.name))||achievements.at(-1);achievementQueue.push(award);showNextAchievement()}if(action==='items'){upgrades.forEach(item=>{state.counts[item.id]=Math.max(1,state.counts[item.id]);state.helperUntil[item.id]=now+15*60000});render(true)}if(action==='end-items'){state.helperUntil={};render(true)}if(action==='dishes'){carpetFood.forEach((item,index)=>state.treatUntil[index]=now+item.minutes*60000);state.adTreatUnlocks=carpetFood.map((_,index)=>index);render(true)}if(action==='end-dishes'){state.treatUntil={};render(true)}if(action==='accept')testDishReaction(false);if(action==='refuse')testDishReaction(true);if(action==='reset'){localStorage.removeItem(saveKey);location.reload()}save()})}
 function save(){state.last=Date.now();localStorage.setItem(saveKey,JSON.stringify(state))}
 const away=Math.min(4*3600,Math.max(0,(Date.now()-(state.last||Date.now()))/1000));if(away>10&&cps()>0){const bonus=Math.floor(away*cps());state.food+=bonus;state.total+=bonus;$('phrase').textContent=`Пока тебя не было, Шеф получил ${format(bonus)} рыбов.`}
-setInterval(()=>{if(adPlaying)return;const gain=cps()/10;state.food+=gain;state.total+=gain;render()},100);setInterval(()=>{if(adPlaying)return;updateCare();save();if($('care').classList.contains('open'))renderCare();else $('openCare').classList.toggle('has-request',!!state.care.request)},60000);setInterval(save,5000);addEventListener('beforeunload',save);updateCare();render(true);applyLayout();initTestMode();scheduleRoomEvent(true);scheduleAdDrawer();trackEvent('game_start',{level:currentLevel()+1,test_mode:testMode});setTimeout(()=>trackEvent('session_30_sec'),30000);setTimeout(()=>trackEvent('session_1_min'),60000);setTimeout(()=>trackEvent('session_3_min'),180000);setTimeout(()=>trackEvent('session_5_min'),300000);setTimeout(()=>$('introSplash').classList.add('hide'),3000);setTimeout(()=>$('introSplash').remove(),3900);
+setInterval(()=>{if(adPlaying)return;const gain=cps()/10;state.food+=gain;state.total+=gain;render()},100);setInterval(()=>{if(adPlaying)return;updateCare();save();if($('care').classList.contains('open'))renderCare();else $('openCare').classList.toggle('has-request',!!state.care.request)},60000);setInterval(save,5000);addEventListener('beforeunload',save);updateCare();render(true);applyLayout();initTestMode();initCatThoughts();scheduleRoomEvent(true);scheduleAdDrawer();trackEvent('game_start',{level:currentLevel()+1,test_mode:testMode});setTimeout(()=>trackEvent('session_30_sec'),30000);setTimeout(()=>trackEvent('session_1_min'),60000);setTimeout(()=>trackEvent('session_3_min'),180000);setTimeout(()=>trackEvent('session_5_min'),300000);setTimeout(()=>$('introSplash').classList.add('hide'),3000);setTimeout(()=>$('introSplash').remove(),3900);
