@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#ffb84d">
   <title>Кот, который слишком хорошо живёт</title>
-  <link rel="stylesheet" href="style.css?v=20260831-16">
+  <link rel="stylesheet" href="style.css?v=20260901-2">
 </head>
 <body>
   <main class="game">
@@ -120,7 +120,19 @@
     <span id="achievementToastIcon">🏆</span>
     <div><small>НАГРАДА ПОЛУЧЕНА</small><strong id="achievementToastTitle"></strong><p id="achievementToastText"></p></div>
   </div>
+  <aside id="testPanel" class="test-panel" hidden>
+    <div><b>🧪 Тест Шефа</b><button id="testClose" aria-label="Свернуть">−</button></div>
+    <label>Уровень <select id="testLevel"></select></label>
+    <div class="test-grid">
+      <button data-test="set-level">Выбрать</button><button data-test="next-level">Следующий + заставка</button>
+      <button data-test="fish">+ рыбовы</button><button data-test="reward">Выдать награду</button>
+      <button data-test="items">Все предметы</button><button data-test="end-items">Убрать предметы</button>
+      <button data-test="dishes">Все блюда</button><button data-test="end-dishes">Убрать блюда</button>
+      <button data-test="accept">Принять блюдо</button><button data-test="refuse">Отказ Шефа</button>
+    </div>
+    <button class="test-reset" data-test="reset">Сбросить тест</button>
+  </aside>
   <script src="/sdk.js"></script>
-  <script src="game.js?v=20260831-44"></script>
+  <script src="game.js?v=20260901-2"></script>
 </body>
 </html>
