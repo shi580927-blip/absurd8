@@ -239,3 +239,4 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 .test-panel{left:max(10px,calc((100vw - 620px)/2 + 10px))}
 .cat-thought.from-left{left:max(12px,calc((100vw - 620px)/2 + 12px))}
 .cat-thought.from-right{right:max(12px,calc((100vw - 620px)/2 + 12px))}
+.clean-test .test-panel{display:none!important}

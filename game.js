@@ -69,7 +69,10 @@ const carpetFood=[
   {img:9,name:'Фуршет «Девять жизней»',minutes:7,cost:75,x:40,y:74,w:13}
 ];
 const treatUnlockLevels=[1,1,2,2,3,4,6,8,10];
-const testMode=new URLSearchParams(location.search).get('test')==='1';
+const queryParams=new URLSearchParams(location.search);
+const testMode=queryParams.get('test')==='1';
+const cleanTestMode=testMode&&queryParams.get('clean')==='1';
+const forcedTestLevel=testMode?Math.max(0,Math.min(levels.length-1,(parseInt(queryParams.get('level'),10)||0)-1)):-1;
 const saveKey=testMode?'absurd8-test-save':'absurd8-save';
 let state={saveVersion:8,food:0,total:0,counts:{},helperUntil:{},treatUntil:{},adTreatUnlocks:[],treatWish:null,nextTreatWish:0,earnedAchievements:null,music:true,sfx:true,last:Date.now(),outfit:null,care:null,adBonusUntil:0};
 try{state={...state,...JSON.parse(localStorage.getItem(saveKey)||'{}')}}catch(e){}
@@ -85,10 +88,12 @@ if((state.saveVersion||0)<6&&state.counts.box>0)state.helperUntil.box=Date.now()
 if(typeof state.music!=='boolean')state.music=state.sound!==false;
 if(typeof state.sfx!=='boolean')state.sfx=state.sound!==false;
 state.saveVersion=8;
+if(forcedTestLevel>=0){state.total=levels[forcedTestLevel].at;state.food=Math.max(state.food,state.total);state.outfit=null}
 const freshCare={hunger:82,mood:78,rest:80,last:Date.now(),nextRequest:Date.now(),request:null,bonusUntil:0};
 state.care={...freshCare,...(state.care||{})};
 if(state.artVersion!==2){state.outfit=null;state.artVersion=2}
 const $=id=>document.getElementById(id);
+if(cleanTestMode)document.documentElement.classList.add('clean-test');
 $('foodDecor').innerHTML=carpetFood.map((item,index)=>`<img id="foodProp${index+1}" data-layout-name="Еда ${index+1}" class="food-prop layout-item" src="assets/images/food-${item.img}.png" style="left:${item.x}%;top:${item.y}%;width:${item.w}%" alt="">`).join('');
 const format=n=>Math.floor(n).toLocaleString('ru-RU');
 const price=u=>Math.floor(u.base*Math.pow(1.55,state.counts[u.id]));
