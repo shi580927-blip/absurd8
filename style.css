@@ -236,7 +236,6 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 /* Keep viewport-level effects inside the centered 620px game canvas. */
 .intro-card{width:min(88vw,560px)}
 .intro-studio{right:max(24px,calc((100vw - 620px)/2 + 24px))}
-.level-celebration{right:max(0px,calc((100vw - 620px)/2));left:max(0px,calc((100vw - 620px)/2))}
 .test-panel{left:max(10px,calc((100vw - 620px)/2 + 10px))}
 .cat-thought.from-left{left:max(12px,calc((100vw - 620px)/2 + 12px))}
 .cat-thought.from-right{right:max(12px,calc((100vw - 620px)/2 + 12px))}
