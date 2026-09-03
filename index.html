@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#ffb84d">
   <title>Кот, который слишком хорошо живёт</title>
-  <link rel="stylesheet" href="style.css?v=20260901-10">
+  <link rel="stylesheet" href="style.css?v=20260903-1">
 </head>
 <body>
   <main class="game">
@@ -128,12 +128,23 @@
     <img id="catThoughtImage" src="" alt="">
     <strong id="catThoughtText"></strong>
   </div>
+  <div id="rewardConfirm" class="reward-confirm" aria-hidden="true">
+    <section class="reward-confirm-card" role="dialog" aria-modal="true" aria-labelledby="rewardConfirmTitle">
+      <span class="reward-confirm-icon" aria-hidden="true">🎬</span>
+      <h2 id="rewardConfirmTitle">Открыть за просмотр рекламы?</h2>
+      <p id="rewardConfirmText">Посмотрите ролик полностью — награда будет выдана после просмотра.</p>
+      <div class="reward-confirm-actions">
+        <button id="rewardConfirmCancel" type="button">Не сейчас</button>
+        <button id="rewardConfirmWatch" type="button">Смотреть рекламу</button>
+      </div>
+    </section>
+  </div>
   <aside id="testPanel" class="test-panel" hidden>
     <div><b>🧪 Тест Шефа</b><button id="testClose" aria-label="Свернуть">−</button></div>
     <label>Уровень <select id="testLevel"></select></label>
     <div class="test-grid">
       <button data-test="set-level">Выбрать</button><button data-test="next-level">Следующий + заставка</button>
-      <button data-test="fish">+ рыбовы</button><button data-test="reward">Выдать награду</button>
+      <button data-test="fish">+ рыбов</button><button data-test="reward">Выдать награду</button>
       <button data-test="items">Все предметы</button><button data-test="end-items">Убрать предметы</button>
       <button data-test="dishes">Все блюда</button><button data-test="end-dishes">Убрать блюда</button>
       <button data-test="accept">Принять блюдо</button><button data-test="refuse">Отказ Шефа</button>
@@ -142,6 +153,6 @@
     <button id="testReset" class="test-reset" data-test="reset">Сбросить тест</button>
   </aside>
   <script src="/sdk.js"></script>
-  <script src="game.js?v=20260901-9"></script>
+  <script src="game.js?v=20260903-1"></script>
 </body>
 </html>
