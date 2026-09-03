@@ -240,3 +240,17 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 .cat-thought.from-left{left:max(12px,calc((100vw - 620px)/2 + 12px))}
 .cat-thought.from-right{right:max(12px,calc((100vw - 620px)/2 + 12px))}
 .clean-test .test-panel{display:none!important}
+
+/* Clear consent before a rewarded ad unlocks a dish. */
+.reward-confirm{position:fixed;z-index:1900;inset:0;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(20,7,6,.7);opacity:0;visibility:hidden;transition:opacity .18s ease}
+.reward-confirm.show{opacity:1;visibility:visible}
+.reward-confirm-card{width:min(88vw,430px);padding:22px 20px 18px;border:4px solid #e5a129;border-radius:22px;background:linear-gradient(160deg,#fff8dc,#f5d99c);box-shadow:inset 0 0 0 3px #fff2b7,0 12px 36px rgba(0,0,0,.6);color:#3b190d;text-align:center}
+.reward-confirm-icon{display:block;font-size:2.3rem}.reward-confirm-card h2{margin:5px 0 8px;font-size:1.25rem;line-height:1.15}.reward-confirm-card p{margin:0 0 16px;font-size:.86rem;line-height:1.35}
+.reward-confirm-actions{display:grid;grid-template-columns:1fr 1.35fr;gap:9px}.reward-confirm-actions button{min-height:48px;padding:9px;border:3px solid #8a3d13;border-radius:13px;background:#fff3cf;color:#48200f;font-weight:900;cursor:pointer}.reward-confirm-actions #rewardConfirmWatch{background:linear-gradient(#ffe65f,#f3a515);box-shadow:inset 0 0 0 2px #fff3a2;color:#321207}
+@media(max-width:420px){.reward-confirm{padding:12px}.reward-confirm-card{width:min(92vw,390px);padding:18px 14px 14px}.reward-confirm-card h2{font-size:1.05rem}.reward-confirm-card p{font-size:.78rem}.reward-confirm-actions{grid-template-columns:1fr}.reward-confirm-actions button{min-height:44px}.reward-confirm-actions #rewardConfirmWatch{grid-row:1}}
+
+/* Decorations may continue behind the rating panel, but stop at the buttons. */
+.food-decor,.helper-stage{overflow:visible;clip-path:inset(0 0 -72px 0)}
+.layout-mode .food-decor,.layout-mode .helper-stage{clip-path:none}
+@media(max-width:759px){.food-decor,.helper-stage{clip-path:inset(0 0 -68px 0)}}
+@media(max-width:420px){.food-decor,.helper-stage{clip-path:inset(0 0 -66px 0)}}
