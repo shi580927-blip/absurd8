@@ -26,7 +26,7 @@ Tap Chef or press the Feed button to earn fish. Spend them in the Privileges sec
 
 Use the button with Chef’s face to check his requests, buy dishes, and unlock new outfits, levels, and awards. You can voluntarily watch a rewarded ad to receive an instant supply of fish, triple your income temporarily, or unlock a selected dish. Rewards are granted only after the full video has been watched.
 
-Progress is saved automatically using Yandex Games cloud storage, with a local browser backup.
+Progress is saved automatically.
 
 **Keywords**
 
@@ -37,6 +37,8 @@ cat, clicker, cat simulator, idle, humor, pet, feeding, upgrades, casual game
 - Add English to “Game translated into”.
 - Complete every field of the English store listing.
 - Upload English screenshots showing the actual English interface.
+- Do not mention Yandex, Yandex Games, or another third-party brand in the public listing fields.
+- Use unedited screenshots captured directly from the current draft; do not add, enlarge, or rearrange game elements.
 - Test the draft with the platform language set to English.
 - Verify menus, rewards, dishes, ads, settings, and level-up messages.
 - Verify that side-offer ads and dish-unlock ads share the same 120-second cooldown.
