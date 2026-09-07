@@ -47,6 +47,7 @@ const rooms=[
   'assets/images/rooms/room-stage-4.webp',
   'assets/images/rooms/room-stage-5.webp'
 ];
+const desktopRooms=rooms.map((_,index)=>`assets/images/rooms/desktop/room-stage-${index+1}-desktop-v1.webp`);
 const bowlImages=[
   'assets/images/bowl-empty.png',
   'assets/images/bowl-stage-2.png',
@@ -249,6 +250,7 @@ function render(updatePanels=false){
   const level=levels[li],next=levels[li+1];
   const roomStage=li===levels.length-1?4:li>=10?3:li>=8?2:li>=4?1:0;
   document.querySelector('.game').style.setProperty('--room-bg',`url("${rooms[roomStage]}")`);
+  document.querySelector('.game').style.setProperty('--room-bg-desktop',`url("${desktopRooms[roomStage]}")`);
   document.querySelector('.game').classList.toggle('cosmic-final',li===levels.length-1);
   $('level').textContent=`${li+1} · ${itemName(level)}`;
   const chosen=outfits.find(o=>o.id===state.outfit&&li>=o.unlock);
