@@ -286,8 +286,8 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
   .bottom-nav{left:50%;right:auto;width:min(920px,72vw);transform:translateX(-50%);border:3px solid #f1a62b;border-bottom:0;border-radius:18px 18px 0 0}
   .shop{left:50%;right:auto;width:min(780px,72vw);transform:translate(-50%,115%)}
   .shop.open{transform:translate(-50%,0)}
-  .layout-tools{left:50%;right:auto;width:min(660px,60vw);transform:translate(-50%,-220%)}
-  .layout-mode .layout-tools{transform:translate(-50%,0)}
+  .layout-tools{top:92px;right:14px;left:auto;width:300px;max-height:calc(100dvh - 190px);overflow:auto;transform:translateX(115%)}
+  .layout-mode .layout-tools{transform:translateX(0)}
   .intro-studio{right:32px}
   .test-panel{left:10px}
   .cat-thought.from-left{left:24px}
