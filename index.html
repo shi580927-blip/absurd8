@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#ffb84d">
   <title id="pageTitle">Кот, который слишком хорошо живёт</title>
-  <link rel="stylesheet" href="style.css?v=20260906-5">
+  <link rel="stylesheet" href="style.css?v=20260907-1">
 </head>
 <body>
   <main class="game">
@@ -15,7 +15,7 @@
     </header>
 
     <section class="scene">
-      <div id="phrase" class="speech">В этой миске подозрительно видно дно.</div>
+      <div id="phrase" data-layout-name="Реплика Шефа" data-layout-mode="offset" class="speech layout-item">В этой миске подозрительно видно дно.</div>
       <div id="foodDecor" class="food-decor" aria-hidden="true"></div>
       <div class="helper-stage" aria-hidden="true">
         <img id="certificateDecor" data-layout-name="Сертификат" class="scene-branding certificate-decor layout-item" src="assets/images/certificate.png?v=20260831-2" alt="">
@@ -31,7 +31,7 @@
         <img id="catBody" src="assets/images/cat-level-01.png" alt="Рыжий кот Шеф">
       </button>
       <img id="bowl" data-layout-name="Миска" data-layout-mode="offset" class="bowl layout-item" src="assets/images/bowl-empty.png" alt="Пустая миска">
-      <button id="roomEvent" class="room-event" aria-label="Собрать случайный бонус"></button>
+      <button id="roomEvent" data-layout-name="Случайная игрушка" data-layout-mode="offset" class="room-event layout-item" aria-label="Собрать случайный бонус"></button>
       <div id="adDrawer" class="ad-drawer peek">
         <button id="adPeek" class="ad-peek" aria-label="Показать предложение">🎬</button>
         <button id="adClose" class="ad-close" aria-label="Скрыть предложение">×</button>
@@ -154,6 +154,6 @@
     <button id="testReset" class="test-reset" data-test="reset">Сбросить тест</button>
   </aside>
   <script src="/sdk.js"></script>
-  <script src="game.js?v=20260906-7"></script>
+  <script src="game.js?v=20260907-1"></script>
 </body>
 </html>
