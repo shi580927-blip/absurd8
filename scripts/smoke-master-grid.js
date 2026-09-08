@@ -6,6 +6,9 @@ const fragment=code.slice(code.indexOf('function layoutProfile()'),code.indexOf(
 for(const editor of [false,true]){
   const context=vm.createContext({layoutEditorMode:editor,localStorage:{getItem:()=>JSON.stringify({grandmaHelper:{left:99,top:99}})}});
   vm.runInContext(fragment,context);
+  assert.equal(vm.runInContext('readLayout().grandmaHelper.left',context),editor?99:11.6);
+  assert.equal(vm.runInContext('readLayout().boxDecor.left',context),62.5);
+  vm.runInContext('activeRoomStage=1',context);
   assert.equal(vm.runInContext('readLayout().grandmaHelper.left',context),editor?99:21.87);
   assert.equal(vm.runInContext('readLayout().boxDecor.left',context),56.04);
 }
