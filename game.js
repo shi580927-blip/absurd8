@@ -381,6 +381,9 @@ $('adDrawer').addEventListener('click',e=>{
   if($('adDrawer').classList.contains('peek'))showAdDrawer();
   else mainRewardedAdClick();
 });
+$('adPeek').addEventListener('click',e=>{e.stopPropagation();if($('adDrawer').classList.contains('peek'))showAdDrawer();else mainRewardedAdClick()});
+$('rewardedAd').addEventListener('click',e=>{e.stopPropagation();if(!$('adDrawer').classList.contains('peek'))mainRewardedAdClick()});
+$('adClose').addEventListener('click',e=>{e.stopPropagation();peekAdDrawer()});
 $('outfits').addEventListener('click',e=>{const card=e.target.closest('.outfit-card');if(!card)return;const outfit=outfits.find(o=>o.id===card.dataset.outfit);if(currentLevel()<outfit.unlock){$('phrase').textContent=L('Шеф ещё не заслужил этот наряд. Хотя он с этим не согласен.','Chef has not earned this outfit yet. He strongly disagrees.');return}state.outfit=outfit.id;$('phrase').textContent=L(`Шеф выбрал: «${itemName(outfit)}». Публика может аплодировать.`,`Chef chose “${itemName(outfit)}”. The audience may applaud.`);save();render(true)});
 $('upgrades').addEventListener('click',e=>{const b=e.target.closest('.upgrade');if(!b)return;const u=upgrades.find(x=>x.id===b.dataset.id),p=price(u);if(state.food>=p){state.food-=p;state.counts[u.id]++;playSound('buy',.7);if(['grandma','chef','delivery','mouse','laser'].includes(u.id))state.helperUntil[u.id]=Math.max(Date.now(),state.helperUntil[u.id]||0)+5*60*1000;if(u.id==='box')state.helperUntil.box=Math.max(Date.now(),state.helperUntil.box||0)+10*60*1000;if(u.id==='ministry')state.helperUntil.ministry=Math.max(Date.now(),state.helperUntil.ministry||0)+15*60*1000;const message=u.id==='ministry'?L(`Министерский запас и сертификат выданы на ${Math.ceil((state.helperUntil.ministry-Date.now())/60000)} мин.`,`Ministry reserves and certificate issued for ${Math.ceil((state.helperUntil.ministry-Date.now())/60000)} min.`):L(`Куплено: «${itemName(u)}» · уровень ${state.counts[u.id]}.`,`Purchased: “${itemName(u)}” · level ${state.counts[u.id]}.`);$('phrase').textContent=message;$('shopMessage').textContent=message;$('shopMessage').className='panel-message success';trackEvent('upgrade_bought',{upgrade:u.id,level:state.counts[u.id]});save();render(true);if(['grandma','chef','delivery'].includes(u.id)){$('shop').classList.remove('open');$('shop').setAttribute('aria-hidden','true')}}else{playSound('error');const message=L(`Не хватает ${format(p-state.food)} рыбов.`,`You need ${format(p-state.food)} more fish.`);$('phrase').textContent=message;$('shopMessage').textContent=message;$('shopMessage').className='panel-message warning';showAdDrawer();b.classList.add('nope');setTimeout(()=>b.classList.remove('nope'),300)}});
 $('roomEvent').addEventListener('click',()=>{const toy=$('roomEvent');if(!toy.classList.contains('show'))return;const reward=Math.max(10,perClick()*12);state.food+=reward;state.total+=reward;playSound(toy.dataset.sound||'reward',.9);if(Math.random()<.45)playSound(Math.random()<.5?'cat-happy-2':'cat-soft',.68);$('phrase').textContent=toy.dataset.phrase;toy.classList.remove('show');save();render();scheduleRoomEvent()});
@@ -408,7 +411,10 @@ const defaultLayouts={
 };
 let selectedLayoutItem=null;
 const roomLayoutOverrides={
-  0:{grandmaHelper:{z:0,hidden:false,left:11.6,top:34.95,width:10.09},boxDecor:{z:-5,hidden:false,left:62.5,top:60.58,width:13.65}}
+  0:{grandmaHelper:{z:0,hidden:false,left:11.6,top:34.95,width:10.09},boxDecor:{z:-5,hidden:false,left:62.5,top:60.58,width:13.65}},
+  1:{grandmaHelper:{z:0,hidden:false,left:21.87,top:33.12,width:10.09},boxDecor:{z:-5,hidden:false,left:56.04,top:35.62,width:13.65}},
+  2:{grandmaHelper:{z:0,hidden:false,left:21.87,top:33.12,width:10.09},boxDecor:{z:-5,hidden:false,left:56.04,top:35.62,width:13.65}},
+  3:{grandmaHelper:{z:0,hidden:false,left:21.87,top:33.12,width:10.09},boxDecor:{z:-5,hidden:false,left:56.04,top:35.62,width:13.65}}
 };
 function masterLayout(){const profile=layoutProfile();return {...defaultLayouts[profile],...(roomLayoutOverrides[activeRoomStage]||{})}}
 function readLayout(){const master=masterLayout();if(!layoutEditorMode)return master;try{return {...master,...JSON.parse(localStorage.getItem(layoutKey())||'{}')}}catch(e){return master}}
