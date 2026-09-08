@@ -21,4 +21,5 @@ for(const [w,h] of [[1920,1080],[1366,768],[844,390],[2560,1080]]){
   assert.ok(Math.abs(1600*scale/(900*scale)-16/9)<1e-12);
 }
 assert.match(fs.readFileSync('scene.html','utf8'),/id="grandmaHelper"/);
+assert.doesNotMatch(code,/finalAspect=545\/475/);
 console.log('Master grid: stored overrides isolated; FIT geometry passed for four viewport sizes.');
