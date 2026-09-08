@@ -299,3 +299,9 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
   .cat-thought.from-left{left:24px}
   .cat-thought.from-right{right:24px}
 }
+
+/* Reaction cards belong to the 16:9 game frame, never to the browser viewport. */
+.game .cat-thought{position:absolute;top:12%;width:min(28%,344px)}
+.game .cat-thought.from-left{left:1.5%;right:auto}
+.game .cat-thought.from-right{right:1.5%;left:auto}
+@media(max-width:759px){.game .cat-thought{top:17%;width:50%}}

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#ffb84d">
   <title id="pageTitle">Кот, который слишком хорошо живёт</title>
-  <link rel="stylesheet" href="style.css?v=20260908-5">
+  <link rel="stylesheet" href="style.css?v=20260908-6">
 </head>
 <body>
   <main class="game">
@@ -108,6 +108,10 @@
       </div>
       <div class="studio-credit"><small id="developerLabel">Разработчик</small><b>Mintyberries Games</b></div>
     </section>
+    <div id="catThought" class="cat-thought" aria-live="polite">
+      <img id="catThoughtImage" src="" alt="">
+      <strong id="catThoughtText"></strong>
+    </div>
   </main>
   <div id="introSplash" class="intro-splash" aria-label="Кот, который слишком хорошо живёт">
     <div class="intro-card">
@@ -125,10 +129,6 @@
   <div id="achievementToast" class="achievement-toast" aria-live="polite">
     <span id="achievementToastIcon">🏆</span>
     <div><small id="achievementReceivedLabel">НАГРАДА ПОЛУЧЕНА</small><strong id="achievementToastTitle"></strong><p id="achievementToastText"></p></div>
-  </div>
-  <div id="catThought" class="cat-thought" aria-live="polite">
-    <img id="catThoughtImage" src="" alt="">
-    <strong id="catThoughtText"></strong>
   </div>
   <div id="rewardConfirm" class="reward-confirm" aria-hidden="true">
     <section class="reward-confirm-card" role="dialog" aria-modal="true" aria-labelledby="rewardConfirmTitle">
@@ -150,11 +150,15 @@
       <button data-test="items">Все предметы</button><button data-test="end-items">Убрать предметы</button>
       <button data-test="dishes">Все блюда</button><button data-test="end-dishes">Убрать блюда</button>
       <button data-test="accept">Принять блюдо</button><button data-test="refuse">Отказ Шефа</button>
+      <button data-reaction="stunned">Морда: ошеломление</button><button data-reaction="shock">Морда: шок</button>
+      <button data-reaction="hunting">Морда: охота</button><button data-reaction="hypnosis">Морда: гипноз</button>
+      <button data-reaction="judging">Морда: осуждение</button><button data-reaction="pleading">Морда: мольба</button>
+      <button data-reaction="innocent">Морда: не трогал</button>
       <button data-test="ad-success">Реклама: просмотрена</button><button data-test="ad-cancel">Реклама: закрыта</button>
     </div>
     <button id="testReset" class="test-reset" data-test="reset">Сбросить тест</button>
   </aside>
   <script src="/sdk.js"></script>
-  <script src="game.js?v=20260908-8"></script>
+  <script src="game.js?v=20260908-9"></script>
 </body>
 </html>
