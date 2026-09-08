@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ffb84d">
+  <title id="pageTitle">Кот, который слишком хорошо живёт</title>
+  <link rel="stylesheet" href="style.css?v=20260908-9">
+</head>
+<body>
+  <main class="game">
+    <header class="topbar">
+      <div class="counter-copy"><div class="counter-value"><span class="counter-fish" aria-hidden="true">🐟</span><h1 id="food">0</h1></div></div>
+      <div class="top-actions"><button id="openCare" class="round care-button" aria-label="Состояние Шефа"><img src="assets/images/ui/top/care-cat-gold.png?v=20260906-1" alt=""></button><button id="openSettings" class="round settings-button" aria-label="Настройки"><img src="assets/images/ui/top/settings-gear-gold.png?v=20260906-1" alt=""></button><button id="layoutToggle" hidden aria-hidden="true">🛠️</button><button id="sound" hidden aria-hidden="true">🔊</button></div>
+    </header>
+
+    <section class="scene">
+      <div id="phrase" data-layout-name="Реплика Шефа" data-layout-mode="offset" class="speech layout-item">В этой миске подозрительно видно дно.</div>
+      <div id="foodDecor" class="food-decor" aria-hidden="true"></div>
+      <div class="helper-stage" aria-hidden="true">
+        <img id="certificateDecor" data-layout-name="Сертификат" class="scene-branding certificate-decor layout-item" src="assets/images/certificate.png?v=20260831-2" alt="">
+        <img id="foodPileDecor" data-layout-name="Гора еды" class="scene-food-pile layout-item" src="assets/images/food-pile.png?v=20260831-2" alt="">
+        <img id="grandmaHelper" data-layout-name="Бабушка" class="room-helper grandma-helper layout-item" src="assets/images/helpers/grandma-v2.png" alt="">
+        <img id="chefHelper" data-layout-name="Повар" class="room-helper chef-helper layout-item" src="assets/images/helpers/chef-stage-1.png" alt="">
+        <img id="deliveryHelper" data-layout-name="Курьер" class="room-helper delivery-helper layout-item" src="assets/images/helpers/delivery-v2.png" alt="">
+        <img id="mouseDecor" data-layout-name="Мышь в гамаке" class="room-prop mouse-decor layout-item" src="assets/images/events/mouse-remote-520.png" alt="">
+        <img id="boxDecor" data-layout-name="Коробка" class="room-prop box-decor layout-item" src="assets/images/houses/house-stage-1.png" alt="Коробка Шефа">
+        <i id="laserDecor" data-layout-name="Лазер" class="laser-decor layout-item"></i>
+      </div>
+      <button id="cat" data-layout-name="Шеф" data-layout-mode="offset" class="cat layout-item" aria-label="Покормить кота">
+        <img id="catBody" src="assets/images/cat-level-01.png" alt="Рыжий кот Шеф">
+      </button>
+      <img id="bowl" data-layout-name="Миска" data-layout-mode="offset" class="bowl layout-item" src="assets/images/bowl-empty.png" alt="Пустая миска">
+      <button id="roomEvent" data-layout-name="Случайная игрушка" data-layout-mode="offset" class="room-event layout-item" aria-label="Собрать случайный бонус"></button>
+      <div id="adDrawer" class="ad-drawer peek">
+        <button id="adPeek" class="ad-peek" aria-label="Показать предложение">🎬</button>
+        <button id="adClose" class="ad-close" aria-label="Скрыть предложение"></button>
+        <button id="rewardedAd" class="rewarded-ad-pill"><span class="action-copy"><b>Посмотреть рекламу</b><small>Наедание ×3 на 5 минут</small></span></button>
+      </div>
+      <div class="action-dock">
+        <button id="feed" class="feed"><span class="action-icon" aria-hidden="true">🐟</span><span class="action-copy"><b id="feedLabel">ПОКОРМИТЬ</b><small id="perClick">+1 рыбов</small></span></button>
+        <span id="adStatus" class="sr-status" aria-live="polite"></span>
+      </div>
+      <p id="feedHint" class="hint">Можно нажимать на кота или на кнопку</p>
+    </section>
+
+    <aside id="layoutTools" class="layout-tools" aria-hidden="true"><b>Предмет</b><select id="layoutSelect" aria-label="Выбрать предмет"></select><small id="layoutStatus">выберите предмет</small><div><button id="previousLayout">← Предыдущий</button><button id="nextLayout">Следующий →</button><button id="centerLayout">В центр</button></div><div><button id="sizeDown">− Размер</button><button id="sizeUp">+ Размер</button><button id="toggleLayoutVisibility">Скрыть</button></div><div><button id="layerDown">Слой −</button><button id="layerUp">Слой +</button><b id="layoutLayer">Слой: —</b></div><div><button id="copyLayout">Копировать</button><button id="resetLayout">Сбросить</button><button id="closeLayout">Готово</button></div></aside>
+
+    <section class="status">
+      <div><span id="levelLabel">Уровень наглости</span><strong id="level">1 · Голодный стратег</strong></div>
+      <div class="meter"><i id="levelProgress"></i></div>
+      <div class="income"><span id="incomeLabel">Доход</span><b id="income">0</b><small id="incomeUnit">рыбов/сек.</small></div>
+    </section>
+
+    <nav class="bottom-nav">
+      <button id="openFeed" class="nav-button active"><img class="nav-icon" src="assets/images/ui/nav/nav-1.png" alt=""><span id="navFeed">Кормить</span></button>
+      <button id="openShop" class="nav-button"><img class="nav-icon" src="assets/images/ui/nav/nav-2.png" alt=""><span id="navShop">Привилегии</span></button>
+      <button id="openWardrobe" class="nav-button"><img class="nav-icon" src="assets/images/ui/nav/nav-3-v3.png" alt=""><span id="navWardrobe">Шкаф</span></button>
+      <button id="openAwards" class="nav-button"><img class="nav-icon" src="assets/images/ui/nav/nav-4-v3.png" alt=""><span id="navAwards">Награды</span></button>
+    </nav>
+
+    <section id="shop" class="shop" aria-hidden="true">
+      <div class="shop-head"><h2 id="shopTitle">👑 Привилегии Шефа</h2><button id="closeShop" class="close" aria-label="Закрыть"></button></div>
+      <div id="shopMessage" class="panel-message">Выберите привилегию для Шефа.</div>
+      <div id="upgrades" class="upgrade-list"></div>
+    </section>
+
+    <section id="wardrobe" class="shop wardrobe" aria-hidden="true">
+      <div class="shop-head"><h2 id="wardrobeTitle">👕 Гардероб Шефа</h2><button id="closeWardrobe" class="close" aria-label="Закрыть"></button></div>
+      <div id="wardrobeMessage" class="panel-message">Одежда меняет вид, но не уменьшает наглость.</div>
+      <div id="outfits" class="outfit-list"></div>
+    </section>
+
+    <section id="awards" class="shop awards" aria-hidden="true">
+      <div class="shop-head"><h2 id="awardsTitle">🏆 Награды Шефа</h2><button id="closeAwards" class="close" aria-label="Закрыть"></button></div>
+      <div id="awardsMessage" class="panel-message">Шеф не хвастается. Он официально информирует.</div>
+      <div id="achievements" class="achievement-list"></div>
+    </section>
+
+    <section id="care" class="shop care" aria-hidden="true">
+      <div class="shop-head"><h2 id="careTitle">🐾 Как поживает Шеф</h2><button id="closeCare" class="close" aria-label="Закрыть"></button></div>
+      <div id="careMessage" class="panel-message">Шеф не нуждается в заботе. Он разрешает её проявить.</div>
+      <div class="care-meters">
+        <div class="care-meter"><span id="hungerLabel">🐟 Сытость</span><div><i id="hungerBar"></i></div><b id="hungerValue">80%</b></div>
+        <div class="care-meter"><span id="moodLabel">🧶 Настроение</span><div><i id="moodBar"></i></div><b id="moodValue">80%</b></div>
+        <div class="care-meter"><span id="restLabel">💤 Отдых</span><div><i id="restBar"></i></div><b id="restValue">80%</b></div>
+      </div>
+      <article class="care-request">
+        <span id="careRequestIcon">🐾</span>
+        <div><b id="careRequestTitle">Шеф обдумывает пожелания</b><p id="careRequestText">Он сообщит, когда потребуется персонал.</p></div>
+      </article>
+      <button id="careAction" class="care-action" disabled>Ожидаем распоряжений</button>
+      <p id="careBonus" class="care-bonus">Бонус заботы пока не действует.</p>
+      <section class="treat-shop" aria-labelledby="treatTitle">
+        <h3 id="treatTitle">🍽️ Вкусняшки на ковёр</h3>
+        <p id="treatIntro">Купленное блюдо появляется в комнате на несколько минут. Сытый Шеф иногда имеет собственное мнение.</p>
+        <div id="treats" class="treat-list"></div>
+      </section>
+      <p id="careNote" class="care-note">Показатели снижаются очень медленно. Шеф не болеет, не убегает и никого не наказывает. Почти.</p>
+    </section>
+    <section id="settings" class="shop settings" aria-hidden="true">
+      <div class="shop-head"><h2 id="settingsTitle">⚙️ Настройки</h2><button id="closeSettings" class="close" aria-label="Закрыть"></button></div>
+      <div id="settingsMessage" class="panel-message">Шеф разрешает настроить акустику кабинета.</div>
+      <div class="settings-list">
+        <button id="toggleMusic" class="setting-toggle"><span>🎵</span><div><b id="musicLabel">Фоновая музыка</b><small id="musicHint">Музыка играет во время кормления</small></div><strong></strong></button>
+        <button id="toggleEffects" class="setting-toggle"><span>🔔</span><div><b id="effectsLabel">Звуки игры</b><small id="effectsHint">Кормление, кот, награды и игрушки</small></div><strong></strong></button>
+      </div>
+      <div class="studio-credit"><small id="developerLabel">Разработчик</small><b>Mintyberries Games</b></div>
+    </section>
+    <div id="catThought" class="cat-thought" aria-live="polite">
+      <img id="catThoughtImage" src="" alt="">
+      <strong id="catThoughtText"></strong>
+    </div>
+  </main>
+  <div id="introSplash" class="intro-splash" aria-label="Кот, который слишком хорошо живёт">
+    <div class="intro-frame">
+      <div class="intro-card">
+        <img id="introTitleImage" class="intro-title" src="assets/images/slogan.png?v=20260831-3" alt="Кот, который слишком хорошо живёт">
+        <img id="introTitleEnglish" class="intro-title" src="assets/images/slogan-en.png?v=20260906-1" alt="The Cat Who Lives Too Well" hidden>
+      </div>
+      <div class="intro-studio"><b>Mintyberries Games</b><span id="presentsLabel">представляет</span></div>
+    </div>
+  </div>
+  <div class="rotate-notice" aria-label="Поверните устройство">
+    <span aria-hidden="true">↻</span>
+    <strong>Поверните телефон</strong>
+    <small>Шеф принимает посетителей только в горизонтальном кабинете</small>
+  </div>
+  <div id="floaters" aria-hidden="true"></div>
+  <div id="levelCelebration" class="level-celebration" aria-live="assertive">
+    <span id="newLevelLabel">✨ НОВЫЙ УРОВЕНЬ ✨</span>
+    <strong id="levelCelebrationTitle"></strong>
+    <small id="congratsLabel">Шеф принимает поздравления.</small>
+  </div>
+  <div id="achievementToast" class="achievement-toast" aria-live="polite">
+    <span id="achievementToastIcon">🏆</span>
+    <div><small id="achievementReceivedLabel">НАГРАДА ПОЛУЧЕНА</small><strong id="achievementToastTitle"></strong><p id="achievementToastText"></p></div>
+  </div>
+  <div id="rewardConfirm" class="reward-confirm" aria-hidden="true">
+    <section class="reward-confirm-card" role="dialog" aria-modal="true" aria-labelledby="rewardConfirmTitle">
+      <span class="reward-confirm-icon" aria-hidden="true">🎬</span>
+      <h2 id="rewardConfirmTitle">Открыть за просмотр рекламы?</h2>
+      <p id="rewardConfirmText">Посмотрите ролик полностью — награда будет выдана после просмотра.</p>
+      <div class="reward-confirm-actions">
+        <button id="rewardConfirmCancel" type="button">Не сейчас</button>
+        <button id="rewardConfirmWatch" type="button">Смотреть рекламу</button>
+      </div>
+    </section>
+  </div>
+  <aside id="testPanel" class="test-panel" hidden>
+    <div><b>🧪 Тест Шефа</b><button id="testClose" aria-label="Свернуть">−</button></div>
+    <label>Уровень <select id="testLevel"></select></label>
+    <div class="test-grid">
+      <button data-test="set-level">Выбрать</button><button data-test="next-level">Следующий + заставка</button>
+      <button data-test="fish">+ рыбов</button><button data-test="reward">Выдать награду</button>
+      <button data-test="items">Все предметы</button><button data-test="end-items">Убрать предметы</button>
+      <button data-test="dishes">Все блюда</button><button data-test="end-dishes">Убрать блюда</button>
+      <button data-test="accept">Принять блюдо</button><button data-test="refuse">Отказ Шефа</button>
+      <button data-reaction="stunned">Морда: ошеломление</button><button data-reaction="shock">Морда: шок</button>
+      <button data-reaction="hunting">Морда: охота</button>
+      <button data-reaction="judging">Морда: осуждение</button><button data-reaction="pleading">Морда: мольба</button>
+      <button data-reaction="innocent">Морда: не трогал</button>
+      <button data-test="ad-success">Реклама: просмотрена</button><button data-test="ad-cancel">Реклама: закрыта</button>
+    </div>
+    <button id="testReset" class="test-reset" data-test="reset">Сбросить тест</button>
+  </aside>
+  <script src="/sdk.js"></script>
+  <script src="game.js?v=master-grid-1"></script>
+</body>
+</html>
