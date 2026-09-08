@@ -279,7 +279,8 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 /* Wide desktop gameplay. The portrait artwork remains sharp in the centre;
    a softened copy continues the room behind real scene content. */
 @media (min-width:900px) and (min-aspect-ratio:4/3){
-  .game{width:100%;max-width:none;background-image:linear-gradient(rgba(20,8,4,.04),rgba(30,7,8,.26)),var(--room-bg-desktop,var(--room-bg));background-size:100% 100%,cover;background-repeat:no-repeat;background-position:center,center;isolation:isolate}
+  html,body{display:grid;place-items:center;background:#160b09}
+  .game{width:min(100vw,calc(100svh * 16 / 9));height:min(100svh,calc(100vw * 9 / 16));min-height:0;aspect-ratio:16/9;max-width:none;background-image:linear-gradient(rgba(20,8,4,.04),rgba(30,7,8,.26)),var(--room-bg-desktop,var(--room-bg));background-size:100% 100%,100% 100%;background-repeat:no-repeat;background-position:center,center;isolation:isolate}
   .game:before{content:none}
   .game:after{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(90deg,rgba(28,9,7,.34),transparent 24%,transparent 76%,rgba(28,9,7,.34));pointer-events:none}
   .topbar{left:24px;right:24px}
