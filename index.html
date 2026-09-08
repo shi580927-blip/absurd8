@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#ffb84d">
   <title id="pageTitle">Кот, который слишком хорошо живёт</title>
-  <link rel="stylesheet" href="style.css?v=20260908-7">
+  <link rel="stylesheet" href="style.css?v=20260908-8">
 </head>
 <body>
   <main class="game">
@@ -20,12 +20,11 @@
       <div class="helper-stage" aria-hidden="true">
         <img id="certificateDecor" data-layout-name="Сертификат" class="scene-branding certificate-decor layout-item" src="assets/images/certificate.png?v=20260831-2" alt="">
         <img id="foodPileDecor" data-layout-name="Гора еды" class="scene-food-pile layout-item" src="assets/images/food-pile.png?v=20260831-2" alt="">
-        <img id="houseDecor" data-layout-name="Недвижимость Шефа" class="cat-house layout-item" src="assets/images/houses/house-stage-1.png" alt="">
         <img id="grandmaHelper" data-layout-name="Бабушка" class="room-helper grandma-helper layout-item" src="assets/images/helpers/grandma-v2.png" alt="">
         <img id="chefHelper" data-layout-name="Повар" class="room-helper chef-helper layout-item" src="assets/images/helpers/chef-stage-1.png" alt="">
         <img id="deliveryHelper" data-layout-name="Курьер" class="room-helper delivery-helper layout-item" src="assets/images/helpers/delivery-v2.png" alt="">
         <img id="mouseDecor" data-layout-name="Мышь в гамаке" class="room-prop mouse-decor layout-item" src="assets/images/events/mouse-remote-520.png" alt="">
-        <img id="boxDecor" data-layout-name="Коробка" class="room-prop box-decor layout-item" src="assets/images/helpers/luxury-box.png" alt="">
+        <img id="boxDecor" data-layout-name="Коробка" class="room-prop box-decor layout-item" src="assets/images/houses/house-stage-1.png" alt="Коробка Шефа">
         <i id="laserDecor" data-layout-name="Лазер" class="laser-decor layout-item"></i>
       </div>
       <button id="cat" data-layout-name="Шеф" data-layout-mode="offset" class="cat layout-item" aria-label="Покормить кота">
@@ -114,11 +113,13 @@
     </div>
   </main>
   <div id="introSplash" class="intro-splash" aria-label="Кот, который слишком хорошо живёт">
-    <div class="intro-card">
-      <img id="introTitleImage" class="intro-title" src="assets/images/slogan.png?v=20260831-3" alt="Кот, который слишком хорошо живёт">
-      <img id="introTitleEnglish" class="intro-title" src="assets/images/slogan-en.png?v=20260906-1" alt="The Cat Who Lives Too Well" hidden>
+    <div class="intro-frame">
+      <div class="intro-card">
+        <img id="introTitleImage" class="intro-title" src="assets/images/slogan.png?v=20260831-3" alt="Кот, который слишком хорошо живёт">
+        <img id="introTitleEnglish" class="intro-title" src="assets/images/slogan-en.png?v=20260906-1" alt="The Cat Who Lives Too Well" hidden>
+      </div>
+      <div class="intro-studio"><b>Mintyberries Games</b><span id="presentsLabel">представляет</span></div>
     </div>
-    <div class="intro-studio"><b>Mintyberries Games</b><span id="presentsLabel">представляет</span></div>
   </div>
   <div id="floaters" aria-hidden="true"></div>
   <div id="levelCelebration" class="level-celebration" aria-live="assertive">
@@ -159,6 +160,6 @@
     <button id="testReset" class="test-reset" data-test="reset">Сбросить тест</button>
   </aside>
   <script src="/sdk.js"></script>
-  <script src="game.js?v=20260908-10"></script>
+  <script src="game.js?v=20260908-12"></script>
 </body>
 </html>
