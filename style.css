@@ -25,6 +25,7 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 .cat:active,.cat.bop{transform:translate(var(--layout-x),var(--layout-y)) scale(calc(var(--layout-scale) * .94)) rotate(-1deg)}
 .cat.feasting{animation:catFeast .65s ease}.cat.refuses{animation:catRefuse .85s ease}.bowl.refused{animation:bowlRefuse .85s ease}
 .bowl{--layout-x:0px;--layout-y:0px;--layout-scale:1;position:relative;top:1.5dvh;z-index:3;width:min(44vw,225px);height:clamp(100px,16dvh,155px);object-fit:contain;margin-top:clamp(-45px,-5dvh,-24px);filter:drop-shadow(0 7px 4px rgba(20,5,0,.55));pointer-events:none;transform:translate(var(--layout-x),var(--layout-y)) scale(var(--layout-scale));transition:.3s}.bowl.upgraded{filter:drop-shadow(0 0 10px #ffe45b) drop-shadow(0 8px 5px rgba(20,5,0,.65))}
+.bowl.buffet-active{width:min(82vw,490px);height:clamp(150px,25dvh,240px);margin-top:clamp(-82px,-9dvh,-48px);filter:drop-shadow(0 9px 7px rgba(20,5,0,.68));animation:buffetArrival .45s cubic-bezier(.2,.9,.25,1.15)}
 .bowl.served{animation:served .18s ease}
 .room-event{position:absolute;z-index:8;left:var(--event-x,20%);top:var(--event-y,45%);width:86px;height:86px;border:0;background:none;opacity:0;pointer-events:none;transform:translate(-50%,-50%) scale(.3) rotate(-20deg);transition:.25s}.room-event.show{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1) rotate(0);animation:eventFloat 1.1s infinite alternate ease-in-out}.room-event img{width:100%;height:100%;object-fit:contain;pointer-events:none;filter:drop-shadow(0 0 7px #fff36c) drop-shadow(0 0 14px #45e9ff)}
 .feed{position:relative;z-index:3;margin-top:-10px;border:3px solid #3a1712;border-radius:15px;padding:8px 27px;background:linear-gradient(#ffe95b,#ff9d14);color:#35170f;box-shadow:0 0 0 2px #ffd65a,0 5px 0 #3a1712;font-size:1rem;font-weight:1000;cursor:pointer}
@@ -89,6 +90,7 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 @keyframes catFeast{35%{transform:translate(var(--layout-x),calc(var(--layout-y) + 1.2dvh)) scale(calc(var(--layout-scale) * .97)) rotate(1deg)}70%{transform:translate(var(--layout-x),var(--layout-y)) scale(calc(var(--layout-scale) * 1.02))}}
 @keyframes catRefuse{35%,70%{transform:translate(calc(var(--layout-x) - 3vw),var(--layout-y)) scale(var(--layout-scale)) rotate(-5deg)}}
 @keyframes bowlRefuse{35%,70%{transform:translateX(18px) rotate(8deg)}}
+@keyframes buffetArrival{from{opacity:0;transform:translate(var(--layout-x),calc(var(--layout-y) + 18px)) scale(calc(var(--layout-scale) * .72))}to{opacity:1;transform:translate(var(--layout-x),var(--layout-y)) scale(var(--layout-scale))}}
 @keyframes levelMoment{0%{opacity:0;transform:scale(1.1)}16%,76%{opacity:1;transform:none}100%{opacity:0;transform:scale(.96)}}
 @keyframes awardToast{0%{opacity:0;transform:translate(-50%,-150%)}12%,82%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,-135%)}}
 @keyframes eventFloat{to{transform:translate(-50%,calc(-50% - 9px)) scale(1.08);filter:brightness(1.18)}}
