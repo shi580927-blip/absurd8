@@ -69,9 +69,9 @@ const carpetFood=[
   {img:3,name:'Фиолетовая консерва',minutes:4,cost:28,x:24,y:66,w:11},
   {img:8,name:'Лосось для руководства',minutes:6,cost:60,x:63,y:65,w:14},
   {img:9,name:'Фуршет «Девять жизней»',minutes:7,cost:75,x:40,y:74,w:13},
-  {img:'buffets/sushi-ship-full',name:'Суши-корабль Его Наглейшества',minutes:3,cost:140,buffet:true,clickMultiplier:2,stageClicks:[14,34],revealLevel:8,adLevel:9}
+  {img:'buffets/sushi-ship-full',name:'Суши-корабль Его Наглейшества',minutes:3,cost:140,buffet:true,clickMultiplier:2,stageClicks:[14,34],revealLevel:8,adLevel:8}
 ];
-const treatUnlockLevels=[1,1,2,2,3,4,6,8,10,11];
+const treatUnlockLevels=[1,1,2,2,3,4,6,8,10,9];
 const queryParams=new URLSearchParams(location.search);
 const testMode=queryParams.get('test')==='1';
 const layoutEditorMode=queryParams.get('layout')==='1';
