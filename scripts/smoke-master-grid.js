@@ -4,7 +4,7 @@ const assert=require('assert/strict');
 const code=fs.readFileSync('game.js','utf8');
 const fragment=code.slice(code.indexOf('function layoutProfile()'),code.indexOf('function itemStage('));
 for(const editor of [false,true]){
-  const context=vm.createContext({layoutEditorMode:editor,localStorage:{getItem:()=>JSON.stringify({grandmaHelper:{left:99,top:99}})}});
+  const context=vm.createContext({layoutEditorMode:editor,document:{querySelector:()=>({classList:{contains:()=>editor}})},localStorage:{getItem:()=>JSON.stringify({grandmaHelper:{left:99,top:99}})}});
   vm.runInContext(fragment,context);
   assert.equal(vm.runInContext('readLayout().grandmaHelper.left',context),editor?99:11.6);
   assert.equal(vm.runInContext('readLayout().boxDecor.left',context),62.5);
