@@ -49,12 +49,12 @@ const rooms=[
 ];
 const desktopRooms=rooms.map((_,index)=>`assets/images/rooms/desktop/room-stage-${index+1}-desktop-v1.webp`);
 const boxStages=[
-  {level:1,name:['Коробка эконом-класса','Economy-Class Box'],img:'assets/images/houses/house-stage-1.png'},
-  {level:3,name:['Однокомнатная премиум-класса','One-Room Purr-mium Home'],img:'assets/images/houses/house-stage-2.png'},
-  {level:5,name:['Домик с личной когтеточкой','Home with a Private Scratcher'],img:'assets/images/houses/house-stage-3.png'},
-  {level:7,name:['Вертикальная недвижимость','Vertical Real Estate'],img:'assets/images/houses/house-stage-4.png'},
-  {level:9,name:['Трон-резиденция Шефа','Chef’s Throne Residence'],img:'assets/images/houses/house-stage-5.png'},
-  {level:11,name:['Дворец Повелителя отдыха','Palace of the Lord of Rest'],img:'assets/images/houses/house-stage-6.png'}
+  {level:1,name:['Коробка эконом-класса','Economy-Class Box'],img:'assets/images/houses/house-stage-1.png?v=20260909-1'},
+  {level:3,name:['Однокомнатная премиум-класса','One-Room Purr-mium Home'],img:'assets/images/houses/house-stage-2.png?v=20260909-1'},
+  {level:5,name:['Домик с личной когтеточкой','Home with a Private Scratcher'],img:'assets/images/houses/house-stage-3.png?v=20260909-1'},
+  {level:7,name:['Вертикальная недвижимость','Vertical Real Estate'],img:'assets/images/houses/house-stage-4.png?v=20260909-1'},
+  {level:9,name:['Трон-резиденция Шефа','Chef’s Throne Residence'],img:'assets/images/houses/house-stage-5.png?v=20260909-1'},
+  {level:11,name:['Дворец Повелителя отдыха','Palace of the Lord of Rest'],img:'assets/images/houses/house-stage-6.png?v=20260909-1'}
 ];
 const bowlImages=[
   'assets/images/bowl-empty.png',
