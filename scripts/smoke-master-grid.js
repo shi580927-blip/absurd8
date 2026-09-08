@@ -9,8 +9,12 @@ for(const editor of [false,true]){
   assert.equal(vm.runInContext('readLayout().grandmaHelper.left',context),editor?99:11.6);
   assert.equal(vm.runInContext('readLayout().boxDecor.left',context),62.5);
   vm.runInContext('activeRoomStage=1',context);
-  assert.equal(vm.runInContext('readLayout().grandmaHelper.left',context),editor?99:21.87);
+  assert.equal(vm.runInContext('readLayout().grandmaHelper.left',context),editor?99:24.65);
+  assert.equal(vm.runInContext('readLayout().grandmaHelper.top',context),editor?99:28.19);
   assert.equal(vm.runInContext('readLayout().boxDecor.left',context),56.04);
+  vm.runInContext('activeRoomStage=2',context);
+  assert.equal(vm.runInContext('readLayout().grandmaHelper.left',context),editor?99:15.89);
+  assert.equal(vm.runInContext('readLayout().grandmaHelper.top',context),editor?99:28.62);
 }
 const index=fs.readFileSync('index.html','utf8');
 assert.match(index,/width:1600px;height:900px/);

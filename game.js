@@ -412,8 +412,8 @@ const defaultLayouts={
 let selectedLayoutItem=null;
 const roomLayoutOverrides={
   0:{grandmaHelper:{z:0,hidden:false,left:11.6,top:34.95,width:10.09},boxDecor:{z:-5,hidden:false,left:62.5,top:60.58,width:13.65}},
-  1:{grandmaHelper:{z:0,hidden:false,left:21.87,top:33.12,width:10.09},boxDecor:{z:-5,hidden:false,left:56.04,top:35.62,width:13.65}},
-  2:{grandmaHelper:{z:0,hidden:false,left:21.87,top:33.12,width:10.09},boxDecor:{z:-5,hidden:false,left:56.04,top:35.62,width:13.65}},
+  1:{grandmaHelper:{z:0,hidden:false,left:24.65,top:28.19,width:10.09},boxDecor:{z:-5,hidden:false,left:56.04,top:35.62,width:13.65}},
+  2:{grandmaHelper:{z:0,hidden:false,left:15.89,top:28.62,width:10.09},boxDecor:{z:-5,hidden:false,left:56.04,top:35.62,width:13.65}},
   3:{grandmaHelper:{z:0,hidden:false,left:21.87,top:33.12,width:10.09},boxDecor:{z:-5,hidden:false,left:56.04,top:35.62,width:13.65}}
 };
 function masterLayout(){const profile=layoutProfile();return {...defaultLayouts[profile],...(roomLayoutOverrides[activeRoomStage]||{})}}
