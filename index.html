@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#ffb84d">
   <title id="pageTitle">Кот, который слишком хорошо живёт</title>
-  <link rel="stylesheet" href="style.css?v=20260908-8">
+  <link rel="stylesheet" href="style.css?v=20260908-9">
 </head>
 <body>
   <main class="game">
@@ -121,6 +121,11 @@
       <div class="intro-studio"><b>Mintyberries Games</b><span id="presentsLabel">представляет</span></div>
     </div>
   </div>
+  <div class="rotate-notice" aria-label="Поверните устройство">
+    <span aria-hidden="true">↻</span>
+    <strong>Поверните телефон</strong>
+    <small>Шеф принимает посетителей только в горизонтальном кабинете</small>
+  </div>
   <div id="floaters" aria-hidden="true"></div>
   <div id="levelCelebration" class="level-celebration" aria-live="assertive">
     <span id="newLevelLabel">✨ НОВЫЙ УРОВЕНЬ ✨</span>
@@ -152,7 +157,7 @@
       <button data-test="dishes">Все блюда</button><button data-test="end-dishes">Убрать блюда</button>
       <button data-test="accept">Принять блюдо</button><button data-test="refuse">Отказ Шефа</button>
       <button data-reaction="stunned">Морда: ошеломление</button><button data-reaction="shock">Морда: шок</button>
-      <button data-reaction="hunting">Морда: охота</button><button data-reaction="hypnosis">Морда: гипноз</button>
+      <button data-reaction="hunting">Морда: охота</button>
       <button data-reaction="judging">Морда: осуждение</button><button data-reaction="pleading">Морда: мольба</button>
       <button data-reaction="innocent">Морда: не трогал</button>
       <button data-test="ad-success">Реклама: просмотрена</button><button data-test="ad-cancel">Реклама: закрыта</button>
@@ -160,6 +165,6 @@
     <button id="testReset" class="test-reset" data-test="reset">Сбросить тест</button>
   </aside>
   <script src="/sdk.js"></script>
-  <script src="game.js?v=20260908-12"></script>
+  <script src="game.js?v=20260908-13"></script>
 </body>
 </html>
