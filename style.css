@@ -202,13 +202,14 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 
 /* Rewarded ad drawer: always-visible edge tab with a two-minute cooldown. */
 .ad-drawer{position:absolute;z-index:70;right:0;bottom:112px;width:290px;max-width:68%;min-height:64px;pointer-events:none}
-.ad-drawer .rewarded-ad-pill{position:relative;width:100%;min-height:64px;display:grid;grid-template-columns:44px minmax(0,1fr);align-items:center;padding:5px 50px 5px 5px;pointer-events:auto;overflow:hidden;border:3px solid #dca02b;border-right:0;border-radius:18px 0 0 18px;background:linear-gradient(145deg,rgba(229,233,255,.98),rgba(121,135,222,.98));box-shadow:inset 0 0 0 2px #f4f5ff,0 5px 16px rgba(30,12,48,.5);text-align:center;transform:translateX(0);transition:transform .38s cubic-bezier(.2,.8,.25,1);cursor:pointer}
-.ad-drawer.peek .rewarded-ad-pill{transform:translateX(calc(100% - 48px))}
+.ad-drawer .rewarded-ad-pill{position:relative;margin-left:auto;width:100%;min-height:64px;display:grid;grid-template-columns:44px minmax(0,1fr);align-items:center;padding:5px 50px 5px 5px;pointer-events:auto;overflow:hidden;border:3px solid #dca02b;border-right:0;border-radius:18px 0 0 18px;background:linear-gradient(145deg,rgba(229,233,255,.98),rgba(121,135,222,.98));box-shadow:inset 0 0 0 2px #f4f5ff,0 5px 16px rgba(30,12,48,.5);text-align:center;transition:width .38s cubic-bezier(.2,.8,.25,1),border-radius .38s cubic-bezier(.2,.8,.25,1);cursor:pointer}
+.ad-drawer.peek .rewarded-ad-pill{width:52px;grid-template-columns:44px;padding:5px 3px;border-radius:18px 0 0 18px}
+.ad-drawer.peek .rewarded-ad-pill .action-copy{display:none}
 .ad-drawer .rewarded-ad-pill .action-icon{display:grid;place-items:center;width:40px;height:46px;border-radius:12px;background:linear-gradient(#fff08b,#eda21e);box-shadow:0 3px 0 #6d310d;font-size:1.35rem}
 .ad-close{position:absolute;z-index:2;top:50%;right:2px;width:48px;height:48px;pointer-events:auto;transform:translateY(-50%);border:0;border-radius:50%;background:transparent;color:#4b244b;font-size:0;font-weight:1000;cursor:pointer;touch-action:manipulation;opacity:1;transition:opacity .15s}
 .ad-drawer.peek .ad-close{opacity:0;pointer-events:none}
 .ad-close:before{content:"";display:block;width:27px;height:27px;margin:auto;border:2px solid #4b244b;border-radius:50%;background:linear-gradient(45deg,transparent calc(50% - 1px),#4b244b calc(50% - 1px),#4b244b calc(50% + 1px),transparent calc(50% + 1px)),linear-gradient(-45deg,transparent calc(50% - 1px),#4b244b calc(50% - 1px),#4b244b calc(50% + 1px),transparent calc(50% + 1px)),#fff4e2;box-shadow:0 2px 0 rgba(75,36,75,.3)}
-@media(max-width:420px){.ad-drawer{bottom:108px;width:235px}}
+@media(max-width:420px){.ad-drawer{bottom:108px;width:235px}.ad-drawer.peek .rewarded-ad-pill{width:56px}}
 
 /* Compact counter, reliable feed CTA and platform-independent nav icons. */
 .counter-copy{display:flex;align-items:center;max-width:45%;padding:7px 14px}.counter-value{width:100%}.topbar h1{font-size:clamp(1.45rem,4.3vw,2.05rem)}
