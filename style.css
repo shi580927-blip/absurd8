@@ -482,6 +482,37 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 .small-screen .nav-icon{width:calc(28 * var(--ui-unit));height:calc(27 * var(--ui-unit))}
 .small-screen .nav-button span{font-size:calc(9 * var(--ui-unit));line-height:1}
 .small-screen .game .cat-thought{top:calc(62 * var(--ui-unit));width:31%;max-height:calc(210 * var(--ui-unit))}
+.game .topbar{left:16px;right:16px}
+.game .topbar .counter-copy{flex:0 1 auto;width:auto;max-width:36%;gap:14px;padding-inline:16px}
+.counter-copy .counter-value{flex:0 1 auto;width:auto;white-space:nowrap}
+.counter-copy .income:before{content:'📈';color:#8cda68;margin-right:6px}
+.small-screen .game .topbar{left:calc(5 * var(--ui-unit));right:calc(5 * var(--ui-unit));padding-inline:0}
+.small-screen .game .topbar .counter-copy{flex:0 1 auto;width:auto;max-width:45%;gap:calc(7 * var(--ui-unit));padding-inline:calc(8 * var(--ui-unit))}
+/* One reusable, horizontally scrollable row above the level bar. */
+.game #foodShop{--shelf-unit:1px;top:auto;bottom:148px;left:50%;right:auto;width:76%;height:auto;max-height:none;padding:12px 8px;overflow:visible;background:rgba(49,25,15,.9);border:2px solid #e5aa43;transition:transform .2s,opacity .2s}
+#foodShop .shop-head,#foodShop #treatIntro{display:none}
+#foodShop .food-shelf{display:flex;align-items:center;gap:calc(6 * var(--shelf-unit));min-width:0}
+#foodShop .treat-list{display:flex;flex-wrap:nowrap;gap:calc(12 * var(--shelf-unit));padding:calc(4 * var(--shelf-unit));overflow-x:auto;overflow-y:hidden;min-width:0;flex:1;touch-action:pan-x;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#ba8139 transparent;cursor:grab}
+#foodShop .treat-card{display:flex;flex-direction:column;justify-content:flex-start;align-items:center;flex:0 0 calc(180 * var(--shelf-unit));width:calc(180 * var(--shelf-unit));min-height:0;padding:calc(6 * var(--shelf-unit));gap:calc(3 * var(--shelf-unit));border:1px solid #9e6835;border-radius:calc(9 * var(--shelf-unit));box-shadow:none;background:rgba(64,33,18,.7);text-align:center;user-select:none;touch-action:pan-x}
+#foodShop .treat-card img{width:100%;height:calc(76 * var(--shelf-unit));object-fit:contain;flex-shrink:0}
+#foodShop .treat-card .dish-name{font-size:calc(13 * var(--shelf-unit));line-height:1.15;height:calc(30 * var(--shelf-unit));display:flex;align-items:center;justify-content:center}
+#foodShop .treat-card .dish-price{font-size:calc(18 * var(--shelf-unit));white-space:nowrap}
+#foodShop .treat-card .dish-effect,#foodShop .treat-card .dish-status{font-size:calc(12 * var(--shelf-unit));line-height:1.2;margin:0;white-space:nowrap}
+#foodShop .treat-card .dish-effect{color:#9dde88}
+#foodShop .treat-card.premium{border-color:#dfac56}
+#foodShop .treat-card.active{background:rgba(43,77,34,.8);border-color:#95d07e}
+#foodShop .treat-card.level-locked{background:rgba(44,32,49,.9)}
+#foodShop .treat-card.locked .dish-price{color:#c3ada0}
+#foodShop .shelf-arrow{flex:0 0 calc(36 * var(--shelf-unit));height:calc(48 * var(--shelf-unit));padding:0;border:1px solid #d69b4c;border-radius:calc(9 * var(--shelf-unit));background:#4b291b;color:#ffe0a0;font-size:calc(32 * var(--shelf-unit));cursor:pointer;touch-action:manipulation}
+#foodShop .shelf-arrow:disabled{opacity:.3;cursor:default}
+.small-screen .game #foodShop{--shelf-unit:var(--ui-unit);bottom:calc(100 * var(--ui-unit));width:94%;padding:calc(4 * var(--ui-unit));border-radius:calc(12 * var(--ui-unit))}
+.small-screen #foodShop .treat-card{flex-basis:calc(150 * var(--ui-unit));width:calc(150 * var(--ui-unit))}
+.small-screen #foodShop .treat-card img{height:calc(48 * var(--ui-unit))}
+.small-screen #foodShop .treat-card .dish-name{font-size:calc(12 * var(--ui-unit));height:calc(28 * var(--ui-unit))}
+.small-screen #foodShop .treat-card .dish-price{font-size:calc(16 * var(--ui-unit))}
+.small-screen #foodShop .shelf-arrow{flex-basis:calc(44 * var(--ui-unit));height:calc(48 * var(--ui-unit))}
+.game:has(#foodShop.open):after{display:none}
+.game:has(#foodShop.open) .status{z-index:25}
 .small-screen .cat-thought strong{padding:calc(6 * var(--ui-unit)) calc(8 * var(--ui-unit));font-size:calc(12 * var(--ui-unit))}
 .small-screen .reward-confirm-card{width:calc(360 * var(--ui-unit));max-width:90%;max-height:90%;overflow:auto;padding:calc(16 * var(--ui-unit))}
 .small-screen .reward-confirm-card h2{font-size:calc(20 * var(--ui-unit))}

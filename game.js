@@ -329,8 +329,38 @@ function activePremiumDish(){const active=activeLuxuryDish();return active&&!act
 function buffetImage(active){if(!active)return null;const clicks=state.buffetClicks[active.index]||0,[halfAt,emptyAt]=active.treat.stageClicks;const stage=clicks>=emptyAt?'empty':clicks>=halfAt?'half':'full';return active.treat.stageAssets?.[stage]||`assets/images/buffets/${active.treat.buffetKey}-${stage}.webp`}
 function buffetStageText(index){const treat=carpetFood[index];if(!treat?.buffet)return'';const clicks=state.buffetClicks[index]||0,[halfAt,emptyAt]=treat.stageClicks;return clicks>=emptyAt?L('Съедено','Eaten'):clicks>=halfAt?L('Съедено наполовину','Half eaten'):L('Полная подача','Full serving')}
 function treatCardImage(treat){return treat.asset||(treat.buffet?'assets/images/buffets/sushi-ship-full.webp':`assets/images/food-${treat.img}.png`)}
-function renderTreatWish(){const wish=state.treatWish;renderChefWish();$('treats').querySelectorAll('.treat-card').forEach(button=>{const index=+button.dataset.treat;if(isTreatUnlocked(index))return;button.classList.remove('wished');button.querySelector('b').textContent=isPremiumTreat(index)?L('Секретное блюдо','Secret dish'):itemName(carpetFood[index]);button.querySelector('strong').textContent=L('🎬 ОТКРЫТЬ ЗА РЕКЛАМУ','🎬 UNLOCK WITH AD')});if(!wish)return;const button=$('treats').querySelector(`[data-treat="${wish.index}"]`);if(!button)return;button.classList.add('wished');button.querySelector('b').textContent=itemName(carpetFood[wish.index]);button.querySelector('strong').textContent=L('ШЕФ ПРОСИТ · 🎬 ЗА РЕКЛАМУ','CHEF WANTS IT · 🎬 WATCH AD')}
-function renderCare(updateTreats=false){updateCare();['hunger','mood','rest'].forEach(key=>{const value=Math.round(state.care[key]);$(`${key}Bar`).style.width=`${value}%`;$(`${key}Value`).textContent=`${value}%`});const request=state.care.request?careRequests[state.care.request]:null;renderChefWish();$('careRequestIcon').textContent=request?.icon||'🐾';$('careRequestTitle').textContent=request?(gameLanguage==='en'?request.enTitle:request.title):L('Шеф обдумывает пожелания','Chef Is Considering His Demands');$('careRequestText').textContent=request?(gameLanguage==='en'?request.enText:request.text):L('Он сообщит, когда потребуется персонал.','He will notify the staff when needed.');$('careAction').textContent=request?(gameLanguage==='en'?request.enAction:request.action):L('Ожидаем распоряжений','Awaiting orders');$('careAction').disabled=!request;const remaining=Math.max(0,state.care.bonusUntil-Date.now());$('careBonus').classList.toggle('active',remaining>0);$('careBonus').textContent=remaining>0?L(`Забота одобрена: доход ×2 ещё ${Math.ceil(remaining/60000)} мин.`,`Care approved: income ×2 for ${Math.ceil(remaining/60000)} more min.`):L('Бонус заботы пока не действует.','Care bonus is not active.');if(updateTreats||!$('treats').children.length)$('treats').innerHTML=carpetFood.map((treat,index)=>{if(!isTreatVisible(index))return'';const left=Math.max(0,(state.treatUntil[index]||0)-Date.now()),active=left>0,unlocked=isTreatUnlocked(index),premium=isPremiumTreat(index),adReady=canUnlockTreatWithAd(index),cost=treatPrice(treat);return `<button class="treat-card ${active?'active':!unlocked?`ad-locked ${premium?'secret':''}`:state.food<cost?'locked':''}" data-treat="${index}"><img src="${treatCardImage(treat)}" alt=""><span><b>${unlocked||!premium?itemName(treat):L('Секретное блюдо','Secret dish')}</b><small>${left?L(`На ковре ещё ${Math.ceil(left/60000)} мин.`,`${Math.ceil(left/60000)} min. left on the carpet`):unlocked?L(`Эффект на ${treat.minutes} мин.`,`Effect for ${treat.minutes} min.`):!adReady?L(`Реклама откроется на уровне ${treat.adLevel}`,`Ad unlock available at level ${treat.adLevel}`):L(`Автоматически на уровне ${treatUnlockLevels[index]}`,`Automatic at level ${treatUnlockLevels[index]}`)}</small></span><strong>${active?L('УЖЕ ПОДАНО','ALREADY SERVED'):unlocked?`🐟 ${format(cost)}`:adReady?L('🎬 ОТКРЫТЬ ЗА РЕКЛАМУ','🎬 UNLOCK WITH AD'):L('ПОКА СКРЫТО','STILL HIDDEN')}</strong></button>`}).join('')}
+function renderTreatWish(){renderChefWish();renderFoodCatalog()}
+function renderFoodCatalog(){
+  const list=$('treats');
+  if(!list.children.length){
+    list.innerHTML=carpetFood.map((treat,index)=>({treat,index})).sort((a,b)=>treatUnlockLevels[a.index]-treatUnlockLevels[b.index]||a.treat.cost-b.treat.cost).map(({treat,index})=>
+      `<button type="button" class="treat-card" data-treat="${index}"><img src="${treatCardImage(treat)}" alt="" draggable="false" loading="lazy"><b class="dish-name"></b><strong class="dish-price"></strong><small class="dish-effect"></small><small class="dish-status"></small></button>`).join('');
+  }
+  list.querySelectorAll('.treat-card').forEach(button=>{
+    const index=+button.dataset.treat,treat=carpetFood[index],unlocked=isTreatUnlocked(index),active=(state.treatUntil[index]||0)>Date.now(),adReady=canUnlockTreatWithAd(index),cost=treatPrice(treat),wished=state.treatWish?.index===index;
+    const stage=active&&treat.buffet?buffetStageText(index):'';
+    const key=JSON.stringify([gameLanguage,unlocked,active,adReady,cost,state.food<cost,wished,stage]);
+    if(button.dataset.renderKey===key)return;
+    button.dataset.renderKey=key;
+    button.className='treat-card'+(treat.premium?' premium':'')+(active?' active':!unlocked?' level-locked':state.food<cost?' locked':'')+(wished?' wished':'');
+    button.querySelector('.dish-name').textContent=itemName(treat);
+    button.querySelector('.dish-price').textContent=compactNumber(cost)+' 🐟';
+    button.querySelector('.dish-effect').textContent=treat.clickMultiplier?L('Тап ×','Tap ×')+treat.clickMultiplier:L('Сытость +10','Hunger +10');
+    button.querySelector('.dish-status').textContent=active?(treat.buffet?buffetStageText(index):L('У Шефа','Served')):unlocked?L(treat.minutes+' мин.',treat.minutes+' min.'):adReady?L('Ур. '+treatUnlockLevels[index]+' / 🎬 сейчас','Lv. '+treatUnlockLevels[index]+' / 🎬 now'):L('🔒 Ур. '+treatUnlockLevels[index],'🔒 Lv. '+treatUnlockLevels[index]);
+    button.setAttribute('aria-disabled',String(active||(unlocked&&state.food<cost)));
+  });
+  updateFoodArrows();
+}
+function updateFoodArrows(){
+  const list=$('treats');
+  $('foodPrev').disabled=list.scrollLeft<=1;
+  $('foodNext').disabled=list.scrollLeft+list.clientWidth>=list.scrollWidth-2;
+}
+function scrollFood(direction){
+  const list=$('treats'),card=list.firstElementChild;
+  list.scrollBy({left:direction*((card?.offsetWidth||180)+12),behavior:'smooth'});
+}
+function renderCare(updateTreats=false){updateCare();['hunger','mood','rest'].forEach(key=>{const value=Math.round(state.care[key]);$(`${key}Bar`).style.width=`${value}%`;$(`${key}Value`).textContent=`${value}%`});const request=state.care.request?careRequests[state.care.request]:null;renderChefWish();$('careRequestIcon').textContent=request?.icon||'🐾';$('careRequestTitle').textContent=request?(gameLanguage==='en'?request.enTitle:request.title):L('Шеф обдумывает пожелания','Chef Is Considering His Demands');$('careRequestText').textContent=request?(gameLanguage==='en'?request.enText:request.text):L('Он сообщит, когда потребуется персонал.','He will notify the staff when needed.');$('careAction').textContent=request?(gameLanguage==='en'?request.enAction:request.action):L('Ожидаем распоряжений','Awaiting orders');$('careAction').disabled=!request;const remaining=Math.max(0,state.care.bonusUntil-Date.now());$('careBonus').classList.toggle('active',remaining>0);$('careBonus').textContent=remaining>0?L(`Забота одобрена: доход ×2 ещё ${Math.ceil(remaining/60000)} мин.`,`Care approved: income ×2 for ${Math.ceil(remaining/60000)} more min.`):L('Бонус заботы пока не действует.','Care bonus is not active.');renderFoodCatalog()}
 function currentLevel(){let i=0;levels.forEach((l,n)=>{if(state.total>=l.at)i=n});return i}
 const achievementQueue=[];
 let achievementShowing=false,achievementDelayTimer;
@@ -423,6 +453,34 @@ $('rewardConfirmCancel').addEventListener('click',closeRewardConfirm);
 $('rewardConfirmWatch').addEventListener('click',()=>{const action=pendingRewardedAction;closeRewardConfirm();action?.()});
 $('rewardConfirm').addEventListener('click',e=>{if(e.target===$('rewardConfirm'))closeRewardConfirm()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('rewardConfirm').classList.contains('show'))closeRewardConfirm()});
+// Keep a drag from buying or opening an advertisement on pointer release.
+let foodDrag=null,foodSuppressClickUntil=0;
+$('treats').addEventListener('click',e=>{if(Date.now()<foodSuppressClickUntil){e.preventDefault();e.stopImmediatePropagation()}},true);
+$('treats').addEventListener('pointerdown',e=>{
+  if(e.pointerType!=='mouse'||e.button!==0)return;
+  foodDrag={id:e.pointerId,x:e.clientX,left:$('treats').scrollLeft,moved:false};
+});
+$('treats').addEventListener('pointermove',e=>{
+  if(!foodDrag||e.pointerId!==foodDrag.id)return;
+  const delta=e.clientX-foodDrag.x,list=$('treats');
+  if(Math.abs(delta)>6){foodDrag.moved=true;list.setPointerCapture(e.pointerId)}
+  if(foodDrag.moved){e.preventDefault();list.scrollLeft=foodDrag.left-delta/(list.getBoundingClientRect().width/list.offsetWidth);foodSuppressClickUntil=Date.now()+400}
+});
+function finishFoodDrag(){if(foodDrag?.moved)foodSuppressClickUntil=Date.now()+400;foodDrag=null}
+$('treats').addEventListener('pointerup',finishFoodDrag);
+$('treats').addEventListener('pointercancel',finishFoodDrag);
+$('treats').addEventListener('lostpointercapture',finishFoodDrag);
+$('treats').addEventListener('wheel',e=>{
+  if(e.ctrlKey)return;
+  const list=$('treats');if(list.scrollWidth<=list.clientWidth)return;
+  e.preventDefault();
+  const delta=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;
+  list.scrollLeft+=delta*(e.deltaMode===1?20:e.deltaMode===2?list.clientWidth:1);
+},{passive:false});
+$('treats').addEventListener('scroll',updateFoodArrows,{passive:true});
+$('foodPrev').addEventListener('click',()=>scrollFood(-1));
+$('foodNext').addEventListener('click',()=>scrollFood(1));
+new ResizeObserver(updateFoodArrows).observe($('treats'));
 $('treats').addEventListener('click',e=>{const button=e.target.closest('.treat-card');if(!button)return;const index=+button.dataset.treat;if(isTreatUnlocked(index))return;e.stopImmediatePropagation();const treat=carpetFood[index],name=itemName(treat);if(!canUnlockTreatWithAd(index)){$('phrase').textContent=L(`Секретное блюдо пока не раскрывает условий. Возвращайтесь на уровне ${treat.adLevel}.`,`The secret dish is not revealing its terms yet. Return at level ${treat.adLevel}.`);playSound('error',.4);return}const hiddenName=isPremiumTreat(index)?L('секретное блюдо','secret dish'):name;confirmRewardedAction(L(`Открыть «${hiddenName}» за рекламу?`,`Unlock “${hiddenName}” by watching an ad?`),L('Посмотрите ролик полностью — блюдо откроется навсегда, и его можно будет покупать за рыбов.','Watch the full video to unlock this dish permanently. You can then buy it with fish.'),()=>showRewardedAction({event:'treat_unlock',onReward:()=>{state.adTreatUnlocks.push(index);if(state.treatWish?.index===index){rememberCompletedWish();state.treatWish=null;state.nextTreatWish=Date.now()+(6+Math.random()*4)*60000}},success:L(`«${name}» открыто навсегда. Теперь его можно купить за рыбов.`,`“${name}” is permanently unlocked. You can now buy it with fish.`)}))},true);
 $('treats').addEventListener('click',e=>{
   const button=e.target.closest('.treat-card');if(!button)return;updateCare();

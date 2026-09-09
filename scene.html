@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#ffb84d">
   <title id="pageTitle">Кот, который слишком хорошо живёт</title>
-  <link rel="stylesheet" href="style.css?v=20260909-22">
+  <link rel="stylesheet" href="style.css?v=20260909-23">
   <style>html,body,.game{overflow:clip}</style>
 </head>
 <body>
@@ -93,7 +93,7 @@
     <section id="foodShop" class="shop food-shop" aria-hidden="true">
       <div class="shop-head"><h2 id="treatTitle">🍽️ Еда для Шефа</h2><button id="closeFoodShop" class="close" aria-label="Close / Закрыть"></button></div>
       <p id="treatIntro" class="panel-message">Выберите блюдо для Шефа.</p>
-      <div id="treats" class="treat-list"></div>
+      <div class="food-shelf"><button id="foodPrev" class="shelf-arrow" type="button" aria-label="Назад / Previous">‹</button><div id="treats" class="treat-list" tabindex="0" aria-label="Блюда / Dishes"></div><button id="foodNext" class="shelf-arrow" type="button" aria-label="Далее / Next">›</button></div>
     </section>
     <section id="chefWish" class="shop chef-wish" aria-hidden="true" aria-labelledby="chefWishTitle">
       <div class="shop-head"><h2 id="chefWishTitle">Желание Шефа</h2><button id="closeChefWish" class="close" aria-label="Закрыть / Close"></button></div>
@@ -187,6 +187,6 @@
     <button id="testReset" class="test-reset" data-test="reset">Сбросить тест</button>
   </aside>
   <script src="/sdk.js"></script>
-  <script src="game.js?v=20260909-22"></script>
+  <script src="game.js?v=20260909-23"></script>
 </body>
 </html>
