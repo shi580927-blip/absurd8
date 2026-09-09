@@ -359,6 +359,10 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 .boost-button.active{background:rgba(63,86,34,.75)}
 .boost-button:disabled{opacity:.65;cursor:wait}
 .boost-button *{pointer-events:none}
+#zoomiesCat{position:absolute;z-index:45;width:20%;height:30%;object-fit:contain;pointer-events:none;will-change:left,top,transform}
+#zoomiesCat[hidden]{display:none}
+.zoomies-running #cat{visibility:hidden!important;pointer-events:none}
+.zoomies-running #feed{opacity:.6;cursor:default}
 .small-screen .boost-button{min-height:calc(48 * var(--ui-unit));padding:calc(5 * var(--ui-unit)) calc(8 * var(--ui-unit));min-width:calc(94 * var(--ui-unit))}
 .small-screen .boost-button b{font-size:calc(18 * var(--ui-unit))}
 .small-screen .boost-button small{font-size:calc(11 * var(--ui-unit))}
