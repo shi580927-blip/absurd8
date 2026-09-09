@@ -471,7 +471,7 @@ function zoomiesBlocked(){return gameIsPaused()||adRequestPending||!!document.qu
 function startZoomies(){
   if(zoomiesRunning||zoomiesBlocked()||!zoomiesFrames.every(img=>img.complete&&img.naturalWidth))return false;
   zoomiesRunning=true;zoomiesElapsed=0;state.zoomiesActiveMs=0;
-  zoomiesPath=Array.from({length:7},()=>({x:12+Math.random()*76,y:26+Math.random()*42}));
+  zoomiesPath={direction:Math.random()<.5?-1:1,turns:3};
   document.querySelector('.game').classList.add('zoomies-running');
   $('zoomiesCat').hidden=false;$('feed').disabled=true;
   $('phrase').textContent=L('Тыгыдык! Срочная проверка периметра. Миска подождёт.','Zoomies! Urgent perimeter inspection. Dinner can wait.');
@@ -490,10 +490,12 @@ function tickZoomies(timestamp){
       const now=Date.now();Object.keys(state.treatUntil).forEach(key=>{if(state.treatUntil[key]>now-dt)state.treatUntil[key]+=dt});
       if(zoomiesElapsed>=ZOOMIES_DURATION)finishZoomies();
       else{
-        const segment=Math.min(5,Math.floor(zoomiesElapsed/1000)),t=(zoomiesElapsed%1000)/1000,a=zoomiesPath[segment],b=zoomiesPath[segment+1],cat=$('zoomiesCat');
+        const progress=zoomiesElapsed/ZOOMIES_DURATION,angle=progress*Math.PI*2*zoomiesPath.turns,cat=$('zoomiesCat');
+        const radius=34*(1-.35*progress),direction=zoomiesPath.direction;
         const frame=zoomiesFrames[Math.floor(zoomiesElapsed/100)%3].src;if(cat.src!==frame)cat.src=frame;
-        cat.style.left=`${a.x+(b.x-a.x)*t}%`;cat.style.top=`${a.y+(b.y-a.y)*t}%`;
-        cat.style.transform=`translate(-50%,-50%) scaleX(${b.x>=a.x?1:-1})`;
+        cat.style.left=`${50+direction*Math.sin(angle)*radius}%`;
+        cat.style.top=`${68-40*progress+12*(1-.3*progress)*Math.cos(angle)}%`;
+        cat.style.transform=`translate(-50%,-50%) rotate(${direction*Math.sin(angle)*18}deg) scale(${1-.25*progress}) scaleX(${direction*Math.cos(angle)>=0?1:-1})`;
       }
     }else{
       state.zoomiesActiveMs=Math.min(ZOOMIES_INTERVAL,(Number.isFinite(state.zoomiesActiveMs)?Math.max(0,state.zoomiesActiveMs):0)+dt);
