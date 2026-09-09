@@ -189,7 +189,7 @@ function compactNumber(n){
   const unit=units.find(([base])=>value>=base);
   if(!unit)return String(value);
   const amount=Math.floor(value/unit[0]*10)/10;
-  return amount.toLocaleString(gameLanguage==='en'?'en-US':'ru-RU',{maximumFractionDigits:1})+(gameLanguage==='en'?unit[2]:' '+unit[1]);
+  return amount.toLocaleString(gameLanguage==='en'?'en-US':'ru-RU',{minimumFractionDigits:1,maximumFractionDigits:1})+(gameLanguage==='en'?unit[2]:' '+unit[1]);
 }
 const price=u=>Math.floor(u.base*Math.pow(1.55,state.counts[u.id]));
 const boostMultiplier=()=>Math.max(state.care.bonusUntil>Date.now()?2:1,state.adBonusUntil>Date.now()?3:1);
@@ -360,6 +360,14 @@ function scrollFood(direction){
   const list=$('treats'),card=list.firstElementChild;
   list.scrollBy({left:direction*((card?.offsetWidth||180)+12),behavior:'smooth'});
 }
+function focusWishedFood(index){
+  const list=$('treats'),card=list.querySelector(`[data-treat="${index}"]`);
+  if(!card)return;
+  const left=card.offsetLeft-(list.clientWidth-card.offsetWidth)/2;
+  list.scrollTo({left:Math.max(0,left),behavior:'smooth'});
+  card.classList.remove('wish-focus');
+  requestAnimationFrame(()=>{card.classList.add('wish-focus');setTimeout(()=>card.classList.remove('wish-focus'),2600)});
+}
 function renderCare(updateTreats=false){updateCare();['hunger','mood','rest'].forEach(key=>{const value=Math.round(state.care[key]);$(`${key}Bar`).style.width=`${value}%`;$(`${key}Value`).textContent=`${value}%`});const request=state.care.request?careRequests[state.care.request]:null;renderChefWish();$('careRequestIcon').textContent=request?.icon||'🐾';$('careRequestTitle').textContent=request?(gameLanguage==='en'?request.enTitle:request.title):L('Шеф обдумывает пожелания','Chef Is Considering His Demands');$('careRequestText').textContent=request?(gameLanguage==='en'?request.enText:request.text):L('Он сообщит, когда потребуется персонал.','He will notify the staff when needed.');$('careAction').textContent=request?(gameLanguage==='en'?request.enAction:request.action):L('Ожидаем распоряжений','Awaiting orders');$('careAction').disabled=!request;const remaining=Math.max(0,state.care.bonusUntil-Date.now());$('careBonus').classList.toggle('active',remaining>0);$('careBonus').textContent=remaining>0?L(`Забота одобрена: доход ×2 ещё ${Math.ceil(remaining/60000)} мин.`,`Care approved: income ×2 for ${Math.ceil(remaining/60000)} more min.`):L('Бонус заботы пока не действует.','Care bonus is not active.');renderFoodCatalog()}
 function currentLevel(){let i=0;levels.forEach((l,n)=>{if(state.total>=l.at)i=n});return i}
 const achievementQueue=[];
@@ -438,7 +446,7 @@ $('openAwards').addEventListener('click',()=>showPanel('awards','openAwards'));
 $('closeAwards').addEventListener('click',()=>showPanel(null,'openFeed'));
 $('openCare').addEventListener('click',()=>{showPanel('chefWish');renderChefWish(true);save()});
 $('closeChefWish').addEventListener('click',()=>showPanel(null));
-$('wishFood').addEventListener('click',()=>showPanel('foodShop','openFeed'));
+$('wishFood').addEventListener('click',()=>{const index=state.treatWish?.index;showPanel('foodShop','openFeed');if(Number.isInteger(index))requestAnimationFrame(()=>requestAnimationFrame(()=>focusWishedFood(index)))});
 $('wishCare').addEventListener('click',()=>showPanel('care'));
 $('closeCare').addEventListener('click',()=>showPanel(null,'openFeed'));
 function renderSettings(){const music=$('toggleMusic'),effects=$('toggleEffects');music.classList.toggle('enabled',state.music);effects.classList.toggle('enabled',state.sfx);music.querySelector('strong').textContent=state.music?L('ВКЛ','ON'):L('ВЫКЛ','OFF');effects.querySelector('strong').textContent=state.sfx?L('ВКЛ','ON'):L('ВЫКЛ','OFF')}

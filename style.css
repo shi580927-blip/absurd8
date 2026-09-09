@@ -483,11 +483,14 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 .small-screen .nav-button span{font-size:calc(9 * var(--ui-unit));line-height:1}
 .small-screen .game .cat-thought{top:calc(62 * var(--ui-unit));width:31%;max-height:calc(210 * var(--ui-unit))}
 .game .topbar{left:16px;right:16px}
-.game .topbar .counter-copy{flex:0 1 auto;width:auto;max-width:36%;gap:14px;padding-inline:16px}
+.game .topbar .counter-copy{flex:0 0 430px;width:430px;max-width:430px;gap:14px;padding-inline:16px}
 .counter-copy .counter-value{flex:0 1 auto;width:auto;white-space:nowrap}
+.counter-copy #food{min-width:8ch;font-variant-numeric:tabular-nums}
+.counter-copy .income{min-width:7.5ch;font-variant-numeric:tabular-nums}
 .counter-copy .income:before{content:'📈';color:#8cda68;margin-right:6px}
 .small-screen .game .topbar{left:calc(5 * var(--ui-unit));right:calc(5 * var(--ui-unit));padding-inline:0}
-.small-screen .game .topbar .counter-copy{flex:0 1 auto;width:auto;max-width:45%;gap:calc(7 * var(--ui-unit));padding-inline:calc(8 * var(--ui-unit))}
+.small-screen .game .topbar .counter-copy{flex:0 0 calc(300 * var(--ui-unit));width:calc(300 * var(--ui-unit));max-width:calc(300 * var(--ui-unit));gap:calc(7 * var(--ui-unit));padding-inline:calc(8 * var(--ui-unit))}
+.small-screen .counter-copy #food{min-width:7.5ch}
 /* One reusable, horizontally scrollable row above the level bar. */
 .game #foodShop{--shelf-unit:1px;top:auto;bottom:148px;left:50%;right:auto;width:76%;height:auto;max-height:none;padding:12px 8px;overflow:visible;background:rgba(49,25,15,.9);border:2px solid #e5aa43;transition:transform .2s,opacity .2s}
 #foodShop .shop-head,#foodShop #treatIntro{display:none}
@@ -500,7 +503,9 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 #foodShop .treat-card .dish-effect,#foodShop .treat-card .dish-status{font-size:calc(12 * var(--shelf-unit));line-height:1.2;margin:0;white-space:nowrap}
 #foodShop .treat-card .dish-effect{color:#9dde88}
 #foodShop .treat-card.premium{border-color:#dfac56}
-#foodShop .treat-card.wished{animation:none;transform:none;box-shadow:inset 0 0 0 1px #ffe55f}
+@keyframes wishShelfPulse{0%,100%{border-color:#ffe55f;box-shadow:inset 0 0 0 1px #ffe55f,0 0 5px rgba(255,229,95,.35)}50%{border-color:#fff5a4;box-shadow:inset 0 0 0 2px #fff5a4,0 0 18px rgba(255,229,95,.95);background:#68421f}}
+#foodShop .treat-card.wished{transform:none;animation:wishShelfPulse 1s ease-in-out infinite}
+#foodShop .treat-card.wish-focus{animation:wishShelfPulse .42s ease-in-out 6}
 #foodShop .treat-card .dish-name{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 #foodShop .treat-card.active{background:rgba(43,77,34,.8);border-color:#95d07e}
 #foodShop .treat-card.level-locked{background:rgba(44,32,49,.9)}
