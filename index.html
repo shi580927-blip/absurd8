@@ -20,6 +20,7 @@
 const frame=document.getElementById('stage'),viewport=document.getElementById('viewport');
 const params=new URLSearchParams(location.search);
 params.set('master','1');
+params.set('build','20260909-6');
 frame.src='scene.html?'+params.toString();
 function fit(){
   const scale=Math.min(viewport.clientWidth/1600,viewport.clientHeight/900);
