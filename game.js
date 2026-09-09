@@ -537,7 +537,7 @@ function updateMobileControls(){
   const side=['both','left','right'].includes(state.feedSide)?state.feedSide:'both';
   document.querySelector('.game').dataset.feedSide=side;
   $('mobileControlsTitle').textContent=L('Кнопки кормления','Feeding buttons');
-  document.querySelectorAll('[data-feed-side]').forEach(button=>{
+  document.querySelectorAll('button[data-feed-side]').forEach(button=>{
     button.textContent=({both:L('Обе','Both'),left:L('Слева','Left'),right:L('Справа','Right')})[button.dataset.feedSide];
     button.setAttribute('aria-pressed',String(button.dataset.feedSide===side));
   });
@@ -548,7 +548,7 @@ function updateMobileControls(){
   });
 }
 document.querySelectorAll('.mobile-feed').forEach(button=>button.addEventListener('click',feed));
-document.querySelectorAll('[data-feed-side]').forEach(button=>button.addEventListener('click',()=>{state.feedSide=button.dataset.feedSide;updateMobileControls();save()}));
+document.querySelectorAll('button[data-feed-side]').forEach(button=>button.addEventListener('click',()=>{state.feedSide=button.dataset.feedSide;updateMobileControls();save()}));
 $('openSettings').addEventListener('click',updateMobileControls);
 new MutationObserver(updateMobileControls).observe($('perClick'),{childList:true,characterData:true,subtree:true});
 new MutationObserver(updateMobileControls).observe($('feed'),{attributes:true,attributeFilter:['disabled']});
