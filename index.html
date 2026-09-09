@@ -20,20 +20,24 @@
 const frame=document.getElementById('stage'),viewport=document.getElementById('viewport');
 const params=new URLSearchParams(location.search);
 params.set('master','1');
-params.set('build','20260909-7');
+params.set('build','20260909-10');
 frame.src='scene.html?'+params.toString();
 function fit(){
   const scale=Math.min(viewport.clientWidth/1600,viewport.clientHeight/900);
   frame.style.transform='scale('+scale+') translate(-50%,-50%)';
-  frame.contentWindow.postMessage({type:'master-orientation',paused:matchMedia('(orientation:portrait) and (pointer:coarse)').matches},location.origin);
+  frame.contentWindow.postMessage({type:'master-orientation',paused:matchMedia('(orientation:portrait) and (pointer:coarse)').matches,scale},location.origin);
 }
 frame.addEventListener('load',fit);
 addEventListener('resize',fit);
 new ResizeObserver(fit).observe(viewport);
-if(params.get('lang')==='en'){
-  document.documentElement.lang='en';
-  document.getElementById('rotate').innerHTML='<strong>Rotate your phone</strong><small>Chef awaits in his landscape office</small>';
+function setShellLanguage(language){
+  const english=language==='en';
+  document.documentElement.lang=english?'en':'ru';
+  document.title=english?'The Cat Who Lives Too Well':'Кот, который слишком хорошо живёт';
+  document.getElementById('rotate').innerHTML=english?'<strong>Rotate your phone</strong><small>Chef awaits in his landscape office</small>':'<strong>Поверните телефон</strong><small>Шеф ждёт в горизонтальном кабинете</small>';
 }
+addEventListener('message',event=>{if(event.source===frame.contentWindow&&event.origin===location.origin&&event.data?.type==='game-language')setShellLanguage(event.data.language)});
+setShellLanguage(params.get('lang'));
 fit();
 </script>
 </body>
