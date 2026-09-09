@@ -344,7 +344,7 @@ function render(updatePanels=false){
   checkAchievements();
 }
 let lastClickPhrase=0;
-function feed(e){if(gameIsPaused()||document.querySelector('.game').classList.contains('layout-mode'))return;const buffet=activeBuffet(),gain=perClick()*(buffet?.treat.clickMultiplier||1),before=currentLevel();state.food+=gain;state.total+=gain;if(buffet){state.buffetClicks[buffet.index]=(state.buffetClicks[buffet.index]||0)+1;const clicks=state.buffetClicks[buffet.index],isPearl=buffet.treat.buffetKey==='pearl-shell';if(clicks===1){$('phrase').textContent=isPearl?L('Раковина принята. Жемчуг оставить в бухгалтерии.','Shell accepted. Leave the pearl with accounting.'):L('Корабль принят. Экипаж свободен.','The ship is accepted. The crew may leave.');showCatThought('happy',isPearl?L('О, подача с драгоценностями.','Oh, a serving with jewels.'):L('О, любимая рыбка.','Oh, my favorite fish.'))}else if(clicks===buffet.treat.stageClicks[1]){$('phrase').textContent=L('Шеф проявил умеренность. Почти.','Chef has shown restraint. Almost.');showCatThought('happy',isPearl?L('Жемчужина осталась. Остальное — нет.','The pearl remains. The rest does not.'):L('Корабль пропал без вести.','The ship has gone missing.'))}}const after=currentLevel();if(after<=before){playFeedSound();if(after===levels.length-1)playPurr()}const cat=$('cat'),bowl=$('bowl');cat.classList.add('bop');bowl.classList.add('served');setTimeout(()=>{cat.classList.remove('bop');bowl.classList.remove('served')},180);if(after>before){$('phrase').textContent=after===12?L('Шеф официально перешёл к заслуженному отдыху. Государственные дела подождут.','Chef has officially entered well-earned retirement. Affairs of state can wait.'):after===13?L('Достигнута абсолютная сытость. Шеф доволен и продолжает принимать рыбов.','Absolute satisfaction achieved. Chef is pleased and continues accepting fish.'):L(`Новый статус: «${itemName(levels[after])}». Шеф ожидал этого раньше.`,`New status: “${itemName(levels[after])}”. Chef expected it sooner.`);lastClickPhrase=Date.now()}else if(!buffet&&Date.now()-lastClickPhrase>18000&&Math.random()<.06){const pool=gameLanguage==='en'?englishPhrases:phrases;$('phrase').textContent=pool[Math.floor(Math.random()*pool.length)];lastClickPhrase=Date.now()}const f=document.createElement('span');f.className='floater';f.textContent=`+${format(gain)} 🐟`;f.style.left=`${e?.clientX||innerWidth/2}px`;f.style.top=`${e?.clientY||innerHeight/2}px`;$('floaters').append(f);setTimeout(()=>f.remove(),850);render(after>before);save()}
+function feed(e){if(zoomiesRunning||gameIsPaused()||document.querySelector('.game').classList.contains('layout-mode'))return;const buffet=activeBuffet(),gain=perClick()*(buffet?.treat.clickMultiplier||1),before=currentLevel();state.food+=gain;state.total+=gain;if(buffet){state.buffetClicks[buffet.index]=(state.buffetClicks[buffet.index]||0)+1;const clicks=state.buffetClicks[buffet.index],isPearl=buffet.treat.buffetKey==='pearl-shell';if(clicks===1){$('phrase').textContent=isPearl?L('Раковина принята. Жемчуг оставить в бухгалтерии.','Shell accepted. Leave the pearl with accounting.'):L('Корабль принят. Экипаж свободен.','The ship is accepted. The crew may leave.');showCatThought('happy',isPearl?L('О, подача с драгоценностями.','Oh, a serving with jewels.'):L('О, любимая рыбка.','Oh, my favorite fish.'))}else if(clicks===buffet.treat.stageClicks[1]){$('phrase').textContent=L('Шеф проявил умеренность. Почти.','Chef has shown restraint. Almost.');showCatThought('happy',isPearl?L('Жемчужина осталась. Остальное — нет.','The pearl remains. The rest does not.'):L('Корабль пропал без вести.','The ship has gone missing.'))}}const after=currentLevel();if(after<=before){playFeedSound();if(after===levels.length-1)playPurr()}const cat=$('cat'),bowl=$('bowl');cat.classList.add('bop');bowl.classList.add('served');setTimeout(()=>{cat.classList.remove('bop');bowl.classList.remove('served')},180);if(after>before){$('phrase').textContent=after===12?L('Шеф официально перешёл к заслуженному отдыху. Государственные дела подождут.','Chef has officially entered well-earned retirement. Affairs of state can wait.'):after===13?L('Достигнута абсолютная сытость. Шеф доволен и продолжает принимать рыбов.','Absolute satisfaction achieved. Chef is pleased and continues accepting fish.'):L(`Новый статус: «${itemName(levels[after])}». Шеф ожидал этого раньше.`,`New status: “${itemName(levels[after])}”. Chef expected it sooner.`);lastClickPhrase=Date.now()}else if(!buffet&&Date.now()-lastClickPhrase>18000&&Math.random()<.06){const pool=gameLanguage==='en'?englishPhrases:phrases;$('phrase').textContent=pool[Math.floor(Math.random()*pool.length)];lastClickPhrase=Date.now()}const f=document.createElement('span');f.className='floater';f.textContent=`+${format(gain)} 🐟`;f.style.left=`${e?.clientX||innerWidth/2}px`;f.style.top=`${e?.clientY||innerHeight/2}px`;$('floaters').append(f);setTimeout(()=>f.remove(),850);render(after>before);save()}
 $('cat').addEventListener('click',feed);$('feed').addEventListener('click',feed);
 $('cat').addEventListener('contextmenu',e=>e.preventDefault());
 const panels=['shop','wardrobe','awards','care','settings'];
@@ -457,6 +457,46 @@ function initTestMode(){if(!testMode)return;const panel=$('testPanel'),select=$(
 $('testPanel').addEventListener('click',e=>{if(!testMode)return;const reaction=e.target.closest('[data-reaction]')?.dataset.reaction;if(reaction)showCatThought(reaction,L(...catReactionNames[reaction]))});
 let suppressSave=false;
 $('testReset').addEventListener('click',e=>{if(!testMode)return;e.stopPropagation();suppressSave=true;localStorage.removeItem(saveKey);location.reload()});
+let zoomiesRunning=false,zoomiesElapsed=0,zoomiesPath=[],zoomiesLastFrame=0;
+const ZOOMIES_INTERVAL=2*60*60*1000,ZOOMIES_DURATION=6000;
+const zoomiesFrames=[1,2,3].map(n=>{const img=new Image();img.src=`assets/images/reactions/tigidik_${n}.webp`;return img});
+function zoomiesBlocked(){return gameIsPaused()||adRequestPending||!!document.querySelector('.shop.open,.reward-confirm.show,.level-celebration.show,.game.layout-mode')}
+function startZoomies(){
+  if(zoomiesRunning||zoomiesBlocked()||!zoomiesFrames.every(img=>img.complete&&img.naturalWidth))return false;
+  zoomiesRunning=true;zoomiesElapsed=0;state.zoomiesActiveMs=0;
+  zoomiesPath=Array.from({length:7},()=>({x:12+Math.random()*76,y:26+Math.random()*42}));
+  document.querySelector('.game').classList.add('zoomies-running');
+  $('zoomiesCat').hidden=false;$('feed').disabled=true;
+  $('phrase').textContent=L('Тыгыдык! Срочная проверка периметра. Миска подождёт.','Zoomies! Urgent perimeter inspection. Dinner can wait.');
+  save();return true;
+}
+function finishZoomies(){
+  zoomiesRunning=false;$('zoomiesCat').hidden=true;$('feed').disabled=false;
+  document.querySelector('.game').classList.remove('zoomies-running');
+  $('phrase').textContent=L('Периметр проверен. Продолжайте кормить.','Perimeter checked. Resume feeding.');save();
+}
+function tickZoomies(timestamp){
+  const dt=zoomiesLastFrame?Math.min(250,Math.max(0,timestamp-zoomiesLastFrame)):0;zoomiesLastFrame=timestamp;
+  if(!zoomiesBlocked()){
+    if(zoomiesRunning){
+      zoomiesElapsed+=dt;
+      const now=Date.now();Object.keys(state.treatUntil).forEach(key=>{if(state.treatUntil[key]>now-dt)state.treatUntil[key]+=dt});
+      if(zoomiesElapsed>=ZOOMIES_DURATION)finishZoomies();
+      else{
+        const segment=Math.min(5,Math.floor(zoomiesElapsed/1000)),t=(zoomiesElapsed%1000)/1000,a=zoomiesPath[segment],b=zoomiesPath[segment+1],cat=$('zoomiesCat');
+        const frame=zoomiesFrames[Math.floor(zoomiesElapsed/100)%3].src;if(cat.src!==frame)cat.src=frame;
+        cat.style.left=`${a.x+(b.x-a.x)*t}%`;cat.style.top=`${a.y+(b.y-a.y)*t}%`;
+        cat.style.transform=`translate(-50%,-50%) scaleX(${b.x>=a.x?1:-1})`;
+      }
+    }else{
+      state.zoomiesActiveMs=Math.min(ZOOMIES_INTERVAL,(Number.isFinite(state.zoomiesActiveMs)?Math.max(0,state.zoomiesActiveMs):0)+dt);
+      if(state.zoomiesActiveMs>=ZOOMIES_INTERVAL)startZoomies();
+    }
+  }
+  requestAnimationFrame(tickZoomies);
+}
+$('testZoomies').addEventListener('click',()=>{if(testMode&&!startZoomies())$('phrase').textContent=L('Закройте меню и редактор; дождитесь загрузки кадров.','Close menus and the editor; wait for the frames to load.')});
+requestAnimationFrame(tickZoomies);
 function save(){if(suppressSave)return;syncPausedTimers();state.last=Date.now();localStorage.setItem(saveKey,JSON.stringify(state));queueCloudSave()}
 const away=Math.min(4*3600,Math.max(0,(Date.now()-(state.last||Date.now()))/1000));if(away>10&&cps()>0){const bonus=Math.floor(away*cps());state.food+=bonus;state.total+=bonus;$('phrase').textContent=L(`Пока тебя не было, Шеф получил ${format(bonus)} рыбов.`,`While you were away, Chef received ${format(bonus)} fish.`)}
 function syncOrientation(){if(needsLandscape()||masterOrientationPaused){stopGameplay();stopAllSounds()}else{startGameplay();ensureMusic()}}
