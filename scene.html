@@ -147,6 +147,12 @@
   </div>
   <aside id="testPanel" class="test-panel" hidden>
     <div><b>🧪 Тест Шефа</b><button id="testClose" aria-label="Свернуть">−</button></div>
+    <select id="testZoomiesRoute" aria-label="Маршрут / Route">
+      <option value="random">Случайный / Random</option>
+      <option value="spiral">Спираль / Spiral</option>
+      <option value="walls">Стены и потолок / Walls and ceiling</option>
+      <option value="eight">Восьмёрка / Figure eight</option>
+    </select>
     <button id="testZoomies">Тыгыдык / Zoomies</button>
     <label>Уровень <select id="testLevel"></select></label>
     <div class="test-grid">
@@ -169,6 +175,6 @@
     <button id="testReset" class="test-reset" data-test="reset">Сбросить тест</button>
   </aside>
   <script src="/sdk.js"></script>
-  <script src="game.js?v=20260909-15"></script>
+  <script src="game.js?v=20260909-16"></script>
 </body>
 </html>

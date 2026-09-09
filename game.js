@@ -177,6 +177,16 @@ let gameplayActive=false,loadingReady=false,brandIntroFinished=false,platformPau
 let initialDataReady=!window.YaGames||testMode,introMinElapsed=false,introFinishStarted=false;
 let adPlaying=false,adRequestPending=false;
 const soundExt=(()=>{const audio=document.createElement('audio');return audio.canPlayType('audio/ogg; codecs="vorbis"')?'ogg':'mp3'})();
+const zoomiesAudio=new Audio(`assets/audio/zoomies.${soundExt}`);
+zoomiesAudio.preload='auto';zoomiesAudio.volume=.65;
+let zoomiesAudioStarted=false;
+function pauseZoomiesAudio(){zoomiesAudio.pause();zoomiesAudioStarted=false}
+function syncZoomiesAudio(){
+  if(!state.sfx||zoomiesElapsed<0||zoomiesBlocked()){pauseZoomiesAudio();return}
+  if(zoomiesAudioStarted||zoomiesAudio.readyState<2)return;
+  zoomiesAudioStarted=true;zoomiesAudio.currentTime=zoomiesElapsed/1000;
+  zoomiesAudio.play().catch(()=>{});
+}
 const soundNames=['ui-click','feed','buy','error','level','reward','cat-food','cat-happy','cat-happy-2','cat-soft','cat-purr-15','toy-yarn','toy-mouse','toy-slipper','toy-feather','toy-fish'];
 const soundBank=Object.fromEntries(soundNames.map(name=>{const audio=new Audio(`assets/audio/${name}.${soundExt}?v=20260831-9`);audio.preload='auto';return[name,audio]}));
 const backgroundMusic=new Audio(`assets/audio/chef-theme.${soundExt}?v=20260831-2`);backgroundMusic.loop=true;backgroundMusic.preload='auto';backgroundMusic.volume=.16;
@@ -212,13 +222,15 @@ function playPurr(force=false){if(!force&&Date.now()-lastPurr<18000)return;lastP
 let thoughtTimer,delayedThoughtTimer,thoughtSide=false,previousThoughtMessage='',thoughtBatchTimer,thoughtBatch={count:0,refused:false},hungerThoughtShown=false;
 const catReactionImages={happy:'assets/images/reactions/reaction-happy.webp',fussy:'assets/images/reactions/reaction-fussy.webp',stunned:'assets/images/reactions/reaction-stunned.webp',shock:'assets/images/reactions/reaction-shock.webp',pleading:'assets/images/reactions/reaction-pleading.webp',hunting:'assets/images/reactions/reaction-hunting.webp',judging:'assets/images/reactions/reaction-judging.webp',innocent:'assets/images/reactions/reaction-innocent.webp',why:'assets/images/reactions/reaction-why.webp'};
 const catReactionNames={happy:['Довольный Шеф','Satisfied Chef'],fussy:['Привередливый Шеф','Fussy Chef'],stunned:['Ошеломлённый Шеф','Stunned Chef'],shock:['Удивлённый Шеф','Surprised Chef'],pleading:['Голодный Шеф','Hungry Chef'],hunting:['Охотничий взгляд Шефа','Chef on the hunt'],judging:['Осуждающий Шеф','Judging Chef'],innocent:['Невиновный Шеф','Innocent Chef'],why:['Шеф требует объяснений','Chef demands an explanation']};
+catReactionImages.trash='assets/images/reactions/reaction-trash.webp';
+catReactionNames.trash=['Шеф чувствует Зло','Chef senses evil'];
 function showCatThought(kind,text){clearTimeout(thoughtTimer);thoughtSide=!thoughtSide;const reaction=catReactionImages[kind]?kind:'fussy',thought=$('catThought');$('catThoughtImage').src=catReactionImages[reaction];$('catThoughtImage').alt=L(...catReactionNames[reaction]);$('catThoughtText').textContent=text;thought.className=`cat-thought ${reaction} ${thoughtSide?'from-left':'from-right'}`;void thought.offsetWidth;thought.classList.add('show');thoughtTimer=setTimeout(()=>thought.classList.remove('show'),4000)}
 function showCatThoughtDelayed(kind,text,delay=2000){clearTimeout(delayedThoughtTimer);delayedThoughtTimer=setTimeout(()=>showCatThought(kind,text),delay)}
 function treatText(treat,key){const pair=treat[key];return pair?L(pair[0],pair[1]):''}
 function queueCatThought(refused){thoughtBatch.count++;thoughtBatch.refused||=refused;clearTimeout(thoughtBatchTimer);thoughtBatchTimer=setTimeout(()=>{const batch=thoughtBatch;thoughtBatch={count:0,refused:false};if(batch.count>1)showCatThought(batch.refused?'fussy':'happy',batch.refused?L('Шеф ознакомился с меню. Некоторые позиции велел унести.','Chef reviewed the menu. Several items were ordered out.'):L('Шеф ознакомился с меню и одобрил выбор.','Chef reviewed the menu and approved the selection.'));else if(batch.refused)showCatThought('fussy',Math.random()<.22?L('Ой, бабочка… Шеф уже забыл, что заказывал.','Oh, a butterfly… Chef has forgotten what he ordered.'):L('Шеф передумал. Унесите это немедленно.','Chef changed his mind. Remove this at once.'));else showCatThought('happy',L('Котик доволен. Можно продолжать обслуживание.','The kitty is pleased. Service may continue.'))},800)}
 function initCatThoughts(){Object.values(catReactionImages).forEach(src=>{const preload=new Image();preload.src=src});new MutationObserver(()=>{const message=$('phrase').textContent;if(message===previousThoughtMessage)return;previousThoughtMessage=message;if(message.startsWith('Шеф демонстративно')||message.startsWith('Chef made a show'))queueCatThought(true);else if(message.startsWith('Шеф принял блюдо')||message.startsWith('Chef accepted'))queueCatThought(false)}).observe($('phrase'),{childList:true,characterData:true,subtree:true})}
-function stopEffects(){activeSounds.forEach(audio=>{audio.pause();audio.currentTime=0});activeSounds.clear()}
-function stopAllSounds(){backgroundMusic.pause();activeSounds.forEach(audio=>{audio.pause();audio.currentTime=0});activeSounds.clear()}
+function stopEffects(){pauseZoomiesAudio();activeSounds.forEach(audio=>{audio.pause();audio.currentTime=0});activeSounds.clear()}
+function stopAllSounds(){backgroundMusic.pause();stopEffects()}
 function trackEvent(name,params={}){try{window.dataLayer?.push({event:name,...params});if(window.YM_COUNTER_ID&&typeof window.ym==='function')window.ym(window.YM_COUNTER_ID,'reachGoal',name,params)}catch(error){}}
 function startGameplay(){syncPausedTimers();if(gameplayActive||gameIsPaused())return;gameplayActive=true;ysdk?.features?.GameplayAPI?.start?.()}
 function stopGameplay(){syncPausedTimers();if(!gameplayActive)return;gameplayActive=false;ysdk?.features?.GameplayAPI?.stop?.()}
@@ -468,43 +480,58 @@ let zoomiesRunning=false,zoomiesElapsed=0,zoomiesPath=[],zoomiesLastFrame=0;
 const ZOOMIES_INTERVAL=2*60*60*1000,ZOOMIES_DURATION=6000;
 const zoomiesFrames=[1,2,3].map(n=>{const img=new Image();img.src=`assets/images/reactions/tigidik_${n}.webp`;return img});
 function zoomiesBlocked(){return gameIsPaused()||adRequestPending||!!document.querySelector('.shop.open,.reward-confirm.show,.level-celebration.show,.game.layout-mode')}
-function startZoomies(){
+function zoomiesPose(progress,path){
+  const angle=progress*Math.PI*2*path.turns,direction=path.direction;
+  if(path.kind==='walls')return {x:50+40*Math.sin(angle),y:50+35*Math.cos(angle),rotation:-angle*180/Math.PI,scale:.85,flip:1};
+  if(path.kind==='eight')return {x:50+38*Math.sin(angle),y:50+30*Math.sin(angle*2),rotation:Math.sin(angle*2)*30,scale:.9,flip:Math.cos(angle)>=0?1:-1};
+  return {x:50+direction*Math.sin(angle)*34*(1-.35*progress),y:68-40*progress+12*(1-.3*progress)*Math.cos(angle),rotation:direction*Math.sin(angle)*18,scale:1-.25*progress,flip:direction*Math.cos(angle)>=0?1:-1};
+}
+function startZoomies(kind){
   if(zoomiesRunning||zoomiesBlocked()||!zoomiesFrames.every(img=>img.complete&&img.naturalWidth))return false;
-  zoomiesRunning=true;zoomiesElapsed=0;state.zoomiesActiveMs=0;
-  zoomiesPath={direction:Math.random()<.5?-1:1,turns:3};
-  document.querySelector('.game').classList.add('zoomies-running');
-  $('zoomiesCat').hidden=false;$('feed').disabled=true;
-  $('phrase').textContent=L('Тыгыдык! Срочная проверка периметра. Миска подождёт.','Zoomies! Urgent perimeter inspection. Dinner can wait.');
+  zoomiesRunning=true;zoomiesElapsed=-1600;state.zoomiesActiveMs=0;
+  pauseZoomiesAudio();syncZoomiesAudio();
+  zoomiesPath={kind:['spiral','walls','eight'].includes(kind)?kind:['spiral','walls','eight'][Math.floor(Math.random()*3)],direction:Math.random()<.5?-1:1,turns:3};
+  $('zoomiesCat').hidden=true;$('feed').disabled=true;
+  clearTimeout(delayedThoughtTimer);clearTimeout(thoughtBatchTimer);
+  $('phrase').textContent=L('Я чувствую Зло…','I sense evil…');
+  showCatThought('trash',$('phrase').textContent);
   save();return true;
 }
 function finishZoomies(){
+  pauseZoomiesAudio();zoomiesAudio.currentTime=0;
   zoomiesRunning=false;$('zoomiesCat').hidden=true;$('feed').disabled=false;
   document.querySelector('.game').classList.remove('zoomies-running');
-  $('phrase').textContent=L('Периметр проверен. Продолжайте кормить.','Perimeter checked. Resume feeding.');save();
+  $('phrase').textContent=L('Бесы укрощены. Продолжайте кормить.','Demons tamed. Resume feeding.');
+  showCatThought('happy',L('Бесы укрощены.','Demons tamed.'));save();
 }
 function tickZoomies(timestamp){
   const dt=zoomiesLastFrame?Math.min(250,Math.max(0,timestamp-zoomiesLastFrame)):0;zoomiesLastFrame=timestamp;
   if(!zoomiesBlocked()){
     if(zoomiesRunning){
+      syncZoomiesAudio();
       zoomiesElapsed+=dt;
       const now=Date.now();Object.keys(state.treatUntil).forEach(key=>{if(state.treatUntil[key]>now-dt)state.treatUntil[key]+=dt});
       if(zoomiesElapsed>=ZOOMIES_DURATION)finishZoomies();
-      else{
-        const progress=zoomiesElapsed/ZOOMIES_DURATION,angle=progress*Math.PI*2*zoomiesPath.turns,cat=$('zoomiesCat');
-        const radius=34*(1-.35*progress),direction=zoomiesPath.direction;
+      else if(zoomiesElapsed>=0){
+        const cat=$('zoomiesCat'),pose=zoomiesPose(zoomiesElapsed/ZOOMIES_DURATION,zoomiesPath);
+        if(cat.hidden){
+          clearTimeout(thoughtTimer);$('catThought').classList.remove('show');
+          document.querySelector('.game').classList.add('zoomies-running');cat.hidden=false;
+          $('phrase').textContent=L('Тыгыдык! Миска подождёт.','Zoomies! Dinner can wait.');
+        }
         const frame=zoomiesFrames[Math.floor(zoomiesElapsed/100)%3].src;if(cat.src!==frame)cat.src=frame;
-        cat.style.left=`${50+direction*Math.sin(angle)*radius}%`;
-        cat.style.top=`${68-40*progress+12*(1-.3*progress)*Math.cos(angle)}%`;
-        cat.style.transform=`translate(-50%,-50%) rotate(${direction*Math.sin(angle)*18}deg) scale(${1-.25*progress}) scaleX(${direction*Math.cos(angle)>=0?1:-1})`;
+        cat.style.left=`${pose.x}%`;cat.style.top=`${pose.y}%`;
+        cat.style.transform=`translate(-50%,-50%) rotate(${pose.rotation}deg) scale(${pose.scale}) scaleX(${pose.flip})`;
       }
     }else{
       state.zoomiesActiveMs=Math.min(ZOOMIES_INTERVAL,(Number.isFinite(state.zoomiesActiveMs)?Math.max(0,state.zoomiesActiveMs):0)+dt);
       if(state.zoomiesActiveMs>=ZOOMIES_INTERVAL)startZoomies();
     }
   }
+  if(zoomiesBlocked())pauseZoomiesAudio();
   requestAnimationFrame(tickZoomies);
 }
-$('testZoomies').addEventListener('click',()=>{if(testMode&&!startZoomies())$('phrase').textContent=L('Закройте меню и редактор; дождитесь загрузки кадров.','Close menus and the editor; wait for the frames to load.')});
+$('testZoomies').addEventListener('click',()=>{if(testMode&&!startZoomies($('testZoomiesRoute').value))$('phrase').textContent=L('Закройте меню и редактор; дождитесь завершения тыгыдыка и загрузки кадров.','Close menus and the editor; wait for zoomies to finish and frames to load.')});
 requestAnimationFrame(tickZoomies);
 function save(){if(suppressSave)return;syncPausedTimers();state.last=Date.now();localStorage.setItem(saveKey,JSON.stringify(state));queueCloudSave()}
 const away=Math.min(4*3600,Math.max(0,(Date.now()-(state.last||Date.now()))/1000));if(away>10&&cps()>0){const bonus=Math.floor(away*cps());state.food+=bonus;state.total+=bonus;$('phrase').textContent=L(`Пока тебя не было, Шеф получил ${format(bonus)} рыбов.`,`While you were away, Chef received ${format(bonus)} fish.`)}

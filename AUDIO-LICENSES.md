@@ -40,3 +40,14 @@ The audio was converted to OGG and MP3 for browser compatibility and normalized 
 ## Toy interaction sounds
 
 The yarn, mouse, slipper, feather, fish and crystal level-transition sounds were synthesized specifically for this game and may be distributed with it.
+
+## Zoomies / Tygy-dyk
+
+- Files: `assets/audio/zoomies.ogg` and `assets/audio/zoomies.mp3`.
+- Author and pack: Kenney, Impact Sounds — https://kenney.nl/assets/impact-sounds
+- License: Creative Commons CC0 1.0 Universal — https://creativecommons.org/publicdomain/zero/1.0/
+- Commercial use, modification and redistribution with the game are permitted; attribution is not required. Kenney confirms these terms at https://kenney.nl/support.
+- Source samples: `impactWood_medium_000.ogg` and `impactTin_medium_000.ogg`.
+- Download mirror: https://github.com/drwhut/tabletop-club/tree/master/game/Sounds (Wood and Tin directories; game/CREDITS.tres credits Kenney for sound effects).
+- Adaptation: wooden impacts sequenced and pitch-adjusted into running footsteps, tin impacts layered into short rattles; mixed, normalized, faded and converted into a six-second mono game effect.
+- Playback follows the zoomies animation, respects the sound-effects switch and pauses with gameplay, menus or ads.
