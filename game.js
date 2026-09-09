@@ -205,14 +205,14 @@ let gameplayActive=false,loadingReady=false,brandIntroFinished=false,platformPau
 let initialDataReady=!window.YaGames||testMode,introMinElapsed=false,introFinishStarted=false;
 let adPlaying=false,adRequestPending=false;
 const soundExt=(()=>{const audio=document.createElement('audio');return audio.canPlayType('audio/ogg; codecs="vorbis"')?'ogg':'mp3'})();
-const zoomiesAudio=new Audio(`assets/audio/zoomies.${soundExt}`);
-zoomiesAudio.preload='auto';zoomiesAudio.volume=.65;
+const zoomiesAudioTracks=[1,2].map(number=>{const audio=new Audio(`assets/audio/zoomies-carpet-${number}.${soundExt}?v=20260910-1`);audio.preload='auto';audio.volume=.65;audio.loop=true;return audio});
+let zoomiesAudio=zoomiesAudioTracks[0];
 let zoomiesAudioStarted=false;
-function pauseZoomiesAudio(){zoomiesAudio.pause();zoomiesAudioStarted=false}
+function pauseZoomiesAudio(){zoomiesAudioTracks.forEach(audio=>audio.pause());zoomiesAudioStarted=false}
 function syncZoomiesAudio(){
   if(!state.sfx||zoomiesElapsed<0||zoomiesBlocked()){pauseZoomiesAudio();return}
   if(zoomiesAudioStarted||zoomiesAudio.readyState<2)return;
-  zoomiesAudioStarted=true;zoomiesAudio.currentTime=zoomiesElapsed/1000;
+  zoomiesAudioStarted=true;zoomiesAudio.currentTime=(zoomiesElapsed/1000)%(zoomiesAudio.duration||4);
   zoomiesAudio.play().catch(()=>{});
 }
 const soundNames=['ui-click','feed','buy','error','level','reward','cat-food','cat-happy','cat-happy-2','cat-soft','cat-purr-15','toy-yarn','toy-mouse','toy-slipper','toy-feather','toy-fish'];
@@ -580,8 +580,8 @@ function zoomiesPose(progress,path){
 function startZoomies(kind){
   if(zoomiesRunning||zoomiesBlocked()||!zoomiesFrames.every(img=>img.complete&&img.naturalWidth))return false;
   zoomiesRunning=true;zoomiesElapsed=-1600;state.zoomiesActiveMs=0;
-  pauseZoomiesAudio();syncZoomiesAudio();
   zoomiesPath={kind:['spiral','walls','eight'].includes(kind)?kind:['spiral','walls','eight'][Math.floor(Math.random()*3)],direction:Math.random()<.5?-1:1,turns:3};
+  pauseZoomiesAudio();zoomiesAudio=zoomiesAudioTracks[zoomiesPath.kind==='walls'?1:0];zoomiesAudio.currentTime=0;syncZoomiesAudio();
   $('zoomiesCat').hidden=true;$('feed').disabled=true;
   clearTimeout(delayedThoughtTimer);clearTimeout(thoughtBatchTimer);
   $('phrase').textContent=L('Я чувствую Зло…','I sense evil…');
@@ -589,7 +589,7 @@ function startZoomies(kind){
   save();return true;
 }
 function finishZoomies(){
-  pauseZoomiesAudio();zoomiesAudio.currentTime=0;
+  pauseZoomiesAudio();zoomiesAudioTracks.forEach(audio=>audio.currentTime=0);
   zoomiesRunning=false;$('zoomiesCat').hidden=true;$('feed').disabled=false;
   document.querySelector('.game').classList.remove('zoomies-running');
   $('phrase').textContent=L('Бесы укрощены. Продолжайте кормить.','Demons tamed. Resume feeding.');

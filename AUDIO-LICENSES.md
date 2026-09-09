@@ -43,11 +43,13 @@ The yarn, mouse, slipper, feather, fish and crystal level-transition sounds were
 
 ## Zoomies / Tygy-dyk
 
-- Files: `assets/audio/zoomies.ogg` and `assets/audio/zoomies.mp3`.
-- Author and pack: Kenney, Impact Sounds — https://kenney.nl/assets/impact-sounds
-- License: Creative Commons CC0 1.0 Universal — https://creativecommons.org/publicdomain/zero/1.0/
-- Commercial use, modification and redistribution with the game are permitted; attribution is not required. Kenney confirms these terms at https://kenney.nl/support.
-- Source samples: `impactWood_medium_000.ogg` and `impactTin_medium_000.ogg`.
-- Download mirror: https://github.com/drwhut/tabletop-club/tree/master/game/Sounds (Wood and Tin directories; game/CREDITS.tres credits Kenney for sound effects).
-- Adaptation: wooden impacts sequenced and pitch-adjusted into running footsteps, tin impacts layered into short rattles; mixed, normalized, faded and converted into a six-second mono game effect.
+- Source: ZapSplat, “Cat running, playing on carpet”.
+- Source page: https://www.zapsplat.com/music/cat-running-playing-on-carpet/
+- Original files: `zapsplat_animals_cat_run_carpet_001_56478.mp3` and `zapsplat_animals_cat_run_carpet_002_56479.mp3`.
+- Game files: `assets/audio/zoomies-carpet-1.mp3`, `assets/audio/zoomies-carpet-1.ogg`, `assets/audio/zoomies-carpet-2.mp3` and `assets/audio/zoomies-carpet-2.ogg`.
+- Credit: Sound effects obtained from https://www.zapsplat.com
+- License: ZapSplat Standard License Agreement — https://www.zapsplat.com/license-type/standard-license/
+- Commercial use and modification are permitted under the ZapSplat Standard License. Attribution to ZapSplat is required for downloads made with a free Basic account.
+- Adaptation: the supplied MP3 recordings were converted to OGG for browser compatibility. Each recording loops during the six-second animation because the originals are shorter than the animation.
+- Route assignment: the first recording is used for the spiral and figure-eight routes; the second recording is used for the walls-and-ceiling route.
 - Playback follows the zoomies animation, respects the sound-effects switch and pauses with gameplay, menus or ads.
