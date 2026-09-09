@@ -5,13 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#ffb84d">
   <title id="pageTitle">Кот, который слишком хорошо живёт</title>
-  <link rel="stylesheet" href="style.css?v=20260909-10">
+  <link rel="stylesheet" href="style.css?v=20260909-11">
   <style>html,body,.game{overflow:clip}</style>
 </head>
 <body>
   <main class="game">
     <header class="topbar">
       <div class="counter-copy"><div class="counter-value"><span class="counter-fish" aria-hidden="true">🐟</span><h1 id="food">0</h1></div></div>
+      <button id="rewardedAd" class="boost-button"><b>🎬 ×3</b><small>За рекламу</small></button>
       <div class="top-actions"><button id="openCare" class="round care-button" aria-label="Состояние Шефа"><img src="assets/images/ui/top/care-cat-gold.png?v=20260906-1" alt=""></button><button id="openSettings" class="round settings-button" aria-label="Настройки"><img src="assets/images/ui/top/settings-gear-gold.png?v=20260906-1" alt=""></button><button id="layoutToggle" hidden aria-hidden="true">🛠️</button><button id="sound" hidden aria-hidden="true">🔊</button></div>
     </header>
 
@@ -33,11 +34,6 @@
       </button>
       <img id="bowl" data-layout-name="Миска" data-layout-mode="offset" class="bowl layout-item" src="assets/images/bowl-empty.png" alt="Пустая миска">
       <button id="roomEvent" data-layout-name="Случайная игрушка" data-layout-mode="offset" class="room-event layout-item" aria-label="Собрать случайный бонус"></button>
-      <div id="adDrawer" class="ad-drawer peek">
-        <button id="adPeek" class="ad-peek" aria-label="Показать предложение">🎬</button>
-        <button id="adClose" class="ad-close" aria-label="Скрыть предложение"></button>
-        <button id="rewardedAd" class="rewarded-ad-pill"><span class="action-copy"><b>Посмотреть рекламу</b><small>Наедание ×3 на 5 минут</small></span></button>
-      </div>
       <div class="action-dock">
         <button id="feed" class="feed"><span class="action-icon" aria-hidden="true">🐟</span><span class="action-copy"><b id="feedLabel">ПОКОРМИТЬ</b><small id="perClick">+1 рыбов</small></span></button>
         <span id="adStatus" class="sr-status" aria-live="polite"></span>
@@ -171,6 +167,6 @@
     <button id="testReset" class="test-reset" data-test="reset">Сбросить тест</button>
   </aside>
   <script src="/sdk.js"></script>
-  <script src="game.js?v=20260909-10"></script>
+  <script src="game.js?v=20260909-11"></script>
 </body>
 </html>
