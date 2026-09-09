@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#ffb84d">
   <title id="pageTitle">Кот, который слишком хорошо живёт</title>
-  <link rel="stylesheet" href="style.css?v=20260909-18">
+  <link rel="stylesheet" href="style.css?v=20260909-19">
   <style>html,body,.game{overflow:clip}</style>
 </head>
 <body>
@@ -99,6 +99,10 @@
     <section id="settings" class="shop settings" aria-hidden="true">
       <div class="shop-head"><h2 id="settingsTitle">⚙️ Настройки</h2><button id="closeSettings" class="close" aria-label="Закрыть"></button></div>
       <div id="settingsMessage" class="panel-message">Шеф разрешает настроить акустику кабинета.</div>
+      <fieldset class="mobile-controls-settings">
+        <legend id="mobileControlsTitle">Кнопки кормления</legend>
+        <div><button type="button" data-feed-side="both">Обе</button><button type="button" data-feed-side="left">Слева</button><button type="button" data-feed-side="right">Справа</button></div>
+      </fieldset>
       <div class="settings-list">
         <button id="toggleMusic" class="setting-toggle"><span>🎵</span><div><b id="musicLabel">Фоновая музыка</b><small id="musicHint">Музыка играет во время кормления</small></div><strong></strong></button>
         <button id="toggleEffects" class="setting-toggle"><span>🔔</span><div><b id="effectsLabel">Звуки игры</b><small id="effectsHint">Кормление, кот, награды и игрушки</small></div><strong></strong></button>
@@ -109,6 +113,8 @@
       <img id="catThoughtImage" src="" alt="">
       <strong id="catThoughtText"></strong>
     </div>
+    <button type="button" class="mobile-feed mobile-feed-left" aria-label="Покормить кота"><span aria-hidden="true">🐟</span><small></small></button>
+    <button type="button" class="mobile-feed mobile-feed-right" aria-label="Покормить кота"><span aria-hidden="true">🐟</span><small></small></button>
   </main>
   <div id="introSplash" class="intro-splash" aria-label="Кот, который слишком хорошо живёт">
     <div class="intro-frame">
@@ -175,6 +181,6 @@
     <button id="testReset" class="test-reset" data-test="reset">Сбросить тест</button>
   </aside>
   <script src="/sdk.js"></script>
-  <script src="game.js?v=20260909-16"></script>
+  <script src="game.js?v=20260909-19"></script>
 </body>
 </html>
