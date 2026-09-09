@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#ffb84d">
   <title id="pageTitle">Кот, который слишком хорошо живёт</title>
-  <link rel="stylesheet" href="style.css?v=20260909-19">
+  <link rel="stylesheet" href="style.css?v=20260909-21">
   <style>html,body,.game{overflow:clip}</style>
 </head>
 <body>
   <main class="game">
     <header class="topbar">
-      <div class="counter-copy"><div class="counter-value"><span class="counter-fish" aria-hidden="true">🐟</span><h1 id="food">0</h1></div></div>
+      <div class="counter-copy"><div class="counter-value"><span class="counter-fish" aria-hidden="true">🐟</span><h1 id="food">0</h1></div><div class="income"><span id="incomeLabel">Доход</span><b id="income">0</b><small id="incomeUnit">рыбов/сек.</small></div></div>
       <button id="rewardedAd" class="boost-button"><b>🎬 ×3</b><small>За рекламу</small></button>
       <div class="top-actions"><button id="openCare" class="round care-button" aria-label="Состояние Шефа"><img src="assets/images/ui/top/care-cat-gold.png?v=20260906-1" alt=""></button><button id="openSettings" class="round settings-button" aria-label="Настройки"><img src="assets/images/ui/top/settings-gear-gold.png?v=20260906-1" alt=""></button><button id="layoutToggle" hidden aria-hidden="true">🛠️</button><button id="sound" hidden aria-hidden="true">🔊</button></div>
     </header>
@@ -47,11 +47,10 @@
     <section class="status">
       <div><span id="levelLabel">Уровень наглости</span><strong id="level">1 · Голодный стратег</strong></div>
       <div class="meter"><i id="levelProgress"></i></div>
-      <div class="income"><span id="incomeLabel">Доход</span><b id="income">0</b><small id="incomeUnit">рыбов/сек.</small></div>
     </section>
 
     <nav class="bottom-nav">
-      <button id="openFeed" class="nav-button active"><img class="nav-icon" src="assets/images/ui/nav/nav-1.png" alt=""><span id="navFeed">Кормить</span></button>
+      <button id="openFeed" class="nav-button"><img class="nav-icon" src="assets/images/ui/nav/nav-1.png" alt=""><span id="navFeed">Еда</span></button>
       <button id="openShop" class="nav-button"><img class="nav-icon" src="assets/images/ui/nav/nav-2.png" alt=""><span id="navShop">Привилегии</span></button>
       <button id="openWardrobe" class="nav-button"><img class="nav-icon" src="assets/images/ui/nav/nav-3-v3.png" alt=""><span id="navWardrobe">Шкаф</span></button>
       <button id="openAwards" class="nav-button"><img class="nav-icon" src="assets/images/ui/nav/nav-4-v3.png" alt=""><span id="navAwards">Награды</span></button>
@@ -89,12 +88,12 @@
       </article>
       <button id="careAction" class="care-action" disabled>Ожидаем распоряжений</button>
       <p id="careBonus" class="care-bonus">Бонус заботы пока не действует.</p>
-      <section class="treat-shop" aria-labelledby="treatTitle">
-        <h3 id="treatTitle">🍽️ Вкусняшки на ковёр</h3>
-        <p id="treatIntro">Купленное блюдо появляется в комнате на несколько минут. Сытый Шеф иногда имеет собственное мнение.</p>
-        <div id="treats" class="treat-list"></div>
-      </section>
       <p id="careNote" class="care-note">Показатели снижаются очень медленно. Шеф не болеет, не убегает и никого не наказывает. Почти.</p>
+    </section>
+    <section id="foodShop" class="shop food-shop" aria-hidden="true">
+      <div class="shop-head"><h2 id="treatTitle">🍽️ Еда для Шефа</h2><button id="closeFoodShop" class="close" aria-label="Close / Закрыть"></button></div>
+      <p id="treatIntro" class="panel-message">Выберите блюдо для Шефа.</p>
+      <div id="treats" class="treat-list"></div>
     </section>
     <section id="settings" class="shop settings" aria-hidden="true">
       <div class="shop-head"><h2 id="settingsTitle">⚙️ Настройки</h2><button id="closeSettings" class="close" aria-label="Закрыть"></button></div>
@@ -181,6 +180,6 @@
     <button id="testReset" class="test-reset" data-test="reset">Сбросить тест</button>
   </aside>
   <script src="/sdk.js"></script>
-  <script src="game.js?v=20260909-20"></script>
+  <script src="game.js?v=20260909-21"></script>
 </body>
 </html>
