@@ -200,7 +200,7 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 @media(max-width:759px){.round{width:48px;height:48px;border-width:3px}.top-actions{gap:6px}.counter-copy{max-width:58%;padding:7px 10px}.scene{bottom:calc(138px + env(safe-area-inset-bottom))}.status{width:76%;height:50px}.bottom-nav{gap:6px}.nav-button{font-size:1.15rem}.nav-button span{font-size:.61rem}}
 @media(max-width:420px){.counter-copy{max-width:57%}.counter-copy .eyebrow{font-size:.54rem;letter-spacing:.07em}.counter-fish{font-size:1.15rem}.topbar h1{font-size:1.12rem}.round{width:42px;height:42px}.top-actions{gap:4px}.action-dock .feed{right:10%;left:10%}.rewarded-ad-pill{width:46%}.status{width:82%}.bottom-nav{gap:4px}.nav-button span{font-size:.55rem}}
 
-/* Rewarded ad drawer: always-visible edge tab with a two-minute cooldown. */
+/* Rewarded ad drawer: shared five-minute cooldown for all rewards. */
 .ad-drawer{position:absolute;z-index:70;right:0;bottom:112px;width:min(62%,245px);padding:6px 6px 6px 48px;border:3px solid #dca02b;border-right:0;border-radius:18px 0 0 18px;background:linear-gradient(145deg,rgba(229,233,255,.98),rgba(121,135,222,.98));box-shadow:inset 0 0 0 2px #f4f5ff,0 5px 16px rgba(30,12,48,.5);transform:translateX(0);transition:transform .38s cubic-bezier(.2,.8,.25,1);cursor:pointer}
 .ad-drawer.peek{transform:translateX(calc(100% - 48px))}
 .ad-drawer .rewarded-ad-pill{position:static;width:100%;min-height:48px;display:block;padding:5px 42px 5px 5px;border:0;background:none;box-shadow:none;text-align:center}
@@ -336,3 +336,14 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 .game .cat-thought.from-left{left:1.5%;right:auto}
 .game .cat-thought.from-right{right:1.5%;left:auto}
 @media(max-width:759px){.game .cat-thought{top:17%;width:50%}}
+
+/* Keep ad controls readable after the fixed 16:9 scene is scaled down. */
+.small-screen .ad-drawer{width:calc(290 * var(--ui-unit));max-width:90%;padding:calc(6 * var(--ui-unit)) calc(6 * var(--ui-unit)) calc(6 * var(--ui-unit)) calc(54 * var(--ui-unit))}
+.small-screen .ad-drawer.peek{transform:translateX(calc(100% - 54 * var(--ui-unit)))}
+.small-screen .ad-peek{left:calc(3 * var(--ui-unit));width:calc(48 * var(--ui-unit));height:calc(48 * var(--ui-unit));font-size:calc(24 * var(--ui-unit))}
+.small-screen .ad-close{right:0;width:calc(48 * var(--ui-unit));height:calc(48 * var(--ui-unit))}
+.small-screen .ad-close:before{width:calc(34 * var(--ui-unit));height:calc(34 * var(--ui-unit));background-size:calc(18 * var(--ui-unit)) calc(18 * var(--ui-unit))}
+.small-screen .ad-drawer .rewarded-ad-pill{min-height:calc(48 * var(--ui-unit));padding:calc(5 * var(--ui-unit)) calc(44 * var(--ui-unit)) calc(5 * var(--ui-unit)) 0}
+.small-screen .ad-drawer .action-copy b{font-size:calc(15 * var(--ui-unit));line-height:1.15}
+.small-screen .ad-drawer .action-copy small{font-size:calc(12 * var(--ui-unit));line-height:1.2}
+.game-paused *, .game-paused *:before, .game-paused *:after{animation-play-state:paused!important}
