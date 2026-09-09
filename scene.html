@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#ffb84d">
   <title id="pageTitle">Кот, который слишком хорошо живёт</title>
-  <link rel="stylesheet" href="style.css?v=20260909-12">
+  <link rel="stylesheet" href="style.css?v=20260909-13">
   <style>html,body,.game{overflow:clip}</style>
 </head>
 <body>
@@ -17,6 +17,7 @@
     </header>
 
     <section class="scene">
+      <img id="zoomiesCat" hidden alt="" aria-hidden="true">
       <div id="phrase" data-layout-name="Реплика Шефа" data-layout-mode="offset" class="speech layout-item">В этой миске подозрительно видно дно.</div>
       <div id="foodDecor" class="food-decor" aria-hidden="true"></div>
       <div class="helper-stage" aria-hidden="true">
@@ -146,6 +147,7 @@
   </div>
   <aside id="testPanel" class="test-panel" hidden>
     <div><b>🧪 Тест Шефа</b><button id="testClose" aria-label="Свернуть">−</button></div>
+    <button id="testZoomies">Тыгыдык / Zoomies</button>
     <label>Уровень <select id="testLevel"></select></label>
     <div class="test-grid">
       <button data-test="set-level">Выбрать</button><button data-test="next-level">Следующий + заставка</button>
@@ -167,6 +169,6 @@
     <button id="testReset" class="test-reset" data-test="reset">Сбросить тест</button>
   </aside>
   <script src="/sdk.js"></script>
-  <script src="game.js?v=20260909-12"></script>
+  <script src="game.js?v=20260909-13"></script>
 </body>
 </html>
