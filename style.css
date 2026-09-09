@@ -347,3 +347,22 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 .small-screen .ad-drawer .action-copy b{font-size:calc(15 * var(--ui-unit));line-height:1.15}
 .small-screen .ad-drawer .action-copy small{font-size:calc(12 * var(--ui-unit));line-height:1.2}
 .game-paused *, .game-paused *:before, .game-paused *:after{animation-play-state:paused!important}
+
+/* Permanent voluntary boost beside the balance. */
+.game .topbar{justify-content:flex-start;gap:14px}
+.game .topbar .counter-copy{flex:0 1 34%;max-width:34%}
+.game .topbar .top-actions{margin-left:auto}
+.boost-button{align-self:stretch;min-width:130px;padding:8px 14px;border:2px solid #e5b14d;border-radius:18px;background:rgba(67,38,26,.65);color:#fff3ce;box-shadow:inset 0 0 0 1px rgba(255,228,148,.2);cursor:pointer}
+.boost-button b,.boost-button small{display:block;white-space:nowrap}
+.boost-button b{font-size:22px;line-height:1.2}
+.boost-button small{margin-top:4px;font-size:13px}
+.boost-button.active{background:rgba(63,86,34,.75)}
+.boost-button:disabled{opacity:.65;cursor:wait}
+.small-screen .boost-button{min-height:calc(48 * var(--ui-unit));padding:calc(5 * var(--ui-unit)) calc(8 * var(--ui-unit));min-width:calc(94 * var(--ui-unit))}
+.small-screen .boost-button b{font-size:calc(18 * var(--ui-unit))}
+.small-screen .boost-button small{font-size:calc(11 * var(--ui-unit))}
+.small-screen .reward-confirm-card{width:calc(360 * var(--ui-unit));max-width:90%;max-height:90%;overflow:auto;padding:calc(16 * var(--ui-unit))}
+.small-screen .reward-confirm-card h2{font-size:calc(20 * var(--ui-unit))}
+.small-screen .reward-confirm-card p{font-size:calc(15 * var(--ui-unit))}
+.small-screen .reward-confirm-actions button{min-height:calc(48 * var(--ui-unit));font-size:calc(14 * var(--ui-unit))}
+.reward-confirm-actions button:disabled{opacity:.5;cursor:default}
