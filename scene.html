@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#ffb84d">
   <title id="pageTitle">Кот, который слишком хорошо живёт</title>
-  <link rel="stylesheet" href="style.css?v=20260909-21">
+  <link rel="stylesheet" href="style.css?v=20260909-22">
   <style>html,body,.game{overflow:clip}</style>
 </head>
 <body>
@@ -95,6 +95,13 @@
       <p id="treatIntro" class="panel-message">Выберите блюдо для Шефа.</p>
       <div id="treats" class="treat-list"></div>
     </section>
+    <section id="chefWish" class="shop chef-wish" aria-hidden="true" aria-labelledby="chefWishTitle">
+      <div class="shop-head"><h2 id="chefWishTitle">Желание Шефа</h2><button id="closeChefWish" class="close" aria-label="Закрыть / Close"></button></div>
+      <strong id="chefWishName"></strong>
+      <p id="chefWishTask"></p>
+      <b id="chefWishProgress" aria-live="polite"></b>
+      <div class="wish-actions"><button id="wishFood" type="button">Открыть еду</button><button id="wishCare" type="button">Состояние Шефа</button></div>
+    </section>
     <section id="settings" class="shop settings" aria-hidden="true">
       <div class="shop-head"><h2 id="settingsTitle">⚙️ Настройки</h2><button id="closeSettings" class="close" aria-label="Закрыть"></button></div>
       <div id="settingsMessage" class="panel-message">Шеф разрешает настроить акустику кабинета.</div>
@@ -180,6 +187,6 @@
     <button id="testReset" class="test-reset" data-test="reset">Сбросить тест</button>
   </aside>
   <script src="/sdk.js"></script>
-  <script src="game.js?v=20260909-21"></script>
+  <script src="game.js?v=20260909-22"></script>
 </body>
 </html>
