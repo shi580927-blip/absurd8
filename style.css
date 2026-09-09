@@ -205,8 +205,8 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 .ad-drawer.peek{transform:translateX(calc(100% - 48px))}
 .ad-drawer .rewarded-ad-pill{position:static;width:100%;min-height:48px;display:block;padding:5px 42px 5px 5px;border:0;background:none;box-shadow:none;text-align:center}
 .ad-peek{position:absolute;left:5px;top:50%;width:40px;height:48px;transform:translateY(-50%);border:0;border-radius:12px;background:linear-gradient(#fff08b,#eda21e);box-shadow:0 3px 0 #6d310d;font-size:1.35rem;cursor:pointer}
-.ad-close{position:absolute;z-index:2;top:50%;right:2px;width:44px;height:44px;transform:translateY(-50%);border:0;border-radius:50%;background:transparent;color:#4b244b;font-size:0;font-weight:1000;cursor:pointer;touch-action:manipulation}
-.ad-close:before{content:"×";display:grid;place-items:center;width:27px;height:27px;margin:auto;border:2px solid #4b244b;border-radius:50%;background:#fff4e2;box-shadow:0 2px 0 rgba(75,36,75,.3);font-size:1.05rem;line-height:1}
+.ad-close{position:absolute;z-index:2;top:50%;right:2px;width:48px;height:48px;transform:translateY(-50%);border:0;border-radius:50%;background:transparent;cursor:pointer;touch-action:manipulation}
+.ad-close:before{content:"";display:block;width:34px;height:34px;margin:auto;border:2px solid #4b244b;border-radius:50%;background:linear-gradient(45deg,transparent calc(50% - 1.5px),#4b244b calc(50% - 1.5px),#4b244b calc(50% + 1.5px),transparent calc(50% + 1.5px)) center/18px 18px no-repeat,linear-gradient(-45deg,transparent calc(50% - 1.5px),#4b244b calc(50% - 1.5px),#4b244b calc(50% + 1.5px),transparent calc(50% + 1.5px)) center/18px 18px no-repeat,#fff4e2;box-shadow:0 2px 0 rgba(75,36,75,.3)}
 @media(max-width:420px){.ad-drawer{bottom:108px;width:min(68%,235px)}}
 
 /* Compact counter, reliable feed CTA and platform-independent nav icons. */
