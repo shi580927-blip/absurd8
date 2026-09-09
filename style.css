@@ -375,3 +375,33 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 .small-screen .reward-confirm-card p{font-size:calc(15 * var(--ui-unit))}
 .small-screen .reward-confirm-actions button{min-height:calc(48 * var(--ui-unit));font-size:calc(14 * var(--ui-unit))}
 .reward-confirm-actions button:disabled{opacity:.5;cursor:default}
+
+/* Mobile landscape keeps controls finger-sized after the 1600x900 stage is fitted. */
+.small-screen .topbar{top:calc(5 * var(--ui-unit));height:calc(52 * var(--ui-unit));gap:calc(7 * var(--ui-unit));padding:calc(4 * var(--ui-unit)) calc(8 * var(--ui-unit));border-radius:calc(12 * var(--ui-unit))}
+.small-screen .topbar .counter-copy{flex-basis:34%;max-width:34%;height:calc(44 * var(--ui-unit));padding:calc(4 * var(--ui-unit)) calc(8 * var(--ui-unit));border-width:calc(2 * var(--ui-unit));border-radius:calc(11 * var(--ui-unit));overflow:hidden}
+.small-screen .counter-fish{font-size:calc(18 * var(--ui-unit))}
+.small-screen .topbar h1{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:calc(20 * var(--ui-unit))}
+.small-screen .top-actions{gap:calc(5 * var(--ui-unit))}
+.small-screen .round{width:calc(44 * var(--ui-unit));height:calc(44 * var(--ui-unit));border-width:calc(2 * var(--ui-unit));border-radius:calc(10 * var(--ui-unit))}
+.small-screen .boost-button{align-self:center;height:calc(48 * var(--ui-unit));border-width:calc(2 * var(--ui-unit));border-radius:calc(12 * var(--ui-unit))}
+.small-screen .scene{top:calc(62 * var(--ui-unit));bottom:calc(148 * var(--ui-unit));padding-bottom:0}
+.small-screen .speech{max-width:54%;padding:calc(7 * var(--ui-unit)) calc(11 * var(--ui-unit));border-width:calc(2 * var(--ui-unit));border-radius:calc(11 * var(--ui-unit));font-size:calc(13 * var(--ui-unit));line-height:1.2}
+.small-screen .speech:after{bottom:calc(-7 * var(--ui-unit));width:calc(10 * var(--ui-unit));height:calc(10 * var(--ui-unit));border-width:0 calc(2 * var(--ui-unit)) calc(2 * var(--ui-unit)) 0}
+.small-screen .action-dock{right:25%;bottom:calc(98 * var(--ui-unit));left:25%;height:calc(46 * var(--ui-unit))}
+.small-screen .action-dock .feed{right:0;bottom:0;left:0;min-height:calc(46 * var(--ui-unit));padding:calc(4 * var(--ui-unit)) calc(9 * var(--ui-unit));border-width:calc(3 * var(--ui-unit));border-radius:calc(12 * var(--ui-unit))}
+.small-screen .action-dock .feed .action-copy b{font-size:calc(13 * var(--ui-unit))}
+.small-screen .action-dock .feed .action-copy small{font-size:calc(10 * var(--ui-unit))}
+.small-screen .status{bottom:calc(53 * var(--ui-unit));width:70%;height:calc(40 * var(--ui-unit));padding:calc(5 * var(--ui-unit)) calc(9 * var(--ui-unit));border-width:calc(2 * var(--ui-unit));border-radius:calc(10 * var(--ui-unit));font-size:calc(10 * var(--ui-unit))}
+.small-screen .status .meter{height:calc(7 * var(--ui-unit));margin-top:calc(4 * var(--ui-unit))}
+.small-screen .income{right:calc(8 * var(--ui-unit));bottom:calc(4 * var(--ui-unit));font-size:calc(9 * var(--ui-unit))}
+.small-screen .bottom-nav{height:calc(50 * var(--ui-unit));gap:calc(4 * var(--ui-unit));padding:calc(3 * var(--ui-unit)) calc(5 * var(--ui-unit));border-top-width:calc(2 * var(--ui-unit))}
+.small-screen .nav-button{min-height:calc(44 * var(--ui-unit));border-width:calc(2 * var(--ui-unit));border-radius:calc(9 * var(--ui-unit))}
+.small-screen .nav-icon{width:calc(28 * var(--ui-unit));height:calc(27 * var(--ui-unit))}
+.small-screen .nav-button span{font-size:calc(9 * var(--ui-unit));line-height:1}
+.small-screen .game .cat-thought{top:calc(62 * var(--ui-unit));width:31%;max-height:calc(210 * var(--ui-unit))}
+.small-screen .cat-thought strong{padding:calc(6 * var(--ui-unit)) calc(8 * var(--ui-unit));font-size:calc(12 * var(--ui-unit))}
+.small-screen .reward-confirm-card{width:calc(360 * var(--ui-unit));max-width:90%;max-height:90%;overflow:auto;padding:calc(16 * var(--ui-unit))}
+.small-screen .reward-confirm-card h2{font-size:calc(20 * var(--ui-unit))}
+.small-screen .reward-confirm-card p{font-size:calc(15 * var(--ui-unit))}
+.small-screen .reward-confirm-actions button{min-height:calc(48 * var(--ui-unit));font-size:calc(14 * var(--ui-unit))}
+.reward-confirm-actions button:disabled{opacity:.5;cursor:default}
