@@ -533,6 +533,26 @@ function tickZoomies(timestamp){
 }
 $('testZoomies').addEventListener('click',()=>{if(testMode&&!startZoomies($('testZoomiesRoute').value))$('phrase').textContent=L('Закройте меню и редактор; дождитесь завершения тыгыдыка и загрузки кадров.','Close menus and the editor; wait for zoomies to finish and frames to load.')});
 requestAnimationFrame(tickZoomies);
+function updateMobileControls(){
+  const side=['both','left','right'].includes(state.feedSide)?state.feedSide:'both';
+  document.querySelector('.game').dataset.feedSide=side;
+  $('mobileControlsTitle').textContent=L('Кнопки кормления','Feeding buttons');
+  document.querySelectorAll('[data-feed-side]').forEach(button=>{
+    button.textContent=({both:L('Обе','Both'),left:L('Слева','Left'),right:L('Справа','Right')})[button.dataset.feedSide];
+    button.setAttribute('aria-pressed',String(button.dataset.feedSide===side));
+  });
+  document.querySelectorAll('.mobile-feed').forEach(button=>{
+    button.setAttribute('aria-label',L('Покормить кота','Feed the cat'));
+    button.querySelector('small').textContent=$('perClick').textContent;
+    button.disabled=$('feed').disabled;
+  });
+}
+document.querySelectorAll('.mobile-feed').forEach(button=>button.addEventListener('click',feed));
+document.querySelectorAll('[data-feed-side]').forEach(button=>button.addEventListener('click',()=>{state.feedSide=button.dataset.feedSide;updateMobileControls();save()}));
+$('openSettings').addEventListener('click',updateMobileControls);
+new MutationObserver(updateMobileControls).observe($('perClick'),{childList:true,characterData:true,subtree:true});
+new MutationObserver(updateMobileControls).observe($('feed'),{attributes:true,attributeFilter:['disabled']});
+updateMobileControls();
 function save(){if(suppressSave)return;syncPausedTimers();state.last=Date.now();localStorage.setItem(saveKey,JSON.stringify(state));queueCloudSave()}
 const away=Math.min(4*3600,Math.max(0,(Date.now()-(state.last||Date.now()))/1000));if(away>10&&cps()>0){const bonus=Math.floor(away*cps());state.food+=bonus;state.total+=bonus;$('phrase').textContent=L(`Пока тебя не было, Шеф получил ${format(bonus)} рыбов.`,`While you were away, Chef received ${format(bonus)} fish.`)}
 function syncOrientation(){if(needsLandscape()||masterOrientationPaused){stopGameplay();stopAllSounds()}else{startGameplay();ensureMusic()}}
