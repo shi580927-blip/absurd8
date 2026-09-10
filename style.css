@@ -405,6 +405,57 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 .small-screen .game .cat-thought{width:25%;max-height:none;overflow:visible}
 .small-screen .cat-thought strong{font-size:calc(11 * var(--ui-unit));line-height:1.2}
 
+/* Unified Chef status and wish dashboard. */
+.game .chef-dashboard{top:72px;bottom:54px;left:50%;right:auto;width:1080px;max-width:88%;padding:18px 22px 16px;overflow:auto;border:3px solid #e7a83c;border-radius:24px;background:linear-gradient(145deg,rgba(83,39,23,.98),rgba(35,14,12,.98));box-shadow:inset 0 0 0 2px #7d451f,0 18px 60px rgba(15,4,2,.72)}
+.chef-dashboard-head{position:relative;display:flex;align-items:center;justify-content:center;min-height:96px;margin:-8px 44px 12px;text-align:center;border-bottom:1px solid #a9662f}
+.chef-dashboard-emblem{width:108px;height:108px;object-fit:contain;filter:drop-shadow(0 5px 7px rgba(12,3,0,.55))}
+.chef-dashboard-head h2{margin:0;color:#ffd55b;font-family:Georgia,serif;font-size:34px;line-height:1;text-shadow:0 2px #6d200e}
+.chef-dashboard-head p{margin:8px 0 0;color:#f3d7ac;font-size:15px;font-weight:800}
+.chef-dashboard-head .close{position:absolute;top:12px;right:-42px}
+.chef-dashboard-main{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(330px,.85fr);gap:16px;align-items:stretch}
+.care-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.care-card{display:flex;min-width:0;flex-direction:column;align-items:center;padding:12px 8px 10px;border:2px solid #a9652e;border-radius:18px;background:linear-gradient(#5b311e,#351811);text-align:center;box-shadow:inset 0 1px #d49a52}
+.care-card h3{margin:0 0 5px;color:#fff2d2;font-size:17px}
+.care-card img{width:112px;height:100px;object-fit:contain;filter:drop-shadow(0 5px 5px rgba(15,3,0,.45))}
+.care-card b{color:#ffd75b;font-size:34px;line-height:1}
+.care-card strong{width:100%;margin:8px 0 5px;padding:5px 4px;border:1px solid #4f9d31;border-radius:10px;background:#245d19;color:#cfff7a;font-size:13px}
+.care-card[data-level="medium"] strong{border-color:#b98525;background:#66420f;color:#ffe291}
+.care-card[data-level="low"] strong{border-color:#ce4238;background:#6d1d20;color:#ffd0c7}
+.care-card p{min-height:34px;margin:4px 0 0;color:#d9bda4;font-size:12px;line-height:1.3}
+.chef-wish-card{display:flex;min-width:0;flex-direction:column;padding:10px;border:2px solid #c98431;border-radius:18px;background:linear-gradient(#6a351f,#30150f);box-shadow:inset 0 0 0 2px #7b3e20}
+.chef-wish-card>h3{margin:0 0 8px;padding:8px;border-radius:11px;background:linear-gradient(#7a261f,#4c1715);color:#ffd554;text-align:center;font:800 20px Georgia,serif}
+.chef-wish-content{display:grid;grid-template-columns:145px minmax(0,1fr);gap:10px;align-items:center;min-height:166px}
+#chefWishImage{width:145px;height:145px;object-fit:contain;filter:drop-shadow(0 6px 7px rgba(17,3,0,.55))}
+.chef-wish-copy{min-width:0}.chef-wish-copy p{margin:7px 0;color:#f3dfc6;font-size:13px;line-height:1.3}.chef-wish-copy>strong{display:block;color:#fff1d4;font-size:15px}.chef-wish-copy>#chefWishProgress{display:block;margin-top:8px;padding:5px 8px;border:1px solid #d49b4c;border-radius:9px;color:#ffe269;text-align:center}.chef-wish-copy>#chefWishProgress.completed{color:#baff91}
+.chef-wish-reward{display:flex;align-items:center;justify-content:center;gap:8px;min-height:45px;margin-top:5px;padding:4px 10px;border:1px solid #b47431;border-radius:10px;background:#5a2c1c;color:#ffd764}.chef-wish-reward img{width:39px;height:39px;object-fit:contain}.chef-wish-reward[hidden]{display:none}
+.wish-food{min-height:42px;margin-top:8px;border:2px solid #d99531;border-radius:11px;background:linear-gradient(#ffe05a,#f29916);color:#35140d;font-weight:900;cursor:pointer}.wish-food[hidden]{display:none}
+.chef-wish-hint{margin:8px 4px 1px;color:#ccb4d9;font-size:11px;line-height:1.3;text-align:center}
+.chef-dashboard-footer{margin:14px 0 0;padding:9px 12px;border:1px solid #bd7933;border-radius:11px;background:rgba(91,44,24,.72);color:#ecd5b9;text-align:center;font-size:13px;font-weight:700}
+
+.small-screen .game .chef-dashboard{top:calc(8 * var(--ui-unit));bottom:calc(38 * var(--ui-unit));width:92%;max-width:none;padding:calc(9 * var(--ui-unit));border-width:calc(2 * var(--ui-unit));border-radius:calc(15 * var(--ui-unit))}
+.small-screen .chef-dashboard-head{min-height:calc(58 * var(--ui-unit));margin:0 calc(35 * var(--ui-unit)) calc(7 * var(--ui-unit))}
+.small-screen .chef-dashboard-emblem{width:calc(62 * var(--ui-unit));height:calc(62 * var(--ui-unit))}
+.small-screen .chef-dashboard-head h2{font-size:calc(21 * var(--ui-unit))}
+.small-screen .chef-dashboard-head p{margin-top:calc(3 * var(--ui-unit));font-size:calc(10 * var(--ui-unit))}
+.small-screen .chef-dashboard-head .close{top:calc(5 * var(--ui-unit));right:calc(-31 * var(--ui-unit))}
+.small-screen .chef-dashboard-main{grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:calc(7 * var(--ui-unit))}
+.small-screen .care-cards{gap:calc(5 * var(--ui-unit))}
+.small-screen .care-card{padding:calc(6 * var(--ui-unit)) calc(4 * var(--ui-unit));border-width:calc(1 * var(--ui-unit));border-radius:calc(10 * var(--ui-unit))}
+.small-screen .care-card h3{font-size:calc(12 * var(--ui-unit))}
+.small-screen .care-card img{width:calc(70 * var(--ui-unit));height:calc(63 * var(--ui-unit))}
+.small-screen .care-card b{font-size:calc(24 * var(--ui-unit))}
+.small-screen .care-card strong{margin:calc(4 * var(--ui-unit)) 0 calc(2 * var(--ui-unit));padding:calc(3 * var(--ui-unit));font-size:calc(9 * var(--ui-unit))}
+.small-screen .care-card p{min-height:calc(25 * var(--ui-unit));font-size:calc(8 * var(--ui-unit))}
+.small-screen .chef-wish-card{padding:calc(6 * var(--ui-unit));border-width:calc(1 * var(--ui-unit));border-radius:calc(10 * var(--ui-unit))}
+.small-screen .chef-wish-card>h3{margin-bottom:calc(4 * var(--ui-unit));padding:calc(4 * var(--ui-unit));font-size:calc(14 * var(--ui-unit))}
+.small-screen .chef-wish-content{grid-template-columns:calc(88 * var(--ui-unit)) minmax(0,1fr);gap:calc(5 * var(--ui-unit));min-height:calc(100 * var(--ui-unit))}
+.small-screen #chefWishImage{width:calc(88 * var(--ui-unit));height:calc(88 * var(--ui-unit))}
+.small-screen .chef-wish-copy p{margin:calc(3 * var(--ui-unit)) 0;font-size:calc(9 * var(--ui-unit))}.small-screen .chef-wish-copy>strong{font-size:calc(10 * var(--ui-unit))}.small-screen .chef-wish-copy>#chefWishProgress{margin-top:calc(4 * var(--ui-unit));padding:calc(3 * var(--ui-unit));font-size:calc(10 * var(--ui-unit))}
+.small-screen .chef-wish-reward{min-height:calc(32 * var(--ui-unit));margin-top:calc(3 * var(--ui-unit));padding:calc(2 * var(--ui-unit));font-size:calc(10 * var(--ui-unit))}.small-screen .chef-wish-reward img{width:calc(28 * var(--ui-unit));height:calc(28 * var(--ui-unit))}
+.small-screen .wish-food{min-height:calc(36 * var(--ui-unit));margin-top:calc(4 * var(--ui-unit));font-size:calc(10 * var(--ui-unit))}
+.small-screen .chef-wish-hint{margin:calc(4 * var(--ui-unit)) 0 0;font-size:calc(8 * var(--ui-unit))}
+.small-screen .chef-dashboard-footer{margin-top:calc(7 * var(--ui-unit));padding:calc(5 * var(--ui-unit));font-size:calc(9 * var(--ui-unit))}
+
 /* Final control placement overrides. Keep this block last. */
 .game .status{bottom:8px;left:50%;right:auto;width:520px;height:38px;padding:4px 10px;transform:translateX(-50%);border-width:1px;border-radius:10px;font-size:11px}
 .game .status .meter{height:6px;margin-top:3px}

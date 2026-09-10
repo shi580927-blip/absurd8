@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#ffb84d">
   <title id="pageTitle">Кот, который слишком хорошо живёт</title>
-  <link rel="stylesheet" href="style.css?v=20260910-8">
+  <link rel="stylesheet" href="style.css?v=20260910-9">
   <style>html,body,.game{overflow:clip}</style>
 </head>
 <body>
@@ -74,33 +74,36 @@
       <div id="achievements" class="achievement-list"></div>
     </section>
 
-    <section id="care" class="shop care" aria-hidden="true">
-      <div class="shop-head"><h2 id="careTitle">🐾 Как поживает Шеф</h2><button id="closeCare" class="close" aria-label="Закрыть"></button></div>
-      <div id="careMessage" class="panel-message">Шеф не нуждается в заботе. Он разрешает её проявить.</div>
-      <div class="care-meters">
-        <div class="care-meter"><span id="hungerLabel">🐟 Сытость</span><div><i id="hungerBar"></i></div><b id="hungerValue">80%</b></div>
-        <div class="care-meter"><span id="moodLabel">🧶 Настроение</span><div><i id="moodBar"></i></div><b id="moodValue">80%</b></div>
-        <div class="care-meter"><span id="restLabel">💤 Отдых</span><div><i id="restBar"></i></div><b id="restValue">80%</b></div>
+    <section id="care" class="shop care chef-dashboard" aria-hidden="true" aria-labelledby="careTitle">
+      <header class="chef-dashboard-head">
+        <img class="chef-dashboard-emblem" src="assets/images/ui/care/chef-monocle.png" alt="">
+        <div><h2 id="careTitle">Как поживает Шеф</h2><p id="careSubtitle">Забота делает Шефа счастливее!</p></div>
+        <button id="closeCare" class="close" aria-label="Закрыть"></button>
+      </header>
+      <div class="chef-dashboard-main">
+        <div class="care-cards" aria-label="Состояние Шефа">
+          <article class="care-card" data-care="hunger"><h3 id="hungerLabel">Сытость</h3><img src="assets/images/ui/care/satiety-bowl.png" alt=""><b id="hungerValue">80%</b><strong id="hungerStatus">Хорошо</strong><p id="hungerNote">Шеф почти сыт</p></article>
+          <article class="care-card" data-care="mood"><h3 id="moodLabel">Настроение</h3><img src="assets/images/ui/care/mood-yarn.png" alt=""><b id="moodValue">80%</b><strong id="moodStatus">Хорошее</strong><p id="moodNote">Шеф в хорошем настроении</p></article>
+          <article class="care-card" data-care="rest"><h3 id="restLabel">Отдых</h3><img src="assets/images/ui/care/rest-sleep.png" alt=""><b id="restValue">80%</b><strong id="restStatus">Достаточно</strong><p id="restNote">Шеф полон сил</p></article>
+        </div>
+        <article class="chef-wish-card">
+          <h3 id="chefWishTitle">🐾 Желание Шефа</h3>
+          <div class="chef-wish-content">
+            <img id="chefWishImage" src="assets/images/ui/care/wish-purple-can.png" alt="">
+            <div class="chef-wish-copy"><p id="chefWishQuote">«Мурр… Хочется чего-то особенного!»</p><strong id="chefWishName"></strong><p id="chefWishTask"></p><b id="chefWishProgress" aria-live="polite"></b></div>
+          </div>
+          <div id="chefWishReward" class="chef-wish-reward"><img src="assets/images/ui/care/fish-reward.png" alt=""><b>Награда: +5000 рыбов</b></div>
+          <button id="wishFood" class="wish-food" type="button">Показать в разделе «Еда»</button>
+          <p id="chefWishHint" class="chef-wish-hint">Новое желание появится, когда Шеф его загадает.</p>
+        </article>
       </div>
-      <article class="care-request">
-        <span id="careRequestIcon">🐾</span>
-        <div><b id="careRequestTitle">Шеф обдумывает пожелания</b><p id="careRequestText">Он сообщит, когда потребуется персонал.</p></div>
-      </article>
-      <button id="careAction" class="care-action" disabled>Ожидаем распоряжений</button>
-      <p id="careBonus" class="care-bonus">Бонус заботы пока не действует.</p>
-      <p id="careNote" class="care-note">Показатели снижаются очень медленно. Шеф не болеет, не убегает и никого не наказывает. Почти.</p>
+      <p id="careMessage" class="chef-dashboard-footer">Шеф не нуждается в заботе. Он разрешает её проявить.</p>
+      <div class="care-legacy" hidden><span id="careRequestIcon"></span><b id="careRequestTitle"></b><p id="careRequestText"></p><button id="careAction" disabled></button><p id="careBonus"></p><p id="careNote"></p></div>
     </section>
     <section id="foodShop" class="shop food-shop" aria-hidden="true">
       <div class="shop-head"><h2 id="treatTitle">🍽️ Еда для Шефа</h2><button id="closeFoodShop" class="close" aria-label="Close / Закрыть"></button></div>
       <p id="treatIntro" class="panel-message">Выберите блюдо для Шефа.</p>
       <div class="food-shelf"><button id="foodPrev" class="shelf-arrow" type="button" aria-label="Назад / Previous">‹</button><div id="treats" class="treat-list" tabindex="0" aria-label="Блюда / Dishes"></div><button id="foodNext" class="shelf-arrow" type="button" aria-label="Далее / Next">›</button></div>
-    </section>
-    <section id="chefWish" class="shop chef-wish" aria-hidden="true" aria-labelledby="chefWishTitle">
-      <div class="shop-head"><h2 id="chefWishTitle">Желание Шефа</h2><button id="closeChefWish" class="close" aria-label="Закрыть / Close"></button></div>
-      <strong id="chefWishName"></strong>
-      <p id="chefWishTask"></p>
-      <b id="chefWishProgress" aria-live="polite"></b>
-      <div class="wish-actions"><button id="wishFood" type="button">Открыть еду</button><button id="wishCare" type="button">Состояние Шефа</button></div>
     </section>
     <section id="settings" class="shop settings" aria-hidden="true">
       <div class="shop-head"><h2 id="settingsTitle">⚙️ Настройки</h2><button id="closeSettings" class="close" aria-label="Закрыть"></button></div>
@@ -186,6 +189,6 @@
     </div>
     <button id="testReset" class="test-reset" data-test="reset">Сбросить тест</button>
   </aside>
-  <script src="game.js?v=20260910-7"></script>
+  <script src="game.js?v=20260910-9"></script>
 </body>
 </html>
