@@ -405,6 +405,65 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 .small-screen .game .cat-thought{width:25%;max-height:none;overflow:visible}
 .small-screen .cat-thought strong{font-size:calc(11 * var(--ui-unit));line-height:1.2}
 
+/* Final sizing correction: keep this after every legacy responsive override. */
+.game .bottom-nav{top:150px;left:14px;width:50px;gap:8px}
+.game .nav-button{width:48px;height:48px;padding:3px;border:0;border-radius:10px;background:rgba(35,15,11,.36)}
+.game .nav-icon{width:34px;height:34px}
+.game .nav-button span{display:none}
+.game .action-dock{bottom:-72px;width:250px}
+.game .action-dock .feed{min-height:42px;padding:4px 10px;border-width:2px;border-radius:10px}
+.game .action-dock .feed .action-copy b{font-size:13px}
+.game .action-dock .feed .action-copy small{font-size:9px}
+.game .chef-dashboard{left:52%;width:920px;max-width:72%;padding:15px 18px 13px}
+.chef-dashboard-head{min-height:80px;margin:-5px 38px 10px}
+.chef-dashboard-emblem{width:88px;height:88px}
+.chef-dashboard-head h2{font-size:30px}
+.chef-dashboard-main{grid-template-columns:minmax(0,1.08fr) minmax(320px,.92fr);gap:12px}
+.care-card img{width:94px;height:84px}
+.care-card b{font-size:30px}
+.small-screen .bottom-nav{top:calc(68 * var(--ui-unit));width:calc(48 * var(--ui-unit));gap:calc(5 * var(--ui-unit))}
+.small-screen .nav-button{width:calc(46 * var(--ui-unit));height:calc(46 * var(--ui-unit));padding:calc(2 * var(--ui-unit));border:0}
+.small-screen .nav-icon{width:calc(31 * var(--ui-unit));height:calc(31 * var(--ui-unit))}
+.small-screen .game .chef-dashboard{left:50%;width:76%;max-width:none;max-height:84%;padding:calc(8 * var(--ui-unit));overflow:auto}
+.small-screen .chef-dashboard-head{min-height:calc(48 * var(--ui-unit));margin:0 calc(31 * var(--ui-unit)) calc(6 * var(--ui-unit))}
+.small-screen .chef-dashboard-emblem{width:calc(52 * var(--ui-unit));height:calc(52 * var(--ui-unit))}
+.small-screen .chef-dashboard-head h2{font-size:calc(18 * var(--ui-unit))}
+.small-screen .chef-dashboard-main{grid-template-columns:1fr;gap:calc(6 * var(--ui-unit))}
+.small-screen .care-card img{width:calc(58 * var(--ui-unit));height:calc(52 * var(--ui-unit))}
+.small-screen .care-card b{font-size:calc(21 * var(--ui-unit))}
+.small-screen .chef-wish-content{grid-template-columns:calc(74 * var(--ui-unit)) minmax(0,1fr);min-height:calc(82 * var(--ui-unit))}
+.small-screen #chefWishImage{width:calc(74 * var(--ui-unit));height:calc(74 * var(--ui-unit))}
+
+/* Final sizing correction: navigation, desktop feed and Chef dashboard. */
+.game .bottom-nav{top:150px;left:14px;width:50px;gap:8px}
+.game .nav-button{width:48px;height:48px;padding:3px;border:0;border-radius:10px;background:rgba(35,15,11,.36)}
+.game .nav-icon{width:34px;height:34px}
+.game .nav-button span{display:none}
+.game .action-dock{bottom:-72px;width:250px}
+.game .action-dock .feed{min-height:42px;padding:4px 10px;border-width:2px;border-radius:10px}
+.game .action-dock .feed .action-copy b{font-size:13px}
+.game .action-dock .feed .action-copy small{font-size:9px}
+.game .chef-dashboard{left:52%;width:920px;max-width:72%;padding:15px 18px 13px}
+.chef-dashboard-head{min-height:80px;margin:-5px 38px 10px}
+.chef-dashboard-emblem{width:88px;height:88px}
+.chef-dashboard-head h2{font-size:30px}
+.chef-dashboard-main{grid-template-columns:minmax(0,1.08fr) minmax(320px,.92fr);gap:12px}
+.care-card img{width:94px;height:84px}
+.care-card b{font-size:30px}
+
+.small-screen .bottom-nav{top:calc(68 * var(--ui-unit));width:calc(48 * var(--ui-unit));gap:calc(5 * var(--ui-unit))}
+.small-screen .nav-button{width:calc(46 * var(--ui-unit));height:calc(46 * var(--ui-unit));padding:calc(2 * var(--ui-unit));border:0}
+.small-screen .nav-icon{width:calc(31 * var(--ui-unit));height:calc(31 * var(--ui-unit))}
+.small-screen .game .chef-dashboard{left:50%;width:76%;max-width:none;max-height:84%;padding:calc(8 * var(--ui-unit));overflow:auto}
+.small-screen .chef-dashboard-head{min-height:calc(48 * var(--ui-unit));margin:0 calc(31 * var(--ui-unit)) calc(6 * var(--ui-unit))}
+.small-screen .chef-dashboard-emblem{width:calc(52 * var(--ui-unit));height:calc(52 * var(--ui-unit))}
+.small-screen .chef-dashboard-head h2{font-size:calc(18 * var(--ui-unit))}
+.small-screen .chef-dashboard-main{grid-template-columns:1fr;gap:calc(6 * var(--ui-unit))}
+.small-screen .care-card img{width:calc(58 * var(--ui-unit));height:calc(52 * var(--ui-unit))}
+.small-screen .care-card b{font-size:calc(21 * var(--ui-unit))}
+.small-screen .chef-wish-content{grid-template-columns:calc(74 * var(--ui-unit)) minmax(0,1fr);min-height:calc(82 * var(--ui-unit))}
+.small-screen #chefWishImage{width:calc(74 * var(--ui-unit));height:calc(74 * var(--ui-unit))}
+
 /* Unified Chef status and wish dashboard. */
 .game .chef-dashboard{top:72px;bottom:auto;left:50%;right:auto;width:1080px;max-width:88%;max-height:calc(100% - 126px);padding:18px 22px 16px;overflow:auto;border:3px solid #e7a83c;border-radius:24px;background:linear-gradient(145deg,rgba(83,39,23,.98),rgba(35,14,12,.98));box-shadow:inset 0 0 0 2px #7d451f,0 18px 60px rgba(15,4,2,.72)}
 .chef-dashboard-head{position:relative;display:flex;align-items:center;justify-content:center;min-height:96px;margin:-8px 44px 12px;text-align:center;border-bottom:1px solid #a9662f}
@@ -712,3 +771,32 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 .small-screen .status .meter{height:calc(5 * var(--ui-unit));margin-top:calc(2 * var(--ui-unit))}
 .small-screen .game .cat-thought{width:25%;max-height:none;overflow:visible}
 .small-screen .cat-thought strong{font-size:calc(11 * var(--ui-unit));line-height:1.2}
+
+/* Definitive dimensions: this block intentionally closes the cascade. */
+.game .bottom-nav{top:150px;left:14px;width:50px;gap:8px}
+.game .nav-button{width:48px;height:48px;padding:3px;border:0;border-radius:10px;background:rgba(35,15,11,.36)}
+.game .nav-icon{width:34px;height:34px}
+.game .nav-button span{display:none}
+.game .action-dock{bottom:-72px;width:250px}
+.game .action-dock .feed{min-height:42px;padding:4px 10px;border-width:2px;border-radius:10px}
+.game .action-dock .feed .action-copy b{font-size:13px}
+.game .action-dock .feed .action-copy small{font-size:9px}
+.game .chef-dashboard{left:52%;width:920px;max-width:72%;padding:15px 18px 13px}
+.chef-dashboard-head{min-height:80px;margin:-5px 38px 10px}
+.chef-dashboard-emblem{width:88px;height:88px}
+.chef-dashboard-head h2{font-size:30px}
+.chef-dashboard-main{grid-template-columns:minmax(0,1.08fr) minmax(320px,.92fr);gap:12px}
+.care-card img{width:94px;height:84px}
+.care-card b{font-size:30px}
+.small-screen .bottom-nav{top:calc(68 * var(--ui-unit));width:calc(48 * var(--ui-unit));gap:calc(5 * var(--ui-unit))}
+.small-screen .nav-button{width:calc(46 * var(--ui-unit));height:calc(46 * var(--ui-unit));padding:calc(2 * var(--ui-unit));border:0}
+.small-screen .nav-icon{width:calc(31 * var(--ui-unit));height:calc(31 * var(--ui-unit))}
+.small-screen .game .chef-dashboard{left:50%;width:76%;max-width:none;max-height:84%;padding:calc(8 * var(--ui-unit));overflow:auto}
+.small-screen .chef-dashboard-head{min-height:calc(48 * var(--ui-unit));margin:0 calc(31 * var(--ui-unit)) calc(6 * var(--ui-unit))}
+.small-screen .chef-dashboard-emblem{width:calc(52 * var(--ui-unit));height:calc(52 * var(--ui-unit))}
+.small-screen .chef-dashboard-head h2{font-size:calc(18 * var(--ui-unit))}
+.small-screen .chef-dashboard-main{grid-template-columns:1fr;gap:calc(6 * var(--ui-unit))}
+.small-screen .care-card img{width:calc(58 * var(--ui-unit));height:calc(52 * var(--ui-unit))}
+.small-screen .care-card b{font-size:calc(21 * var(--ui-unit))}
+.small-screen .chef-wish-content{grid-template-columns:calc(74 * var(--ui-unit)) minmax(0,1fr);min-height:calc(82 * var(--ui-unit))}
+.small-screen #chefWishImage{width:calc(74 * var(--ui-unit));height:calc(74 * var(--ui-unit))}
