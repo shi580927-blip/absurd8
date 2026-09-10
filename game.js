@@ -220,9 +220,9 @@ function syncZoomiesAudio(){
 }
 const soundNames=['ui-click','feed','buy','error','level','reward','cat-food','cat-happy','cat-happy-2','cat-soft','cat-purr-15','toy-yarn','toy-mouse','toy-slipper','toy-feather','toy-fish'];
 const soundBank=Object.fromEntries(soundNames.map(name=>{const audio=new Audio(`assets/audio/${name}.${soundExt}?v=20260831-9`);audio.preload='auto';return[name,audio]}));
-const backgroundMusic=new Audio(`assets/audio/chef-theme.${soundExt}?v=20260831-2`);backgroundMusic.loop=true;backgroundMusic.preload='auto';backgroundMusic.volume=.16;
+const backgroundMusic=new Audio(`assets/audio/chef-theme.${soundExt}?v=20260910-2`);backgroundMusic.loop=true;backgroundMusic.preload='auto';backgroundMusic.volume=.42;
 const activeSounds=new Set();
-const MUSIC_VOLUME=.16,MUSIC_DUCK_VOLUME=.045;
+const MUSIC_VOLUME=.42,MUSIC_DUCK_VOLUME=.08;
 let musicRampTimer,duckRestoreTimer,duckUntil=0;
 function rampMusic(target,duration=220){clearInterval(musicRampTimer);const start=backgroundMusic.volume,steps=10,delta=(target-start)/steps;let step=0;musicRampTimer=setInterval(()=>{step++;backgroundMusic.volume=Math.max(0,Math.min(1,start+delta*step));if(step>=steps)clearInterval(musicRampTimer)},duration/steps)}
 function duckMusic(duration){duckUntil=Math.max(duckUntil,Date.now()+duration);rampMusic(MUSIC_DUCK_VOLUME);clearTimeout(duckRestoreTimer);duckRestoreTimer=setTimeout(()=>{const wait=duckUntil-Date.now();if(wait>20)duckRestoreTimer=setTimeout(()=>rampMusic(MUSIC_VOLUME,500),wait);else rampMusic(MUSIC_VOLUME,500)},duration)}
@@ -245,6 +245,16 @@ function syncPausedTimers(){
   document.documentElement.classList.toggle('game-paused',timersWerePaused);
 }
 function ensureMusic(){if(state.music&&!gameIsPaused()&&backgroundMusic.paused)backgroundMusic.play().catch(()=>{})}
+let audioPrepared=false,audioUnlocked=false;
+function unlockAudio(){
+  if(audioUnlocked){ensureMusic();return}
+  if(!audioPrepared){Object.values(soundBank).forEach(audio=>audio.load());backgroundMusic.load();audioPrepared=true}
+  if(!state.music||gameIsPaused())return;
+  audioUnlocked=true;
+  backgroundMusic.play().catch(()=>{audioUnlocked=false});
+}
+document.addEventListener('pointerdown',unlockAudio,{capture:true});
+document.addEventListener('keydown',unlockAudio,{capture:true});
 function playSound(name,volume=1){if(!state.sfx||gameIsPaused())return;ensureMusic();const source=soundBank[name];if(!source)return;if(name.startsWith('cat-')&&name!=='cat-food')duckMusic(name==='cat-purr-15'?15000:2200);const player=source.cloneNode();player.volume=volume;activeSounds.add(player);const done=()=>activeSounds.delete(player);player.addEventListener('ended',done,{once:true});player.addEventListener('error',done,{once:true});player.play().catch(done)}
 let lastFeedSound=0;
 function playFeedSound(){if(Date.now()-lastFeedSound<3200)return;lastFeedSound=Date.now();playSound('feed',.72)}
