@@ -1,12 +1,12 @@
 const upgrades = [
-  {id:'bowl', icon:'🥣', name:'Миска без дна', desc:'+1 рыбов за нажатие', base:25, click:1},
-  {id:'grandma', icon:'👵', name:'Бабушка-кормитель', desc:'+1 рыбов в секунду', base:60, cps:1},
-  {id:'chef', icon:'👨‍🍳', name:'Повар, боящийся кота', desc:'+5 рыбов в секунду', base:260, cps:5},
-  {id:'delivery', icon:'🛵', name:'Доставка со скоростью света', desc:'+20 рыбов в секунду', base:1100, cps:20},
-  {id:'ministry', icon:'🏛️', name:'Министерство кошачьей еды', desc:'+100 рыбов в секунду', base:6000, cps:100},
-  {id:'laser', icon:'🔴', name:'Лазерная точка с амбициями', desc:'+3 рыбов за нажатие', base:180, click:3},
-  {id:'mouse', icon:'🐭', name:'Мышь на удалённой работе', desc:'+12 рыбов в секунду', base:720, cps:12},
-  {id:'box', icon:'📦', name:'Коробка дороже квартиры', desc:'+250 рыбов в секунду', base:18000, cps:250}
+  {id:'bowl', icon:'🥣', iconAsset:'assets/images/ui/perk-bowl.png', name:'Миска без дна', desc:'+1 рыбов за нажатие', base:25, click:1},
+  {id:'grandma', icon:'👵', iconAsset:'assets/images/ui/perk-grandma.png', name:'Бабушка-кормитель', desc:'+1 рыбов в секунду', base:60, cps:1},
+  {id:'chef', icon:'👨‍🍳', iconAsset:'assets/images/ui/perk-chef.png', name:'Повар, боящийся кота', desc:'+5 рыбов в секунду', base:260, cps:5},
+  {id:'delivery', icon:'🛵', iconAsset:'assets/images/ui/perk-delivery.png', name:'Доставка со скоростью света', desc:'+20 рыбов в секунду', base:1100, cps:20},
+  {id:'ministry', icon:'🏛️', iconAsset:'assets/images/ui/perk-ministry.png', name:'Министерство кошачьей еды', desc:'+100 рыбов в секунду', base:6000, cps:100},
+  {id:'laser', icon:'🔴', iconAsset:'assets/images/ui/perk-laser.png', name:'Лазерная точка с амбициями', desc:'+3 рыбов за нажатие', base:180, click:3},
+  {id:'mouse', icon:'🐭', iconAsset:'assets/images/ui/perk-mouse.png', name:'Мышь на удалённой работе', desc:'+12 рыбов в секунду', base:720, cps:12},
+  {id:'box', icon:'📦', iconAsset:'assets/images/ui/perk-box.png', name:'Коробка дороже квартиры', desc:'+250 рыбов в секунду', base:18000, cps:250}
 ];
 const levels=[
   {at:0,name:'Голодный стратег',scale:.84,img:'assets/images/cat-level-01.png'},
@@ -39,6 +39,7 @@ const achievements=[
   {icon:'🌌',name:'Вселенная оформлена на кота',desc:'Достичь 12 уровня',done:()=>currentLevel()>=11},
   {icon:'😴',name:'Можно и подремать',desc:'Довести Шефа до абсолютной сытости',done:()=>currentLevel()>=13}
 ];
+achievements.forEach((achievement,index)=>achievement.iconAsset=`assets/images/ui/reward-gift-${index+1}.png`);
 const outfits=levels.map((level,index)=>({id:`level-${index+1}`,name:level.name,img:level.img,scale:level.scale,filter:level.filter||'',unlock:index}));
 const rooms=[
   'assets/images/rooms/room-stage-1.webp',
@@ -407,7 +408,7 @@ function render(updatePanels=false){
   $('catBody').style.transform=`scale(${chosen?.scale??level.scale})`;
   $('catBody').style.filter=chosen?.filter??level.filter??'';
   $('levelProgress').style.width=next?`${Math.min(100,(state.total-level.at)/(next.at-level.at)*100)}%`:'100%';
-  if(updatePanels)$('upgrades').innerHTML=upgrades.map(u=>`<button class="upgrade ${state.food<price(u)?'locked':''}" data-id="${u.id}"><span class="icon">${u.icon}</span><span><b>${itemName(u)} · ${state.counts[u.id]}</b><small>${itemDesc(u)}</small></span><span class="price">🐟 ${format(price(u))}</span></button>`).join('');
+  if(updatePanels)$('upgrades').innerHTML=upgrades.map(u=>`<button class="upgrade ${state.food<price(u)?'locked':''}" data-id="${u.id}"><span class="icon"><img src="${u.iconAsset}" alt="" draggable="false"></span><span><b>${itemName(u)} · ${state.counts[u.id]}</b><small>${itemDesc(u)}</small></span><span class="price">🐟 ${format(price(u))}</span></button>`).join('');
   $('bowl').classList.toggle('upgraded',state.counts.bowl>0);
   [...$('foodDecor').children].forEach(item=>item.classList.toggle('visible',(state.treatUntil[+item.dataset.treatIndex]||0)>Date.now()));
   $('grandmaHelper').classList.toggle('visible',(state.helperUntil.grandma||0)>Date.now());
@@ -423,7 +424,7 @@ function render(updatePanels=false){
   $('certificateDecor').classList.toggle('visible',hasMinistry);
   $('foodPileDecor').classList.toggle('visible',hasMinistry);
   if(updatePanels)$('outfits').innerHTML=outfits.map(o=>{const unlocked=li>=o.unlock,active=(chosen?chosen.id:null)===o.id;return `<button class="outfit-card ${unlocked?'':'locked'} ${active?'selected':''}" data-outfit="${o.id}"><img src="${o.img}" alt=""><b>${unlocked?itemName(o):L('Секретный образ','Secret outfit')}</b><small>${unlocked?(active?L('Надето','Equipped'):L('Надеть','Wear')):L(`Откроется на уровне ${o.unlock+1}`,`Unlocks at level ${o.unlock+1}`)}</small></button>`}).join('');
-  if(updatePanels)$('achievements').innerHTML=achievements.map(a=>`<article class="achievement ${a.done()?'earned':'locked'}"><span>${a.done()?a.icon:'❔'}</span><div><b>${itemName(a)}</b><small>${itemDesc(a)}</small></div><strong>${a.done()?L('Получено','Earned'):L('Не открыто','Locked')}</strong></article>`).join('');
+  if(updatePanels)$('achievements').innerHTML=achievements.map(a=>`<article class="achievement ${a.done()?'earned':'locked'}"><span class="achievement-icon"><img src="${a.iconAsset}" alt="" draggable="false"></span><div><b>${itemName(a)}</b><small>${itemDesc(a)}</small></div><strong>${a.done()?L('Получено','Earned'):L('Не открыто','Locked')}</strong></article>`).join('');
   if(updatePanels||$('care').classList.contains('open')||$('foodShop').classList.contains('open'))renderCare(updatePanels);
   renderTreatWish();
   checkAchievements();
