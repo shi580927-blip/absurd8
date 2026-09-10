@@ -1,0 +1,20 @@
+/* Scoped controls, loaded after the legacy scene stylesheet. */
+.game .bottom-nav{top:140px;left:16px;right:auto;bottom:auto;width:76px;height:auto;gap:8px;align-items:center}
+.game .bottom-nav .nav-button{position:relative;flex:0 0 auto;width:76px;height:76px;min-height:0;padding:0;border:0;background:none;box-shadow:none;border-radius:18px}
+.game .bottom-nav .nav-button::before,.game .bottom-nav .nav-button::after{display:none;content:none}
+.game .bottom-nav .nav-button .nav-icon{display:block;width:100%;height:100%;margin:0;object-fit:contain;filter:none}
+.game .bottom-nav .nav-button span{position:absolute;display:block;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.game .bottom-nav .nav-button:hover{background:none;filter:brightness(1.12)}
+.game .bottom-nav .nav-button.active{background:none;box-shadow:none;filter:drop-shadow(0 0 5px #ffc843)}
+.game .bottom-nav .nav-button:focus-visible{outline:2px solid #fff2a0;outline-offset:2px}
+.game .action-dock{width:264px;height:60px;bottom:-72px;display:block}
+.game .action-dock .feed{position:relative;inset:auto;display:flex;align-items:center;justify-content:center;gap:12px;width:100%;height:60px;min-height:60px;margin:0;padding:7px 18px;box-sizing:border-box;transform:none;border:2px solid #efab28;border-radius:18px;background:linear-gradient(#fff079,#ffc72b 52%,#eda017);box-shadow:inset 0 0 0 2px #fff2a1,0 3px 0 #85420d;color:#32190c}
+.game .action-dock .feed .action-icon{position:static;width:auto;height:auto;flex:0 0 auto;margin:0;font-size:32px;line-height:1;transform:none}
+.game .action-dock .feed .action-copy{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;gap:3px}
+.game .action-dock .feed .action-copy b{font-size:17px;line-height:1.1;white-space:nowrap}
+.game .action-dock .feed .action-copy small{font-size:12px;line-height:1.1;white-space:nowrap}
+.small-screen .game .bottom-nav{top:calc(67 * var(--ui-unit));left:calc(6 * var(--ui-unit));width:calc(48 * var(--ui-unit));gap:calc(3 * var(--ui-unit))}
+.small-screen .game .bottom-nav .nav-button{width:calc(48 * var(--ui-unit));height:calc(48 * var(--ui-unit));border-radius:calc(10 * var(--ui-unit))}
+.small-screen .game[data-feed-side="left"] .bottom-nav{left:auto;right:calc(6 * var(--ui-unit))}
+.small-screen .game[data-feed-side="right"] .bottom-nav{left:calc(6 * var(--ui-unit));right:auto}
+.small-screen .game .action-dock{display:none}
