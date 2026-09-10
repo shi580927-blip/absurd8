@@ -427,7 +427,7 @@ function render(updatePanels=false){
   $('catBody').style.transform=`scale(${chosen?.scale??level.scale})`;
   $('catBody').style.filter=chosen?.filter??level.filter??'';
   $('levelProgress').style.width=next?`${Math.min(100,(state.total-level.at)/(next.at-level.at)*100)}%`:'100%';
-  if(updatePanels)$('upgrades').innerHTML=upgrades.map(u=>`<button class="upgrade ${state.food<price(u)?'locked':''}" data-id="${u.id}"><span class="icon"><img src="${u.iconAsset}" alt="" draggable="false"></span><span><b>${itemName(u)} · ${state.counts[u.id]}</b><small>${itemDesc(u)}</small></span><span class="price">🐟 ${format(price(u))}</span></button>`).join('');
+  if(updatePanels)$('upgrades').innerHTML=upgrades.map(u=>`<button class="upgrade ${state.food<price(u)?'locked':''}" data-id="${u.id}"><span class="icon"><img src="${u.iconAsset}" alt="" draggable="false"><span class="upgrade-level">${L('Ур.','Lvl')} ${state.counts[u.id]}</span></span><span class="upgrade-copy"><b>${itemName(u)}</b><small>${itemDesc(u)}</small></span><span class="price">${L('Купить','Buy')}: ${format(price(u))} 🐟</span></button>`).join('');
   $('bowl').classList.toggle('upgraded',state.counts.bowl>0);
   [...$('foodDecor').children].forEach(item=>item.classList.toggle('visible',(state.treatUntil[+item.dataset.treatIndex]||0)>Date.now()));
   $('grandmaHelper').classList.toggle('visible',(state.helperUntil.grandma||0)>Date.now());
