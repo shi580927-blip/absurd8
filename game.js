@@ -203,7 +203,9 @@ if(!Array.isArray(state.earnedAchievements))state.earnedAchievements=achievement
 const CLOUD_SAVE_KEY='absurd8State';
 let ysdk=null,yandexPlayer=null,cloudSaveReady=false,cloudSaveTimer=null,cloudSaveInFlight=false;
 let gameplayActive=false,loadingReady=false,brandIntroFinished=false,platformPaused=false;
-let initialDataReady=!window.YaGames||testMode,introMinElapsed=false,introFinishStarted=false;
+let parentSdkPromise=null;
+try{if(parent!==window)parentSdkPromise=parent.yandexSdkPromise||null}catch(error){}
+let initialDataReady=(!window.YaGames&&!parentSdkPromise)||testMode,introMinElapsed=false,introFinishStarted=false;
 let adPlaying=false,adRequestPending=false;
 const soundExt=(()=>{const audio=document.createElement('audio');return audio.canPlayType('audio/ogg; codecs="vorbis"')?'ogg':'mp3'})();
 const zoomiesAudioTracks=[1,2].map(number=>{const audio=new Audio(`assets/audio/zoomies-carpet-${number}.${soundExt}?v=20260910-1`);audio.preload='auto';audio.volume=.65;audio.loop=true;return audio});
@@ -309,7 +311,7 @@ async function initCloudSave(){
   }catch(error){yandexPlayer=null;cloudSaveReady=false}
   finally{initialDataReady=true;finishIntroWhenReady()}
 }
-async function initYandexSDK(){try{if(window.YaGames){ysdk=await YaGames.init();const sdkLanguage=ysdk.environment.i18n.lang;applyGameLanguage(queryParams.get('lang')||sdkLanguage);ysdk.on?.('game_api_pause',handlePlatformPause);ysdk.on?.('game_api_resume',handlePlatformResume);await initCloudSave();announceGameReady()}}catch(error){ysdk=null;initialDataReady=true;finishIntroWhenReady()}}
+async function initYandexSDK(){try{ysdk=parentSdkPromise?await parentSdkPromise:(window.YaGames?await YaGames.init():null);if(!ysdk){initialDataReady=true;finishIntroWhenReady();return}const sdkLanguage=ysdk.environment.i18n.lang;applyGameLanguage(queryParams.get('lang')||sdkLanguage);ysdk.on?.('game_api_pause',handlePlatformPause);ysdk.on?.('game_api_resume',handlePlatformResume);await initCloudSave();announceGameReady()}catch(error){ysdk=null;initialDataReady=true;finishIntroWhenReady()}}
 initYandexSDK();
 const careRequests={
   hunger:{icon:'🐟',title:'Шеф требует особый перекус',enTitle:'Chef Demands a Special Snack',text:'Обычное кормление считается работой. А это — забота.',enText:'Regular feeding is work. This is personal care.',action:'Подать особый перекус',enAction:'Serve a special snack'},

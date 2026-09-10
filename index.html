@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Кот, который слишком хорошо живёт</title>
+<!-- Yandex Games SDK must be loaded in the root document. -->
+<script src="/sdk.js"></script>
 <style>
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#160b09}
 #viewport{position:fixed;inset:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);overflow:hidden}
@@ -18,9 +20,10 @@
 <div id="rotate"><strong>Поверните телефон</strong><small>Шеф ждёт в горизонтальном кабинете</small></div>
 <script>
 const frame=document.getElementById('stage'),viewport=document.getElementById('viewport');
+window.yandexSdkPromise=window.YaGames?YaGames.init().catch(()=>null):Promise.resolve(null);
 const params=new URLSearchParams(location.search);
 params.set('master','1');
-params.set('build','20260910-4');
+params.set('build','20260910-5');
 frame.src='scene.html?'+params.toString();
 function fit(){
   const scale=Math.min(viewport.clientWidth/1600,viewport.clientHeight/900);
