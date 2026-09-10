@@ -646,11 +646,12 @@ function tickZoomies(timestamp){
 $('testZoomies').addEventListener('click',()=>{if(testMode&&!startZoomies($('testZoomiesRoute').value))$('phrase').textContent=L('Закройте меню и редактор; дождитесь завершения тыгыдыка и загрузки кадров.','Close menus and the editor; wait for zoomies to finish and frames to load.')});
 requestAnimationFrame(tickZoomies);
 function updateMobileControls(){
-  const side=['both','left','right'].includes(state.feedSide)?state.feedSide:'both';
+  const side=['left','right'].includes(state.feedSide)?state.feedSide:'right';
+  state.feedSide=side;
   document.querySelector('.game').dataset.feedSide=side;
   $('mobileControlsTitle').textContent=L('Кнопки кормления','Feeding buttons');
   document.querySelectorAll('button[data-feed-side]').forEach(button=>{
-    button.textContent=({both:L('Обе','Both'),left:L('Слева','Left'),right:L('Справа','Right')})[button.dataset.feedSide];
+    button.textContent=({left:L('Левая рука','Left hand'),right:L('Правая рука','Right hand')})[button.dataset.feedSide];
     button.setAttribute('aria-pressed',String(button.dataset.feedSide===side));
   });
   document.querySelectorAll('.mobile-feed').forEach(button=>{
