@@ -23,7 +23,7 @@ const frame=document.getElementById('stage'),viewport=document.getElementById('v
 window.yandexSdkPromise=window.YaGames?YaGames.init().catch(()=>null):Promise.resolve(null);
 const params=new URLSearchParams(location.search);
 params.set('master','1');
-params.set('build','20260911-14');
+params.set('build','20260911-15');
 frame.src='scene.html?'+params.toString();
 function fit(){
   const scale=Math.min(viewport.clientWidth/1600,viewport.clientHeight/900);
@@ -31,7 +31,7 @@ function fit(){
   frame.contentWindow.postMessage({type:'master-orientation',paused:matchMedia('(orientation:portrait) and (pointer:coarse)').matches,scale},location.origin);
 }
 function cleanDesktopCounters(){
-  if(params.get('test')==='1'||viewport.clientWidth<1200)return;
+  if(viewport.clientWidth<1200)return;
   const doc=frame.contentDocument;
   if(!doc)return;
   const targets=['food','income','incomeUnit'].map(id=>doc.getElementById(id)).filter(Boolean);
