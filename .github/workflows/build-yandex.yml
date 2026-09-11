@@ -1,0 +1,23 @@
+name: Build Yandex ZIP
+on:
+  push:
+    branches: [yandex-build-20260911]
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare package
+        run: |
+          mkdir -p package
+          rsync -a ./ package/ \
+            --exclude '.git' \
+            --exclude '.github' \
+            --exclude '*.md'
+          cd package
+          zip -r ../kot-shef-yandex.zip .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: kot-shef-yandex
+          path: kot-shef-yandex.zip
+          if-no-files-found: error
