@@ -23,14 +23,26 @@ const frame=document.getElementById('stage'),viewport=document.getElementById('v
 window.yandexSdkPromise=window.YaGames?YaGames.init().catch(()=>null):Promise.resolve(null);
 const params=new URLSearchParams(location.search);
 params.set('master','1');
-params.set('build','20260911-11');
+params.set('build','20260911-13');
 frame.src='scene.html?'+params.toString();
 function fit(){
   const scale=Math.min(viewport.clientWidth/1600,viewport.clientHeight/900);
   frame.style.transform='scale('+scale+') translate(-50%,-50%)';
   frame.contentWindow.postMessage({type:'master-orientation',paused:matchMedia('(orientation:portrait) and (pointer:coarse)').matches,scale},location.origin);
 }
-frame.addEventListener('load',fit);
+function patchDesktopCounterFormatting(){
+  if(params.get('test')==='1'||viewport.clientWidth<1200)return;
+  const win=frame.contentWindow;
+  if(!win||typeof win.compactNumber!=='function'||win.__chefDesktopFormatPatched)return;
+  const original=win.compactNumber;
+  win.compactNumber=function(value){
+    const text=original(value);
+    return typeof text==='string'?text.replace(/\b(тыс|млн|млрд|трлн)\./g,'$1'):text;
+  };
+  win.__chefDesktopFormatPatched=true;
+  if(typeof win.render==='function')win.render(true);
+}
+frame.addEventListener('load',()=>{fit();setTimeout(patchDesktopCounterFormatting,0)});
 addEventListener('resize',fit);
 new ResizeObserver(fit).observe(viewport);
 function setShellLanguage(language){
