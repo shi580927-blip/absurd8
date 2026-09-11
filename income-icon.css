@@ -1,5 +1,5 @@
 /* One image alongside the existing live income value, on both screen sizes. */
-.game .topbar .counter-copy .income{display:flex;align-items:center;justify-content:flex-start;gap:6px;flex-wrap:nowrap}
+.game .topbar .counter-copy .income{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:6px;flex-wrap:nowrap}
 .game .topbar .counter-copy .income::before{content:'';display:block;flex:0 0 28px;width:28px;height:28px;margin:0;background:url('assets/images/ui/top/ui5.png') center / contain no-repeat}
 .game .topbar .counter-copy .income #income{white-space:nowrap}
 .small-screen .game .topbar .counter-copy .income{gap:calc(4 * var(--ui-unit))}
