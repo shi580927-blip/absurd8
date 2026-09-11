@@ -529,7 +529,7 @@ function openBoostOffer(){if(adRequestPending)return;const cooldown=Math.max(0,A
 $('rewardedAd').addEventListener('click',openBoostOffer);
 
 $('outfits').addEventListener('click',e=>{const card=e.target.closest('.outfit-card');if(!card)return;const outfit=outfits.find(o=>o.id===card.dataset.outfit);if(currentLevel()<outfit.unlock){$('phrase').textContent=L('Шеф ещё не заслужил этот наряд. Хотя он с этим не согласен.','Chef has not earned this outfit yet. He strongly disagrees.');return}state.outfit=outfit.id;$('phrase').textContent=L(`Шеф выбрал: «${itemName(outfit)}». Публика может аплодировать.`,`Chef chose “${itemName(outfit)}”. The audience may applaud.`);save();render(true)});
-$('upgrades').addEventListener('click',e=>{const b=e.target.closest('.upgrade');if(!b)return;const u=upgrades.find(x=>x.id===b.dataset.id),p=price(u);if(state.food>=p){state.food-=p;state.counts[u.id]++;playSound('buy',.7);if(['grandma','chef','delivery','mouse','laser'].includes(u.id))state.helperUntil[u.id]=Math.max(Date.now(),state.helperUntil[u.id]||0)+5*60*1000;if(u.id==='box')state.helperUntil.box=Math.max(Date.now(),state.helperUntil.box||0)+10*60*1000;if(u.id==='ministry')state.helperUntil.ministry=Math.max(Date.now(),state.helperUntil.ministry||0)+15*60*1000;const message=u.id==='ministry'?L(`Министерский запас и сертификат выданы на ${Math.ceil((state.helperUntil.ministry-Date.now())/60000)} мин.`,`Ministry reserves and certificate issued for ${Math.ceil((state.helperUntil.ministry-Date.now())/60000)} min.`):L(`Куплено: «${itemName(u)}» · уровень ${state.counts[u.id]}.`,`Purchased: “${itemName(u)}” · level ${state.counts[u.id]}.`);$('phrase').textContent=message;$('shopMessage').textContent=message;$('shopMessage').className='panel-message success';trackEvent('upgrade_bought',{upgrade:u.id,level:state.counts[u.id]});save();render(true);if(['grandma','chef','delivery'].includes(u.id)){$('shop').classList.remove('open');$('shop').setAttribute('aria-hidden','true')}}else{playSound('error');const message=L(`Не хватает ${format(p-state.food)} рыбов.`,`You need ${format(p-state.food)} more fish.`);$('phrase').textContent=message;$('shopMessage').textContent=message;$('shopMessage').className='panel-message warning';renderAd();b.classList.add('nope');setTimeout(()=>b.classList.remove('nope'),300)}});
+$('upgrades').addEventListener('click',e=>{const b=e.target.closest('.upgrade');if(!b)return;const u=upgrades.find(x=>x.id===b.dataset.id),p=price(u);if(state.food>=p){state.food-=p;state.counts[u.id]++;playSound('buy',.7);if(['grandma','chef','delivery','mouse','laser'].includes(u.id))state.helperUntil[u.id]=Math.max(Date.now(),state.helperUntil[u.id]||0)+5*60*1000;if(u.id==='box')state.helperUntil.box=Math.max(Date.now(),state.helperUntil.box||0)+10*60*1000;if(u.id==='ministry')state.helperUntil.ministry=Math.max(Date.now(),state.helperUntil.ministry||0)+15*60*1000;const message=u.id==='ministry'?L(`Министерский запас и сертификат выданы на ${Math.ceil((state.helperUntil.ministry-Date.now())/60000)} мин.`,`Ministry reserves and certificate issued for ${Math.ceil((state.helperUntil.ministry-Date.now())/60000)} min.`):L(`Куплено: «${itemName(u)}» · уровень ${state.counts[u.id]}.`,`Purchased: “${itemName(u)}” · level ${state.counts[u.id]}.`);$('phrase').textContent=message;$('shopMessage').textContent=message;$('shopMessage').className='panel-message success';trackEvent('upgrade_bought',{upgrade:u.id,level:state.counts[u.id]});save();render(true);if(['grandma','chef','delivery'].includes(u.id)){showPanel(null)}}else{playSound('error');const message=L(`Не хватает ${format(p-state.food)} рыбов.`,`You need ${format(p-state.food)} more fish.`);$('phrase').textContent=message;$('shopMessage').textContent=message;$('shopMessage').className='panel-message warning';renderAd();b.classList.add('nope');setTimeout(()=>b.classList.remove('nope'),300)}});
 $('roomEvent').addEventListener('click',()=>{const toy=$('roomEvent');if(!toy.classList.contains('show'))return;const reward=Math.max(10,perClick()*12);state.food+=reward;state.total+=reward;playSound(toy.dataset.sound||'reward',.9);if(Math.random()<.45)playSound(Math.random()<.5?'cat-happy-2':'cat-soft',.68);$('phrase').textContent=toy.dataset.phrase;toy.classList.remove('show');save();render();scheduleRoomEvent()});
 $('roomEvent').addEventListener('contextmenu',e=>e.preventDefault());
 const roomEvents=[
@@ -553,7 +553,7 @@ function layoutProfile(){return'landscape'}
 let activeRoomStage=0;
 const layoutKey=()=>`absurd8-layout-v9-landscape-room-${activeRoomStage+1}`;
 const defaultLayouts={
-  landscape:{certificateDecor:{z:-5,hidden:false,left:23.18,top:0,width:9.99},grandmaHelper:{z:0,hidden:false,left:21.87,top:33.12,width:10.09},mouseDecor:{z:0,hidden:false,left:1.44,top:0,width:4.91},boxDecor:{z:-5,hidden:false,left:56.04,top:35.62,width:13.65},chefHelper:{z:0,hidden:false,left:79.69,top:25.8,width:22.31},deliveryHelper:{z:2,hidden:false,left:0,top:50.57,width:18.19},laserDecor:{z:0,hidden:false,left:21.9,top:97,width:3},cat:{z:0,hidden:false,dx:-1.05,dy:10.57,scale:.8},bowl:{z:0,hidden:false,dx:-.38,dy:2.14,scale:1.4},foodProp1:{z:0,hidden:false,left:23.48,top:87.11,width:5},foodProp2:{z:0,hidden:false,left:21.74,top:70.8,width:5},foodProp3:{z:0,hidden:false,left:70.8,top:85.78,width:4},foodProp4:{z:-1,hidden:false,left:76.76,top:82.89,width:14},foodProp5:{z:0,hidden:false,left:25.96,top:66.71,width:15.99},foodProp6:{z:0,hidden:false,left:68.4,top:68.39,width:13.99},foodProp7:{z:0,hidden:false,left:17.62,top:75.47,width:5},foodProp8:{z:-1,hidden:false,left:3.39,top:83.35,width:9.99},foodProp9:{z:0,hidden:false,left:58.3,top:74.89,width:11},foodPileDecor:{z:-5,hidden:false,left:28.14,top:39.1,width:14.97},roomEvent:{z:0,hidden:false,dx:-14.43,dy:-25.29,scale:1},phrase:{z:-1,hidden:false,dx:0,dy:0,scale:1}}
+  landscape:{certificateDecor:{z:-5,hidden:false,left:23.18,top:0,width:9.99},grandmaHelper:{z:0,hidden:false,left:21.87,top:33.12,width:10.09},mouseDecor:{z:0,hidden:false,left:1.44,top:0,width:4.91},boxDecor:{z:-5,hidden:false,left:56.04,top:35.62,width:13.65},chefHelper:{z:0,hidden:false,left:79.69,top:25.8,width:22.31},deliveryHelper:{z:2,hidden:false,left:0,top:50.57,width:18.19},laserDecor:{z:0,hidden:false,left:22.56,top:97,width:3},cat:{z:0,hidden:false,dx:-1.05,dy:10.57,scale:.8},bowl:{z:0,hidden:false,dx:-.38,dy:2.14,scale:1.4},foodProp1:{z:0,hidden:false,left:23.48,top:87.11,width:5},foodProp2:{z:0,hidden:false,left:21.74,top:70.8,width:5},foodProp3:{z:5,hidden:false,left:70.38,top:85.72,width:6},foodProp4:{z:-1,hidden:false,left:76.76,top:82.89,width:14},foodProp5:{z:0,hidden:false,left:25.96,top:66.71,width:15.99},foodProp6:{z:0,hidden:false,left:65.38,top:67.26,width:13.99},foodProp7:{z:1,hidden:false,left:17.44,top:65.75,width:7},foodProp8:{z:-1,hidden:false,left:28.7,top:85.39,width:9.99},foodProp9:{z:19,hidden:false,left:56.19,top:80.52,width:11},foodPileDecor:{z:-5,hidden:false,left:28.14,top:39.1,width:14.97},roomEvent:{z:0,hidden:false,dx:-14.43,dy:-25.29,scale:1},phrase:{z:-1,hidden:false,dx:0,dy:0,scale:1}}
 };
 let selectedLayoutItem=null;
 const roomLayoutOverrides={
@@ -594,7 +594,9 @@ $('testPanel').addEventListener('click',e=>{if(!testMode)return;const reaction=e
 let suppressSave=false;
 $('testReset').addEventListener('click',e=>{if(!testMode)return;e.stopPropagation();suppressSave=true;localStorage.removeItem(saveKey);location.reload()});
 let zoomiesRunning=false,zoomiesElapsed=0,zoomiesPath=[],zoomiesLastFrame=0;
-const ZOOMIES_INTERVAL=2*60*60*1000,ZOOMIES_DURATION=6000;
+const nextZoomiesInterval=()=> (30+Math.random()*15)*60*1000;
+let ZOOMIES_INTERVAL=nextZoomiesInterval();
+const ZOOMIES_DURATION=6000;
 const zoomiesFrames=[1,2,3].map(n=>{const img=new Image();img.src=`assets/images/reactions/tigidik_${n}.webp`;return img});
 function zoomiesBlocked(){return gameIsPaused()||adRequestPending||!!document.querySelector('.shop.open,.reward-confirm.show,.level-celebration.show,.game.layout-mode')}
 function zoomiesPose(progress,path){
@@ -605,7 +607,7 @@ function zoomiesPose(progress,path){
 }
 function startZoomies(kind){
   if(zoomiesRunning||zoomiesBlocked()||!zoomiesFrames.every(img=>img.complete&&img.naturalWidth))return false;
-  zoomiesRunning=true;zoomiesElapsed=-1600;state.zoomiesActiveMs=0;
+  zoomiesRunning=true;zoomiesElapsed=-1600;state.zoomiesActiveMs=0;ZOOMIES_INTERVAL=nextZoomiesInterval();
   zoomiesPath={kind:['spiral','walls','eight'].includes(kind)?kind:['spiral','walls','eight'][Math.floor(Math.random()*3)],direction:Math.random()<.5?-1:1,turns:3};
   pauseZoomiesAudio();zoomiesAudio=zoomiesAudioTracks[zoomiesPath.kind==='walls'?1:0];zoomiesAudio.currentTime=0;syncZoomiesAudio();
   $('zoomiesCat').hidden=true;$('feed').disabled=true;
@@ -618,8 +620,8 @@ function finishZoomies(){
   pauseZoomiesAudio();zoomiesAudioTracks.forEach(audio=>audio.currentTime=0);
   zoomiesRunning=false;$('zoomiesCat').hidden=true;$('feed').disabled=false;
   document.querySelector('.game').classList.remove('zoomies-running');
-  $('phrase').textContent=L('Бесы укрощены. Продолжайте кормить.','Demons tamed. Resume feeding.');
-  showCatThought('happy',L('Бесы укрощены.','Demons tamed.'));save();
+  $('phrase').textContent=L('Бесы укрощены','Demons tamed. Resume feeding.');
+  showCatThought('happy',L('Бесы укрощены','Demons tamed.'));save();
 }
 function tickZoomies(timestamp){
   const dt=zoomiesLastFrame?Math.min(250,Math.max(0,timestamp-zoomiesLastFrame)):0;zoomiesLastFrame=timestamp;
