@@ -23,26 +23,29 @@ const frame=document.getElementById('stage'),viewport=document.getElementById('v
 window.yandexSdkPromise=window.YaGames?YaGames.init().catch(()=>null):Promise.resolve(null);
 const params=new URLSearchParams(location.search);
 params.set('master','1');
-params.set('build','20260911-13');
+params.set('build','20260911-14');
 frame.src='scene.html?'+params.toString();
 function fit(){
   const scale=Math.min(viewport.clientWidth/1600,viewport.clientHeight/900);
   frame.style.transform='scale('+scale+') translate(-50%,-50%)';
   frame.contentWindow.postMessage({type:'master-orientation',paused:matchMedia('(orientation:portrait) and (pointer:coarse)').matches,scale},location.origin);
 }
-function patchDesktopCounterFormatting(){
+function cleanDesktopCounters(){
   if(params.get('test')==='1'||viewport.clientWidth<1200)return;
-  const win=frame.contentWindow;
-  if(!win||typeof win.compactNumber!=='function'||win.__chefDesktopFormatPatched)return;
-  const original=win.compactNumber;
-  win.compactNumber=function(value){
-    const text=original(value);
-    return typeof text==='string'?text.replace(/\b(тыс|млн|млрд|трлн)\./g,'$1'):text;
+  const doc=frame.contentDocument;
+  if(!doc)return;
+  const targets=['food','income','incomeUnit'].map(id=>doc.getElementById(id)).filter(Boolean);
+  const clean=element=>{
+    const before=element.textContent||'';
+    const after=before.replace(/(тыс|млн|млрд|трлн)\./g,'$1').replace(/(рыбов\/сек|fish\/sec)\.$/,'$1');
+    if(after!==before)element.textContent=after;
   };
-  win.__chefDesktopFormatPatched=true;
-  if(typeof win.render==='function')win.render(true);
+  targets.forEach(element=>{
+    clean(element);
+    new MutationObserver(()=>clean(element)).observe(element,{childList:true,characterData:true,subtree:true});
+  });
 }
-frame.addEventListener('load',()=>{fit();setTimeout(patchDesktopCounterFormatting,0)});
+frame.addEventListener('load',()=>{fit();cleanDesktopCounters()});
 addEventListener('resize',fit);
 new ResizeObserver(fit).observe(viewport);
 function setShellLanguage(language){
