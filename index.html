@@ -23,7 +23,7 @@ const frame=document.getElementById('stage'),viewport=document.getElementById('v
 window.yandexSdkPromise=window.YaGames?YaGames.init().catch(()=>null):Promise.resolve(null);
 const params=new URLSearchParams(location.search);
 params.set('master','1');
-params.set('build','20260911-10');
+params.set('build','20260911-11');
 frame.src='scene.html?'+params.toString();
 function fit(){
   const scale=Math.min(viewport.clientWidth/1600,viewport.clientHeight/900);
