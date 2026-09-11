@@ -34,3 +34,5 @@
 .small-screen .game #shop{width:calc(100% - 124 * var(--ui-unit));max-width:none}
 .small-screen .game #awards .shop-head,.small-screen .game #wardrobe .shop-head{min-height:calc(36 * var(--ui-unit));padding-bottom:0}
 .small-screen .game .shop .close,.small-screen .game #shop .close,.small-screen .game #wardrobe .close,.small-screen .game #awards .close{flex-shrink:0;width:calc(44 * var(--ui-unit));min-width:calc(44 * var(--ui-unit));height:calc(44 * var(--ui-unit));min-height:calc(44 * var(--ui-unit))}
+
+.small-screen .game #settings{left:50%;right:auto;width:calc(100% - 124 * var(--ui-unit));max-width:none;box-sizing:border-box}
