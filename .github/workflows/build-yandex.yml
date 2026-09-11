@@ -9,13 +9,13 @@ jobs:
       - uses: actions/checkout@v4
       - name: Prepare package
         run: |
-          mkdir -p package
-          rsync -a ./ package/ \
+          mkdir -p /tmp/yandex-package
+          rsync -a ./ /tmp/yandex-package/ \
             --exclude '.git' \
             --exclude '.github' \
             --exclude '*.md'
-          cd package
-          zip -r ../kot-shef-yandex.zip .
+          cd /tmp/yandex-package
+          zip -r "$GITHUB_WORKSPACE/kot-shef-yandex.zip" .
       - uses: actions/upload-artifact@v4
         with:
           name: kot-shef-yandex
