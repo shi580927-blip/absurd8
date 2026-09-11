@@ -7,5 +7,11 @@
   .game .topbar .counter-copy .counter-value{flex:1 1 235px;min-width:235px}
   .game .topbar .counter-copy .income{flex:0 0 145px;min-width:145px;padding-left:10px;box-sizing:border-box}
 }
+/* Desktop RU: keep the income block closer to the main fish counter. */
+@media (min-width:1200px){
+  html[lang="ru"] .game .topbar .counter-copy{flex-basis:395px;width:395px;max-width:395px;gap:6px}
+  html[lang="ru"] .game .topbar .counter-copy .counter-value{flex:1 1 210px;min-width:210px}
+  html[lang="ru"] .game .topbar .counter-copy .income{flex:0 0 140px;min-width:140px;padding-left:6px}
+}
 .small-screen .game .topbar .counter-copy .income{gap:calc(4 * var(--ui-unit))}
 .small-screen .game .topbar .counter-copy .income::before{flex-basis:calc(22 * var(--ui-unit));width:calc(22 * var(--ui-unit));height:calc(22 * var(--ui-unit))}
