@@ -1,0 +1,17 @@
+/* Keep the food shelf clear of either navigation rail. */
+.game #foodShop{max-width:calc(100% - 208px);box-sizing:border-box}
+.small-screen .game #foodShop{width:calc(100% - 124 * var(--ui-unit));max-width:calc(100% - 124 * var(--ui-unit));left:50%;right:auto;box-sizing:border-box}
+
+/* Compact gold level plaque; the existing live progress remains unchanged. */
+.game .status{--level-unit:1px;display:flex;flex-direction:column;justify-content:center;gap:6px;width:620px;max-width:calc(100% - 208px);height:auto;min-height:52px;bottom:6px;padding:8px 14px;box-sizing:border-box;border:2px solid #cc9a4c;border-radius:15px;background:linear-gradient(145deg,#523020f5,#29160ff5);box-shadow:inset 0 0 0 1px #f6d28b33,0 3px 9px #170b09a6;color:#fff2de}
+.game .status>div:first-child{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0 5px;position:relative;padding:0 19px;text-align:center;font-size:16px;font-weight:800;line-height:1.2;text-transform:uppercase;text-shadow:0 2px 2px #160805}
+.game .status>div:first-child::before,.game .status>div:first-child::after{content:'★';position:absolute;top:50%;transform:translateY(-50%);color:#ffd260;font-size:18px;text-shadow:0 1px #8f4e13}
+.game .status>div:first-child::before{left:0}
+.game .status>div:first-child::after{right:0}
+.game .status #level{font-size:inherit;color:#ffd575;margin:0;line-height:inherit}
+.game .status .meter{display:block;flex:0 0 auto;width:100%;height:7px;margin:0;border-radius:20px;overflow:hidden;background:#1b0e09;box-shadow:inset 0 1px 2px #0009}
+.game .status .meter i{height:100%;border-radius:inherit;background:linear-gradient(90deg,#55cde0,#b2d5bc 48%,#d9a651);box-shadow:inset 0 1px 1px #fff8}
+.small-screen .game .status{--level-unit:var(--ui-unit);width:66%;max-width:calc(100% - 150 * var(--ui-unit));bottom:calc(3 * var(--ui-unit));min-height:calc(38 * var(--ui-unit));padding:calc(5 * var(--ui-unit)) calc(9 * var(--ui-unit));gap:calc(4 * var(--ui-unit));border-width:calc(1 * var(--ui-unit));border-radius:calc(10 * var(--ui-unit))}
+.small-screen .game .status>div:first-child{font-size:calc(12 * var(--ui-unit));padding:0 calc(15 * var(--ui-unit));gap:0 calc(4 * var(--ui-unit))}
+.small-screen .game .status>div:first-child::before,.small-screen .game .status>div:first-child::after{font-size:calc(13 * var(--ui-unit))}
+.small-screen .game .status .meter{height:calc(4 * var(--ui-unit));margin:0}
