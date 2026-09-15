@@ -1,0 +1,17 @@
+name: Export source snapshot
+on:
+  push:
+    branches:
+      - moderation-fix-20260915
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pack source
+        run: zip -qr source-snapshot.zip . -x '.git/*' 'source-snapshot.zip'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: source-snapshot
+          path: source-snapshot.zip
+          retention-days: 1
