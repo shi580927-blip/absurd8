@@ -128,6 +128,7 @@ const $=id=>document.getElementById(id);
 if(cleanTestMode)document.documentElement.classList.add('clean-test');
 $('foodDecor').innerHTML=carpetFood.map((item,index)=>(item.buffet||item.premium)?'':`<img id="foodProp${index+1}" data-treat-index="${index}" data-layout-name="Еда ${index+1}" class="food-prop layout-item" src="assets/images/food-${item.img}.png" style="left:${item.x}%;top:${item.y}%;width:${item.w}%" alt="">`).join('');
 const SUPPORTED_LANGUAGES=new Set(['ru','en']);
+const RUSSIAN_FALLBACK_LANGUAGES=new Set(['ru','be','kk','uk','uz']);
 const NUMBER_LOCALES={ru:'ru-RU',en:'en-US'};
 let gameLanguage='ru';
 const L=(ru,en)=>gameLanguage==='en'?en:ru;
@@ -157,7 +158,7 @@ function applyStaticTranslations(){
 }
 function applyGameLanguage(language){
   const normalized=String(language||'').toLowerCase().split('-')[0];
-  gameLanguage=SUPPORTED_LANGUAGES.has(normalized)?normalized:'ru';
+  gameLanguage=SUPPORTED_LANGUAGES.has(normalized)?normalized:(RUSSIAN_FALLBACK_LANGUAGES.has(normalized)?'ru':'en');
   document.documentElement.lang=gameLanguage;
   if(parent!==window)parent.postMessage({type:'game-language',language:gameLanguage},location.origin);
   applyStaticTranslations();
