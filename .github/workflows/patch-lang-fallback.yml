@@ -1,0 +1,43 @@
+name: Patch Yandex language fallback
+on:
+  push:
+    branches: [lang-fallback-fix-20260915]
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: lang-fallback-fix-20260915
+          fetch-depth: 0
+      - name: Patch game language fallback
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('game.js')
+          text=p.read_text(encoding='utf-8')
+          old="const SUPPORTED_LANGUAGES=new Set(['ru','en']);\nconst NUMBER_LOCALES={ru:'ru-RU',en:'en-US'};"
+          new="const SUPPORTED_LANGUAGES=new Set(['ru','en']);\nconst RUSSIAN_FALLBACK_LANGUAGES=new Set(['ru','be','kk','uk','uz']);\nconst NUMBER_LOCALES={ru:'ru-RU',en:'en-US'};"
+          if old not in text:
+              raise SystemExit('language constants pattern not found')
+          text=text.replace(old,new,1)
+          old2="gameLanguage=SUPPORTED_LANGUAGES.has(normalized)?normalized:'ru';"
+          new2="gameLanguage=SUPPORTED_LANGUAGES.has(normalized)?normalized:(RUSSIAN_FALLBACK_LANGUAGES.has(normalized)?'ru':'en');"
+          if old2 not in text:
+              raise SystemExit('language fallback pattern not found')
+          text=text.replace(old2,new2,1)
+          p.write_text(text,encoding='utf-8')
+          PY
+          node --check game.js
+      - name: Commit patch
+        shell: bash
+        run: |
+          git config user.name "shi580927-blip"
+          git config user.email "shi580927@gmail.com"
+          git add game.js
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Fix Yandex language fallback"
+          git push origin HEAD:lang-fallback-fix-20260915
