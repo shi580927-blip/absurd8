@@ -213,8 +213,33 @@ let parentSdkPromise=null;
 try{if(parent!==window)parentSdkPromise=parent.yandexSdkPromise||null}catch(error){}
 let initialDataReady=(!window.YaGames&&!parentSdkPromise)||testMode,introMinElapsed=false,introFinishStarted=false;
 let adPlaying=false,adRequestPending=false;
-const soundExt=(()=>{const audio=document.createElement('audio');return audio.canPlayType('audio/ogg; codecs="vorbis"')?'ogg':'mp3'})();
-const zoomiesAudioTracks=[1,2].map(number=>{const audio=new Audio(`assets/audio/zoomies-carpet-${number}.${soundExt}?v=20260910-1`);audio.preload='auto';audio.volume=.65;audio.loop=true;return audio});
+const NativeAudioContext=window.AudioContext||window.webkitAudioContext;
+let sharedAudioContext=null;
+const sharedAudioBuffers=new Map();
+const sharedAudioLoads=new Map();
+function audioContext(){if(!sharedAudioContext&&NativeAudioContext)sharedAudioContext=new NativeAudioContext();return sharedAudioContext}
+async function loadWebAudioBuffer(url){
+  if(sharedAudioBuffers.has(url))return sharedAudioBuffers.get(url);
+  if(sharedAudioLoads.has(url))return sharedAudioLoads.get(url);
+  const promise=(async()=>{const context=audioContext();if(!context)throw new Error('Web Audio API is not supported');const response=await fetch(url,{cache:'force-cache'});if(!response.ok)throw new Error(`Audio load failed: ${response.status}`);const bytes=await response.arrayBuffer();const buffer=await context.decodeAudioData(bytes.slice(0));sharedAudioBuffers.set(url,buffer);sharedAudioLoads.delete(url);return buffer})().catch(error=>{sharedAudioLoads.delete(url);throw error});
+  sharedAudioLoads.set(url,promise);return promise;
+}
+class WebAudioTrack{
+  constructor(url){this.url=url;this.loop=false;this._volume=1;this._offset=0;this._playing=false;this._source=null;this._gain=null;this._buffer=null;this._startedAt=0;this._manualStop=false;this._listeners={ended:new Set(),error:new Set()};this._preload='none'}
+  get paused(){return !this._playing} get readyState(){return this._buffer?4:0} get duration(){return this._buffer?.duration||0} get volume(){return this._volume}
+  set volume(value){this._volume=Math.max(0,Math.min(1,Number(value)||0));if(this._gain)this._gain.gain.value=this._volume}
+  get preload(){return this._preload} set preload(value){this._preload=value;if(value==='auto')this.load().catch(()=>{})}
+  get currentTime(){if(this._playing&&this._buffer){const elapsed=Math.max(0,(audioContext()?.currentTime||0)-this._startedAt);return this.loop&&this.duration?elapsed%this.duration:Math.min(elapsed,this.duration||elapsed)}return this._offset}
+  set currentTime(value){this._offset=Math.max(0,Number(value)||0)}
+  async load(){this._buffer=this._buffer||await loadWebAudioBuffer(this.url);return this}
+  cloneNode(){const copy=new WebAudioTrack(this.url);copy._buffer=this._buffer;copy.loop=this.loop;copy.volume=this.volume;return copy}
+  addEventListener(type,handler,options={}){if(!this._listeners[type])this._listeners[type]=new Set();this._listeners[type].add({handler,once:!!options.once})}
+  _emit(type){const listeners=this._listeners[type];if(!listeners)return;[...listeners].forEach(entry=>{try{entry.handler()}catch(error){}if(entry.once)listeners.delete(entry)})}
+  async play(){if(this._playing)return;const context=audioContext();if(!context)throw new Error('Web Audio API is not supported');if(context.state==='suspended')await context.resume();this._buffer=this._buffer||await loadWebAudioBuffer(this.url);const source=context.createBufferSource(),gain=context.createGain();source.buffer=this._buffer;source.loop=!!this.loop;gain.gain.value=this._volume;source.connect(gain);gain.connect(context.destination);const offset=this.duration?this._offset%this.duration:0;this._source=source;this._gain=gain;this._manualStop=false;this._playing=true;this._startedAt=context.currentTime-offset;source.onended=()=>{const manual=this._manualStop;this._source=null;this._gain=null;if(manual)return;this._playing=false;this._offset=0;this._emit('ended')};try{source.start(0,offset)}catch(error){this._playing=false;this._source=null;this._gain=null;this._emit('error');throw error}}
+  pause(){if(!this._playing)return;this._offset=this.currentTime;this._playing=false;this._manualStop=true;try{this._source?.stop()}catch(error){}try{this._source?.disconnect();this._gain?.disconnect()}catch(error){}this._source=null;this._gain=null}
+}
+const soundExt='mp3';
+const zoomiesAudioTracks=[1,2].map(number=>{const audio=new WebAudioTrack(`assets/audio/zoomies-carpet-${number}.${soundExt}?v=20260910-1`);audio.preload='auto';audio.volume=.65;audio.loop=true;return audio});
 let zoomiesAudio=zoomiesAudioTracks[0];
 let zoomiesAudioStarted=false;
 function pauseZoomiesAudio(){zoomiesAudioTracks.forEach(audio=>audio.pause());zoomiesAudioStarted=false}
@@ -225,8 +250,8 @@ function syncZoomiesAudio(){
   zoomiesAudio.play().catch(()=>{});
 }
 const soundNames=['ui-click','feed','buy','error','level','reward','cat-food','cat-happy','cat-happy-2','cat-soft','cat-purr-15','toy-yarn','toy-mouse','toy-slipper','toy-feather','toy-fish'];
-const soundBank=Object.fromEntries(soundNames.map(name=>{const audio=new Audio(`assets/audio/${name}.${soundExt}?v=20260831-9`);audio.preload='auto';return[name,audio]}));
-const backgroundMusic=new Audio(`assets/audio/chef-theme.${soundExt}?v=20260910-2`);backgroundMusic.loop=true;backgroundMusic.preload='auto';backgroundMusic.volume=.42;
+const soundBank=Object.fromEntries(soundNames.map(name=>{const audio=new WebAudioTrack(`assets/audio/${name}.${soundExt}?v=20260831-9`);audio.preload='auto';return[name,audio]}));
+const backgroundMusic=new WebAudioTrack(`assets/audio/chef-theme.${soundExt}?v=20260910-2`);backgroundMusic.loop=true;backgroundMusic.preload='auto';backgroundMusic.volume=.42;
 const activeSounds=new Set();
 const MUSIC_VOLUME=.42,MUSIC_DUCK_VOLUME=.08;
 let musicRampTimer,duckRestoreTimer,duckUntil=0;
@@ -544,7 +569,10 @@ function pauseGameForAd(){adPlaying=true;stopGameplay();stopAllSounds();clearTim
 function resumeGameAfterAd(){if(!adPlaying)return;adPlaying=false;startGameplay();ensureMusic();scheduleRoomEvent()}
 function scheduleRoomEvent(first=false){clearTimeout(roomEventTimer);roomEventTimer=setTimeout(()=>{if(gameIsPaused()){scheduleRoomEvent();return}const event=roomEvents[Math.floor(Math.random()*roomEvents.length)],toy=$('roomEvent');toy.innerHTML=`<img src="${event.img}" alt="">`;toy.dataset.phrase=gameLanguage==='en'?event.enPhrase:event.phrase;toy.dataset.sound=event.sound;toy.style.setProperty('--event-x',`${12+Math.random()*72}%`);toy.style.setProperty('--event-y',`${30+Math.random()*38}%`);toy.classList.add('show');setTimeout(()=>{if(toy.classList.contains('show')){toy.classList.remove('show');scheduleRoomEvent()}},9000)},first?5000:18000+Math.random()*18000)}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){trackEvent('game_hidden',{level:currentLevel()+1,total:Math.floor(state.total)});stopGameplay();stopAllSounds()}else{startGameplay();ensureMusic()}});
-document.addEventListener('contextmenu',e=>e.preventDefault());
+const interactionGuardStyle=document.createElement('style');
+interactionGuardStyle.textContent='html,body,.game,.game *{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}img{-webkit-user-drag:none!important}';
+document.head.append(interactionGuardStyle);
+['contextmenu','selectstart','dragstart'].forEach(type=>document.addEventListener(type,e=>e.preventDefault(),{capture:true}));
 addEventListener('blur',()=>{windowBlurred=true;stopGameplay();stopAllSounds()});
 addEventListener('focus',()=>{windowBlurred=false;startGameplay();ensureMusic()});
 const layoutItems=[...document.querySelectorAll('.layout-item')];
