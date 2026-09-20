@@ -146,7 +146,7 @@ const englishDescriptions={
 const itemName=item=>gameLanguage==='en'?(englishNames[item.name]||item.name):item.name;
 const itemDesc=item=>gameLanguage==='en'?(englishDescriptions[item.desc]||item.desc):item.desc;
 const staticTranslations={
-  pageTitle:['Кот, который слишком хорошо живёт','The Cat Who Lives Too Well'],phrase:['В этой миске подозрительно видно дно.','The bottom of this bowl is suspiciously visible.'],feedLabel:['ПОКОРМИТЬ','FEED'],feedHint:['Можно нажимать на кота или на кнопку','Tap the cat or press the button'],levelLabel:['Уровень наглости','Audacity level'],incomeLabel:['Доход','Income'],incomeUnit:['рыбов/сек.','fish/sec.'],navFeed:['Еда','Food'],navShop:['Привилегии','Privileges'],navWardrobe:['Шкаф','Wardrobe'],navAwards:['Награды','Awards'],shopTitle:['👑 Привилегии Шефа','👑 Chef’s Privileges'],shopMessage:['Выберите привилегию для Шефа.','Choose a privilege for Chef.'],wardrobeTitle:['👕 Гардероб Шефа','👕 Chef’s Wardrobe'],wardrobeMessage:['Одежда меняет вид, но не уменьшает наглость.','Clothes change his look, not his audacity.'],awardsTitle:['🏆 Награды Шефа','🏆 Chef’s Awards'],awardsMessage:['Шеф не хвастается. Он официально информирует.','Chef does not brag. He issues official updates.'],careTitle:['Как поживает Шеф','How Is Chef Doing?'],careMessage:['Шеф не нуждается в заботе. Он разрешает её проявить.','Chef needs no care. He merely permits it.'],hungerLabel:['Сытость','Fullness'],moodLabel:['Настроение','Mood'],restLabel:['Отдых','Rest'],careRequestTitle:['Шеф обдумывает пожелания','Chef Is Considering His Demands'],careRequestText:['Он сообщит, когда потребуется персонал.','He will notify the staff when needed.'],careAction:['Ожидаем распоряжений','Awaiting orders'],careBonus:['Бонус заботы пока не действует.','Care bonus is not active.'],treatTitle:['🍽️ Еда для Шефа','🍽️ Food for Chef'],treatIntro:['Купленное блюдо появляется в комнате на несколько минут. Сытый Шеф иногда имеет собственное мнение.','A purchased dish appears in the room for several minutes. A full Chef may still have opinions.'],careNote:['Показатели снижаются очень медленно. Шеф не болеет, не убегает и никого не наказывает. Почти.','Stats decrease very slowly. Chef never gets sick, runs away, or punishes anyone. Almost.'],settingsTitle:['⚙️ Настройки','⚙️ Settings'],settingsMessage:['Управление и звуки кабинета Шефа.','Controls and sounds in Chef’s office.'],musicLabel:['Фоновая музыка','Background music'],musicHint:['Музыка играет во время кормления','Music plays while you feed Chef'],effectsLabel:['Звуки игры','Game sounds'],effectsHint:['Кормление, кот, награды и игрушки','Feeding, cat, rewards and toys'],developerLabel:['Разработчик','Developer'],presentsLabel:['представляет','presents'],newLevelLabel:['✨ НОВЫЙ УРОВЕНЬ ✨','✨ NEW LEVEL ✨'],congratsLabel:['Шеф принимает поздравления.','Chef accepts your congratulations.'],achievementReceivedLabel:['НАГРАДА ПОЛУЧЕНА','AWARD UNLOCKED'],rewardConfirmTitle:['Открыть за просмотр рекламы?','Unlock by watching an ad?'],rewardConfirmText:['Посмотрите ролик полностью — награда будет выдана после просмотра.','Watch the full video to receive the reward.'],rewardConfirmCancel:['Не сейчас','Not now'],rewardConfirmWatch:['Смотреть рекламу','Watch ad']
+  pageTitle:['Кот, который слишком хорошо живёт','The Cat Who Lives Too Well'],phrase:['В этой миске подозрительно видно дно.','The bottom of this bowl is suspiciously visible.'],feedLabel:['ПОКОРМИТЬ','FEED'],feedHint:['Можно нажимать на кота или на кнопку','Tap the cat or press the button'],levelLabel:['Уровень наглости','Audacity level'],incomeLabel:['Доход','Income'],incomeUnit:['рыбов/сек','fish/sec'],navFeed:['Еда','Food'],navShop:['Привилегии','Privileges'],navWardrobe:['Шкаф','Wardrobe'],navAwards:['Награды','Awards'],shopTitle:['👑 Привилегии Шефа','👑 Chef’s Privileges'],shopMessage:['Выберите привилегию для Шефа.','Choose a privilege for Chef.'],wardrobeTitle:['👕 Гардероб Шефа','👕 Chef’s Wardrobe'],wardrobeMessage:['Одежда меняет вид, но не уменьшает наглость.','Clothes change his look, not his audacity.'],awardsTitle:['🏆 Награды Шефа','🏆 Chef’s Awards'],awardsMessage:['Шеф не хвастается. Он официально информирует.','Chef does not brag. He issues official updates.'],careTitle:['Как поживает Шеф','How Is Chef Doing?'],careMessage:['Шеф не нуждается в заботе. Он разрешает её проявить.','Chef needs no care. He merely permits it.'],hungerLabel:['Сытость','Fullness'],moodLabel:['Настроение','Mood'],restLabel:['Отдых','Rest'],careRequestTitle:['Шеф обдумывает пожелания','Chef Is Considering His Demands'],careRequestText:['Он сообщит, когда потребуется персонал.','He will notify the staff when needed.'],careAction:['Ожидаем распоряжений','Awaiting orders'],careBonus:['Бонус заботы пока не действует.','Care bonus is not active.'],treatTitle:['🍽️ Еда для Шефа','🍽️ Food for Chef'],treatIntro:['Купленное блюдо появляется в комнате на несколько минут. Сытый Шеф иногда имеет собственное мнение.','A purchased dish appears in the room for several minutes. A full Chef may still have opinions.'],careNote:['Показатели снижаются очень медленно. Шеф не болеет, не убегает и никого не наказывает. Почти.','Stats decrease very slowly. Chef never gets sick, runs away, or punishes anyone. Almost.'],settingsTitle:['⚙️ Настройки','⚙️ Settings'],settingsMessage:['Управление и звуки кабинета Шефа.','Controls and sounds in Chef’s office.'],musicLabel:['Фоновая музыка','Background music'],musicHint:['Музыка играет во время кормления','Music plays while you feed Chef'],effectsLabel:['Звуки игры','Game sounds'],effectsHint:['Кормление, кот, награды и игрушки','Feeding, cat, rewards and toys'],developerLabel:['Разработчик','Developer'],presentsLabel:['представляет','presents'],newLevelLabel:['✨ НОВЫЙ УРОВЕНЬ ✨','✨ NEW LEVEL ✨'],congratsLabel:['Шеф принимает поздравления.','Chef accepts your congratulations.'],achievementReceivedLabel:['НАГРАДА ПОЛУЧЕНА','AWARD UNLOCKED'],rewardConfirmTitle:['Открыть за просмотр рекламы?','Unlock by watching an ad?'],rewardConfirmText:['Посмотрите ролик полностью — награда будет выдана после просмотра.','Watch the full video to receive the reward.'],rewardConfirmCancel:['Не сейчас','Not now'],rewardConfirmWatch:['Смотреть рекламу','Watch ad']
 };
 function applyStaticTranslations(){
   Object.entries(staticTranslations).forEach(([id,texts])=>{const element=$(id);if(element)element.textContent=texts[gameLanguage==='en'?1:0]});
@@ -193,7 +193,7 @@ function renderChefWish(markSeen=false){
 }
 function compactNumber(n){
   const value=Math.max(0,Math.floor(Number(n)||0));
-  const units=[[1e12,'трлн','T'],[1e9,'млрд','B'],[1e6,'млн','M'],[1e3,'тыс.','K']];
+  const units=[[1e12,'трлн','T'],[1e9,'млрд','B'],[1e6,'млн','M'],[1e3,'тыс','K']];
   const unit=units.find(([base])=>value>=base);
   if(!unit)return String(value);
   const amount=Math.floor(value/unit[0]*10)/10;
@@ -262,6 +262,40 @@ const needsLandscape=()=>matchMedia('(orientation:portrait) and (max-width:899px
 let masterOrientationPaused=false,windowBlurred=false;
 addEventListener('message',event=>{if(event.source!==parent||event.origin!==location.origin||event.data?.type!=='master-orientation')return;masterOrientationPaused=!!event.data.paused;const scale=Number(event.data.scale);if(Number.isFinite(scale)&&scale>0){document.documentElement.style.setProperty('--ui-unit',`${1/scale}px`);document.documentElement.classList.toggle('small-screen',scale<.75)}syncOrientation()});
 function gameIsPaused(){return adPlaying||platformPaused||masterOrientationPaused||windowBlurred||!brandIntroFinished||document.visibilityState==='hidden'||needsLandscape()}
+const EventDirector={
+  major:null,
+  until:0,
+  begin(name,duration=0){
+    this.cleanup();
+    if(this.major&&this.major!==name)return false;
+    this.major=name;
+    this.until=duration>0?Date.now()+duration:0;
+    document.documentElement.dataset.majorEvent=name;
+    return true;
+  },
+  end(name){
+    if(name&&this.major!==name)return;
+    this.major=null;
+    this.until=0;
+    delete document.documentElement.dataset.majorEvent;
+  },
+  cleanup(){
+    if(this.major&&this.until>0&&Date.now()>=this.until)this.end(this.major);
+  },
+  busy(except=null){
+    this.cleanup();
+    return !!this.major&&this.major!==except;
+  },
+  uiBusy(){
+    return !!document.querySelector('.shop.open,.reward-confirm.show,.level-celebration.show,.game.layout-mode');
+  },
+  canStartMajor(name){
+    return !gameIsPaused()&&!adRequestPending&&!this.uiBusy()&&!this.busy(name);
+  },
+  canRunIdle(){
+    return !gameIsPaused()&&!adRequestPending&&!this.uiBusy()&&!this.busy()&&!document.querySelector('.game.zoomies-running');
+  }
+};
 let timerCheckpoint=Date.now(),timersWerePaused=false;
 function syncPausedTimers(){
   const now=Date.now(),elapsed=Math.max(0,now-timerCheckpoint);
@@ -421,7 +455,7 @@ let achievementShowing=false,achievementDelayTimer;
 function showNextAchievement(){if(achievementShowing||!achievementQueue.length)return;if($('levelCelebration').classList.contains('show')){if(!achievementDelayTimer)achievementDelayTimer=setTimeout(()=>{achievementDelayTimer=null;showNextAchievement()},2850);return}achievementShowing=true;const award=achievementQueue.shift();$('achievementToastIcon').textContent=award.icon;$('achievementToastTitle').textContent=itemName(award);$('achievementToastText').textContent=itemDesc(award);$('achievementToast').classList.add('show');setTimeout(()=>playSound('reward',.62),350);setTimeout(()=>{$('achievementToast').classList.remove('show');setTimeout(()=>{achievementShowing=false;showNextAchievement()},350)},3600)}
 function checkAchievements(){achievements.forEach(award=>{if(award.done()&&!state.earnedAchievements.includes(award.name)){state.earnedAchievements.push(award.name);achievementQueue.push(award);trackEvent('achievement_unlocked',{achievement:award.name})}});if(achievementQueue.length){save();showNextAchievement()}}
 let levelCelebrationTimer;
-function showLevelCelebration(levelIndex){clearTimeout(levelCelebrationTimer);$('levelCelebrationTitle').textContent=`${levelIndex+1} · ${itemName(levels[levelIndex])}`;$('levelCelebration').classList.remove('show');void $('levelCelebration').offsetWidth;$('levelCelebration').classList.add('show');levelCelebrationTimer=setTimeout(()=>$('levelCelebration').classList.remove('show'),2700)}
+function showLevelCelebration(levelIndex){clearTimeout(levelCelebrationTimer);EventDirector.begin('level',3000);$('levelCelebrationTitle').textContent=`${levelIndex+1} · ${itemName(levels[levelIndex])}`;$('levelCelebration').classList.remove('show');void $('levelCelebration').offsetWidth;$('levelCelebration').classList.add('show');levelCelebrationTimer=setTimeout(()=>{$('levelCelebration').classList.remove('show');EventDirector.end('level')},2700)}
 function returnToSceneForLevel(levelIndex){document.querySelectorAll('.shop.open').forEach(panel=>{panel.classList.remove('open');panel.setAttribute('aria-hidden','true')});document.querySelectorAll('.nav-button').forEach(button=>button.classList.toggle('active',button.id==='openFeed'));playSound('level',.9);showLevelCelebration(levelIndex);setTimeout(()=>playPurr(true),2100)}
 let renderedLevel=currentLevel();
 let renderedBoxStage=-1;
@@ -549,7 +583,7 @@ $('treats').addEventListener('click',e=>{
 $('careAction').addEventListener('click',()=>{updateCare();const type=state.care.request;if(!type)return;if(type==='hunger'){const cost=Math.max(10,perClick()*8);if(state.food<cost){playSound('error');$('careRequestText').textContent=L(`Для особого перекуса не хватает ${format(cost-state.food)} рыбов.`,`The special snack needs ${format(cost-state.food)} more fish.`);return}state.food-=cost}state.care[type]=Math.min(100,state.care[type]+32);state.care.request=null;state.care.bonusUntil=Date.now()+5*60*1000;state.care.nextRequest=Date.now()+(2+Math.random())*3600000;playSound('reward',.75);if(type==='hunger')playPurr();else playSound(type==='mood'?'cat-happy-2':'cat-soft',.72);$('phrase').textContent=type==='hunger'?L('Особый перекус принят. Шеф великодушно не оставил ни крошки.','Special snack accepted. Chef generously left no crumbs.'):type==='mood'?L('Перо побеждено. Настроение руководства улучшилось.','The feather was defeated. Management morale improved.'):L('Тишина объявлена государственной необходимостью.','Silence has been declared a matter of national importance.');save();render(true)});
 const AD_WATCH_COOLDOWN=300000;
 let lastAdWatch=+(localStorage.getItem('absurd8-last-ad-watch')||0);
-function showRewardedAction({event,onReward,success}){if(adRequestPending)return;const remaining=AD_WATCH_COOLDOWN-(Date.now()-lastAdWatch);if(remaining>0){playSound('error',.45);const message=L(`Следующая реклама будет доступна через ${Math.ceil(remaining/1000)} сек.`,`The next ad will be available in ${Math.ceil(remaining/1000)} sec.`);$('phrase').textContent=message;$('adStatus').textContent=message;return}if(!ysdk?.adv){playSound('error');const message=L('Реклама будет доступна после запуска игры на Яндекс Играх.','Ads will be available after launching the game on Yandex Games.');$('phrase').textContent=message;$('adStatus').textContent=message;return}adRequestPending=true;trackEvent(`${event}_clicked`);renderAd();let rewarded=false;const fail=()=>{adRequestPending=false;resumeGameAfterAd();playSound('error');const message=L('Сейчас реклама недоступна. Попробуйте немного позже.','Ads are unavailable right now. Please try again later.');$('phrase').textContent=message;$('adStatus').textContent=message;render(true)};try{const result=ysdk.adv.showRewardedVideo({callbacks:{onOpen:()=>{lastAdWatch=Date.now();localStorage.setItem('absurd8-last-ad-watch',String(lastAdWatch));pauseGameForAd();$('adStatus').textContent=L('Просмотр начался. Награда будет выдана после завершения.','Video started. The reward will be granted after completion.')},onRewarded:()=>{if(rewarded)return;syncPausedTimers();rewarded=true;onReward();trackEvent(`${event}_rewarded`);save()},onClose:()=>{adRequestPending=false;resumeGameAfterAd();if(rewarded)playSound('reward');const message=rewarded?success:L('Просмотр не завершён — награда не выдана.','Video not completed — no reward was granted.');$('phrase').textContent=message;$('adStatus').textContent=message;render(true)},onError:fail}});result?.catch?.(fail)}catch(error){fail()}}
+function showRewardedAction({event,onReward,success}){if(adRequestPending)return;if(!EventDirector.canStartMajor('ad')){const message=L('Шеф сейчас занят. Попробуйте после завершения события.','Chef is busy right now. Try again after the event.');$('phrase').textContent=message;$('adStatus').textContent=message;return}const remaining=AD_WATCH_COOLDOWN-(Date.now()-lastAdWatch);if(remaining>0){playSound('error',.45);const message=L(`Следующая реклама будет доступна через ${Math.ceil(remaining/1000)} сек.`,`The next ad will be available in ${Math.ceil(remaining/1000)} sec.`);$('phrase').textContent=message;$('adStatus').textContent=message;return}if(!ysdk?.adv){playSound('error');const message=L('Реклама будет доступна после запуска игры на Яндекс Играх.','Ads will be available after launching the game on Yandex Games.');$('phrase').textContent=message;$('adStatus').textContent=message;return}adRequestPending=true;trackEvent(`${event}_clicked`);renderAd();let rewarded=false;const fail=()=>{adRequestPending=false;resumeGameAfterAd();playSound('error');const message=L('Сейчас реклама недоступна. Попробуйте немного позже.','Ads are unavailable right now. Please try again later.');$('phrase').textContent=message;$('adStatus').textContent=message;render(true)};try{const result=ysdk.adv.showRewardedVideo({callbacks:{onOpen:()=>{lastAdWatch=Date.now();localStorage.setItem('absurd8-last-ad-watch',String(lastAdWatch));pauseGameForAd();$('adStatus').textContent=L('Просмотр начался. Награда будет выдана после завершения.','Video started. The reward will be granted after completion.')},onRewarded:()=>{if(rewarded)return;syncPausedTimers();rewarded=true;onReward();trackEvent(`${event}_rewarded`);save()},onClose:()=>{adRequestPending=false;resumeGameAfterAd();if(rewarded)playSound('reward');const message=rewarded?success:L('Просмотр не завершён — награда не выдана.','Video not completed — no reward was granted.');$('phrase').textContent=message;$('adStatus').textContent=message;render(true)},onError:fail}});result?.catch?.(fail)}catch(error){fail()}}
 function mainRewardedAdClick(){if(adRequestPending)return;const cooldown=AD_WATCH_COOLDOWN-(Date.now()-lastAdWatch);if(cooldown>0){const message=L(`Следующая реклама будет доступна через ${Math.ceil(cooldown/1000)} сек.`,`The next ad will be available in ${Math.ceil(cooldown/1000)} sec.`);$('phrase').textContent=message;$('adStatus').textContent=message;return}const instantReward=adRewardAmount();showRewardedAction({event:'ad',onReward:()=>{state.food+=instantReward;state.total+=instantReward;state.adBonusUntil=Date.now()+5*60*1000},success:L(`Спонсор выделил ${format(instantReward)} рыбов. Доход ×3 на 5 минут.`,`The sponsor allocated ${format(instantReward)} fish. Income ×3 for 5 minutes.`)})}
 function openBoostOffer(){if(adRequestPending)return;const cooldown=Math.max(0,AD_WATCH_COOLDOWN-(Date.now()-lastAdWatch));if(cooldown>0){confirmRewardedAction(L('Реклама пока недоступна','Ad not ready'),L('Общий перерыв для ускорения и блюд: осталось '+Math.ceil(cooldown/1000)+' сек.','Shared cooldown for boosts and dishes: '+Math.ceil(cooldown/1000)+' seconds left.'),null);$('rewardConfirmWatch').disabled=true;return}confirmRewardedAction(L('Ускорение на 5 минут','Boost for 5 minutes'),L('За полный просмотр: +'+format(adRewardAmount())+' рыбов сразу и набор рыбов ×3 на 5 минут.','Watch the full ad for +'+format(adRewardAmount())+' fish now and ×3 fish earnings for 5 minutes.'),mainRewardedAdClick)}
 $('rewardedAd').addEventListener('click',openBoostOffer);
@@ -566,9 +600,9 @@ const roomEvents=[
   {img:'assets/images/events/fish.png',sound:'toy-fish',phrase:'Рыбка сама пришла устраиваться на работу.',enPhrase:'The fish reported for duty on its own.'}
 ];
 let roomEventTimer;
-function pauseGameForAd(){adPlaying=true;stopGameplay();stopAllSounds();clearTimeout(roomEventTimer);$('roomEvent').classList.remove('show')}
-function resumeGameAfterAd(){if(!adPlaying)return;adPlaying=false;startGameplay();ensureMusic();scheduleRoomEvent()}
-function scheduleRoomEvent(first=false){clearTimeout(roomEventTimer);roomEventTimer=setTimeout(()=>{if(gameIsPaused()){scheduleRoomEvent();return}const event=roomEvents[Math.floor(Math.random()*roomEvents.length)],toy=$('roomEvent');toy.innerHTML=`<img src="${event.img}" alt="">`;toy.dataset.phrase=gameLanguage==='en'?event.enPhrase:event.phrase;toy.dataset.sound=event.sound;toy.style.setProperty('--event-x',`${12+Math.random()*72}%`);toy.style.setProperty('--event-y',`${30+Math.random()*38}%`);toy.classList.add('show');setTimeout(()=>{if(toy.classList.contains('show')){toy.classList.remove('show');scheduleRoomEvent()}},9000)},first?5000:18000+Math.random()*18000)}
+function pauseGameForAd(){EventDirector.begin('ad');adPlaying=true;stopGameplay();stopAllSounds();clearTimeout(roomEventTimer);$('roomEvent').classList.remove('show')}
+function resumeGameAfterAd(){if(!adPlaying)return;adPlaying=false;EventDirector.end('ad');startGameplay();ensureMusic();scheduleRoomEvent()}
+function scheduleRoomEvent(first=false){clearTimeout(roomEventTimer);roomEventTimer=setTimeout(()=>{if(!EventDirector.canRunIdle()){scheduleRoomEvent();return}const event=roomEvents[Math.floor(Math.random()*roomEvents.length)],toy=$('roomEvent');toy.innerHTML=`<img src="${event.img}" alt="">`;toy.dataset.phrase=gameLanguage==='en'?event.enPhrase:event.phrase;toy.dataset.sound=event.sound;toy.style.setProperty('--event-x',`${12+Math.random()*72}%`);toy.style.setProperty('--event-y',`${30+Math.random()*38}%`);toy.classList.add('show');setTimeout(()=>{if(toy.classList.contains('show')){toy.classList.remove('show');scheduleRoomEvent()}},9000)},first?5000:18000+Math.random()*18000)}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){trackEvent('game_hidden',{level:currentLevel()+1,total:Math.floor(state.total)});stopGameplay();stopAllSounds()}else{startGameplay();ensureMusic()}});
 const interactionGuardStyle=document.createElement('style');
 interactionGuardStyle.textContent='html,body,.game,.game *{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}img{-webkit-user-drag:none!important}';
@@ -627,7 +661,7 @@ const nextZoomiesInterval=()=> (30+Math.random()*15)*60*1000;
 let ZOOMIES_INTERVAL=nextZoomiesInterval();
 const ZOOMIES_DURATION=6000;
 const zoomiesFrames=[1,2,3].map(n=>{const img=new Image();img.src=`assets/images/reactions/tigidik_${n}.webp`;return img});
-function zoomiesBlocked(){return gameIsPaused()||adRequestPending||!!document.querySelector('.shop.open,.reward-confirm.show,.level-celebration.show,.game.layout-mode')}
+function zoomiesBlocked(){return !EventDirector.canStartMajor('zoomies')}
 function zoomiesPose(progress,path){
   const angle=progress*Math.PI*2*path.turns,direction=path.direction;
   if(path.kind==='walls')return {x:50+40*Math.sin(angle),y:50+35*Math.cos(angle),rotation:-angle*180/Math.PI,scale:.85,flip:1};
@@ -636,6 +670,7 @@ function zoomiesPose(progress,path){
 }
 function startZoomies(kind){
   if(zoomiesRunning||zoomiesBlocked()||!zoomiesFrames.every(img=>img.complete&&img.naturalWidth))return false;
+  if(!EventDirector.begin('zoomies'))return false;
   zoomiesRunning=true;zoomiesElapsed=-1600;state.zoomiesActiveMs=0;ZOOMIES_INTERVAL=nextZoomiesInterval();
   zoomiesPath={kind:['spiral','walls','eight'].includes(kind)?kind:['spiral','walls','eight'][Math.floor(Math.random()*3)],direction:Math.random()<.5?-1:1,turns:3};
   pauseZoomiesAudio();zoomiesAudio=zoomiesAudioTracks[zoomiesPath.kind==='walls'?1:0];zoomiesAudio.currentTime=0;syncZoomiesAudio();
@@ -647,6 +682,7 @@ function startZoomies(kind){
 }
 function finishZoomies(){
   pauseZoomiesAudio();zoomiesAudioTracks.forEach(audio=>audio.currentTime=0);
+  EventDirector.end('zoomies');
   zoomiesRunning=false;$('zoomiesCat').hidden=true;$('feed').disabled=false;
   document.querySelector('.game').classList.remove('zoomies-running');
   $('phrase').textContent=L('Бесы укрощены','Demons tamed. Resume feeding.');
