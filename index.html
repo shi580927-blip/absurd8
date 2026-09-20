@@ -23,29 +23,14 @@ const frame=document.getElementById('stage'),viewport=document.getElementById('v
 window.yandexSdkPromise=window.YaGames?YaGames.init().catch(()=>null):Promise.resolve(null);
 const params=new URLSearchParams(location.search);
 params.set('master','1');
-params.set('build','20260911-15');
+params.set('build','20260920-16');
 frame.src='scene.html?'+params.toString();
 function fit(){
   const scale=Math.min(viewport.clientWidth/1600,viewport.clientHeight/900);
   frame.style.transform='scale('+scale+') translate(-50%,-50%)';
   frame.contentWindow.postMessage({type:'master-orientation',paused:matchMedia('(orientation:portrait) and (pointer:coarse)').matches,scale},location.origin);
 }
-function cleanDesktopCounters(){
-  if(viewport.clientWidth<1200)return;
-  const doc=frame.contentDocument;
-  if(!doc)return;
-  const targets=['food','income','incomeUnit'].map(id=>doc.getElementById(id)).filter(Boolean);
-  const clean=element=>{
-    const before=element.textContent||'';
-    const after=before.replace(/(тыс|млн|млрд|трлн)\./g,'$1').replace(/(рыбов\/сек|fish\/sec)\.$/,'$1');
-    if(after!==before)element.textContent=after;
-  };
-  targets.forEach(element=>{
-    clean(element);
-    new MutationObserver(()=>clean(element)).observe(element,{childList:true,characterData:true,subtree:true});
-  });
-}
-frame.addEventListener('load',()=>{fit();cleanDesktopCounters()});
+frame.addEventListener('load',fit);
 addEventListener('resize',fit);
 new ResizeObserver(fit).observe(viewport);
 function setShellLanguage(language){
