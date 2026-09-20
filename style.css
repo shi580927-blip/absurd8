@@ -800,3 +800,12 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 .small-screen .care-card b{font-size:calc(21 * var(--ui-unit))}
 .small-screen .chef-wish-content{grid-template-columns:calc(74 * var(--ui-unit)) minmax(0,1fr);min-height:calc(82 * var(--ui-unit))}
 .small-screen #chefWishImage{width:calc(74 * var(--ui-unit));height:calc(74 * var(--ui-unit))}
+
+.cat.chef-antic-rub{pointer-events:none;animation:chefAnticRub 4.6s cubic-bezier(.36,.07,.19,.97) both}
+@keyframes chefAnticRub{
+  0%,100%{transform:translate(var(--layout-x),var(--layout-y)) scale(var(--layout-scale)) rotate(0)}
+  18%{transform:translate(calc(var(--layout-x) - 3vw),calc(var(--layout-y) - 1.2dvh)) scale(var(--layout-scale)) rotate(-2deg)}
+  38%{transform:translate(calc(var(--layout-x) + 4vw),calc(var(--layout-y) - 2dvh)) scale(var(--layout-scale)) rotate(2.5deg)}
+  58%{transform:translate(calc(var(--layout-x) - 2.5vw),calc(var(--layout-y) - .8dvh)) scale(var(--layout-scale)) rotate(-1.5deg)}
+  78%{transform:translate(calc(var(--layout-x) + 3vw),var(--layout-y)) scale(var(--layout-scale)) rotate(1deg)}
+}
