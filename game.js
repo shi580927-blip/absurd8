@@ -1008,9 +1008,9 @@ function layoutOverridesEnabled(){return layoutEditorMode||document.querySelecto
 const stagedLayoutItemIds=new Set(['grandmaHelper','mouseDecor','deliveryHelper']);
 const helperLayoutRoomDefaults={
   0:{
-    grandmaHelper:{z:0,hidden:false,left:8.38,top:34.23,width:14.11},
+    grandmaHelper:{z:0,hidden:false,left:7.73,top:30.18,width:16.11},
     mouseDecor:{z:0,hidden:false,left:56.96,top:42.64,width:3.03},
-    deliveryHelper:{z:2,hidden:false,left:0,top:73.27,width:19.46}
+    deliveryHelper:{z:2,hidden:false,left:1.29,top:77.93,width:15.46}
   },
   1:{
     grandmaHelper:{z:1,hidden:false,left:22.16,top:27.93,width:14.11},
