@@ -638,7 +638,16 @@ const chefAntics={
     thought:['Очень важная встреча с подушкой.','A very important meeting with a pillow.'],reaction:'fussy'
   },
   groom:{
-    enabled:true,minLevel:3,frames:[['groom_back',500],['groom_lick_leg',700],['groom_side_glance',550],['groom_lick_leg',700],['groom_back',500],['groom_lick_leg',850],['groom_side_glance',650]],
+    enabled:true,minLevel:3,frames:[
+      ['groom_back',500],
+      ['groom_lick_leg',700],
+      ['groom_side_glance',550],
+      ['groom_lick_leg',750,null,{flipX:true}],
+      ['groom_side_glance',500,null,{flipX:true}],
+      ['groom_back',450],
+      ['groom_lick_leg',800],
+      ['groom_side_glance',650]
+    ],
     phrase:['Личная гигиена важнее ваших дел.','Personal grooming is more important than your business.'],
     thought:['Не мешайте. Процедура серьёзная.','Do not interrupt. This is a serious procedure.'],reaction:'judging'
   },
