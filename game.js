@@ -628,7 +628,12 @@ const chefAntics={
     thought:['Шеф проявляет нежность. С последствиями.','Chef is showing affection. With consequences.'],reaction:'innocent'
   },
   sleep:{
-    enabled:true,minLevel:2,frames:[['sleep_back',650],['sleep_doze',700],['sleep_asleep',900],['sleep_doze',650],['sleep_asleep',1050],['sleep_doze',650]],
+    enabled:true,minLevel:2,frames:[
+      ['sleep_asleep',1200,null,{flipX:false}],
+      ['sleep_asleep',1200,null,{flipX:true}],
+      ['sleep_asleep',1200,null,{flipX:false}],
+      ['sleep_asleep',1200,null,{flipX:true}]
+    ],
     phrase:['Шеф временно недоступен. Он занят.','Chef is temporarily unavailable. He is busy.'],
     thought:['Очень важная встреча с подушкой.','A very important meeting with a pillow.'],reaction:'fussy'
   },
@@ -669,7 +674,7 @@ const chefAntics={
   }
 };
 const chefAnticVisual={
-  sleep:{scale:.82,sceneWidth:.58,widthScale:1.02},
+  sleep:{scale:.90,sceneWidth:.62,widthScale:1.08},
   groom:{scale:.84,sceneWidth:.60,widthScale:1.05},
   butterfly:{scale:.82,sceneWidth:.60,widthScale:1.08},
   yarn:{scale:.82,sceneWidth:.62,widthScale:1.12},
@@ -707,7 +712,7 @@ function chefAnticMotion(id,index,progress){
   }
   return{dx,dy,scale,rotation:rotation*Math.PI/180}
 }
-function paintChefAnticFrame(ctx,canvas,frameKey,id,index,progress,alpha=1){
+function paintChefAnticFrame(ctx,canvas,frameKey,id,index,progress,alpha=1,opts={}){
   const frame=chefAnticAtlasFrames[frameKey];
   if(!frame)return false;
   const rect=canvas.getBoundingClientRect(),sceneRect=rect,catRect=$('cat').getBoundingClientRect();
@@ -729,12 +734,13 @@ function paintChefAnticFrame(ctx,canvas,frameKey,id,index,progress,alpha=1){
   ctx.globalAlpha=alpha;
   ctx.translate(dx+dw/2,dy+dh/2);
   ctx.rotate(motion.rotation);
-  ctx.scale(motion.scale,motion.scale);
+  const flipX=opts?.flipX?-1:1;
+  ctx.scale(motion.scale*flipX,motion.scale);
   ctx.drawImage(chefAnticAtlas,sx,sy,sw,sh,-dw/2,-dh/2,dw,dh);
   ctx.restore();
   return true
 }
-function drawChefAnticFrame(frameKey,{id='',index=0,progress=1,previousFrameKey=null,blend=1}={}){
+function drawChefAnticFrame(frameKey,{id='',index=0,progress=1,previousFrameKey=null,previousOpts={},opts={},blend=1}={}){
   const frame=chefAnticAtlasFrames[frameKey],canvas=$('chefAnticCanvas');
   if(!frame||!canvas||!chefAnticAtlasReady)return false;
   const rect=canvas.getBoundingClientRect(),dpr=Math.min(3,window.devicePixelRatio||1);
@@ -744,8 +750,8 @@ function drawChefAnticFrame(frameKey,{id='',index=0,progress=1,previousFrameKey=
   ctx.clearRect(0,0,cw,ch);
   ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
   const mix=Math.max(0,Math.min(1,blend));
-  if(previousFrameKey&&mix<1)paintChefAnticFrame(ctx,canvas,previousFrameKey,id,Math.max(0,index-1),1,1-mix);
-  paintChefAnticFrame(ctx,canvas,frameKey,id,index,progress,mix);
+  if(previousFrameKey&&mix<1)paintChefAnticFrame(ctx,canvas,previousFrameKey,id,Math.max(0,index-1),1,1-mix,previousOpts);
+  paintChefAnticFrame(ctx,canvas,frameKey,id,index,progress,mix,opts);
   chefAnticCurrentFrame=frameKey;
   return true
 }
@@ -767,14 +773,17 @@ function playChefAnticFrames(id,antic,index=0){
   if(!chefAnticRunning||index>=antic.frames.length)return;
   cancelAnimationFrame(chefAnticRaf);chefAnticRaf=0;
   clearTimeout(chefAnticFrameTimer);
-  const [frameKey,duration,sound]=antic.frames[index],previousFrameKey=index>0?antic.frames[index-1][0]:null;
+  const [frameKey,duration,sound,opts={}]=antic.frames[index];
+  const previousFrame=index>0?antic.frames[index-1]:null;
+  const previousFrameKey=previousFrame?previousFrame[0]:null;
+  const previousOpts=previousFrame?.[3]||{};
   if(sound)playSound(sound,.7);
   const started=performance.now();
   const tick=now=>{
     if(!chefAnticRunning)return;
     const progress=Math.min(1,(now-started)/Math.max(1,duration));
     const blend=previousFrameKey?Math.min(1,progress/.24):1;
-    if(!drawChefAnticFrame(frameKey,{id,index,progress,previousFrameKey,blend})){finishChefAntic(id);return}
+    if(!drawChefAnticFrame(frameKey,{id,index,progress,previousFrameKey,previousOpts,opts,blend})){finishChefAntic(id);return}
     if(progress<1)chefAnticRaf=requestAnimationFrame(tick);
     else chefAnticFrameTimer=setTimeout(()=>index+1<antic.frames.length?playChefAnticFrames(id,antic,index+1):finishChefAntic(id),45);
   };
