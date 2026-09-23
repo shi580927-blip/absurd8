@@ -809,3 +809,8 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
   58%{transform:translate(calc(var(--layout-x) - 2.5vw),calc(var(--layout-y) - .8dvh)) scale(var(--layout-scale)) rotate(-1.5deg)}
   78%{transform:translate(calc(var(--layout-x) + 3vw),var(--layout-y)) scale(var(--layout-scale)) rotate(1deg)}
 }
+
+.chef-antic-canvas{position:absolute;z-index:9;left:50%;top:54%;width:min(96%,620px);height:min(58dvh,520px);transform:translate(-50%,-50%);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .12s ease;filter:drop-shadow(0 10px 7px rgba(20,5,0,.55))}
+.chef-antic-canvas.show{opacity:1;visibility:visible}
+.game.chef-antic-sequence .cat{opacity:0;pointer-events:none}
+.game.chef-antic-sequence .bowl{opacity:0}
