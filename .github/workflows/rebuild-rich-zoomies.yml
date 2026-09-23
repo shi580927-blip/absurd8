@@ -1,0 +1,46 @@
+name: Rebuild Rich zoomies audio
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/rebuild-rich-zoomies.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Rebuild and verify MP3
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .audio-upload/part*.b64 > /tmp/zoomies.b64
+          base64 -d /tmp/zoomies.b64 > assets/audio/tygydyk-owner.mp3
+          bytes=$(wc -c < assets/audio/tygydyk-owner.mp3 | tr -d ' ')
+          echo "bytes=$bytes"
+          test "$bytes" = "77784"
+          echo "50941404a2f66dbcad9e495ab35ec78136d28dffab9fad6bfb41f7cedeed6d59  assets/audio/tygydyk-owner.mp3" | sha256sum -c -
+          rm -rf .audio-upload
+
+      - name: Commit full audio
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/audio/tygydyk-owner.mp3 .audio-upload
+          if git diff --cached --quiet; then
+            echo "Nothing to commit"
+            exit 0
+          fi
+          git commit -m "Install full Rich zoomies audio"
+          git push
