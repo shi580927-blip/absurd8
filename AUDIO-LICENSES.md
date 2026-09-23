@@ -43,13 +43,10 @@ The yarn, mouse, slipper, feather, fish and crystal level-transition sounds were
 
 ## Zoomies / Tygy-dyk
 
-- Source: ZapSplat, “Cat running, playing on carpet”.
-- Source page: https://www.zapsplat.com/music/cat-running-playing-on-carpet/
-- Original files: `zapsplat_animals_cat_run_carpet_001_56478.mp3` and `zapsplat_animals_cat_run_carpet_002_56479.mp3`.
-- Game files: `assets/audio/zoomies-carpet-1.mp3`, `assets/audio/zoomies-carpet-1.ogg`, `assets/audio/zoomies-carpet-2.mp3` and `assets/audio/zoomies-carpet-2.ogg`.
-- Credit: Sound effects obtained from https://www.zapsplat.com
-- License: ZapSplat Standard License Agreement — https://www.zapsplat.com/license-type/standard-license/
-- Commercial use and modification are permitted under the ZapSplat Standard License. Attribution to ZapSplat is required for downloads made with a free Basic account.
-- Adaptation: the supplied MP3 recordings were converted to OGG for browser compatibility. Each recording loops during the six-second animation because the originals are shorter than the animation.
-- Route assignment: the first recording is used for the spiral and figure-eight routes; the second recording is used for the walls-and-ceiling route.
+- Source: original recording made by the game owner on 2026-09-23.
+- Original supplied file: `Тыгыдык.m4a`.
+- Production file: `assets/audio/tygydyk-owner.mp3`.
+- Processing: trimmed to the continuous running segment, low-frequency rumble reduced, light dynamics compression, level adjusted for in-game use, short fade-in/fade-out, encoded as mono MP3.
+- The same original recording is used for all zoomies routes; no third-party running sound is used.
+- Rights: original recording supplied by the game owner for use in the game and its promotional materials. No third-party attribution is required.
 - Playback follows the zoomies animation, respects the sound-effects switch and pauses with gameplay, menus or ads.

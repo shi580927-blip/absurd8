@@ -240,7 +240,7 @@ class WebAudioTrack{
   pause(){if(!this._playing)return;this._offset=this.currentTime;this._playing=false;this._manualStop=true;try{this._source?.stop()}catch(error){}try{this._source?.disconnect();this._gain?.disconnect()}catch(error){}this._source=null;this._gain=null}
 }
 const soundExt='mp3';
-const zoomiesAudioTracks=[1,2].map(number=>{const audio=new WebAudioTrack(`assets/audio/zoomies-carpet-${number}.${soundExt}?v=20260910-1`);audio.preload='auto';audio.volume=.65;audio.loop=true;return audio});
+const zoomiesAudioTracks=[1,2].map(()=>{const audio=new WebAudioTrack(`assets/audio/tygydyk-owner.${soundExt}?v=20260923-1`);audio.preload='auto';audio.volume=.72;audio.loop=true;return audio});
 let zoomiesAudio=zoomiesAudioTracks[0];
 let zoomiesAudioStarted=false;
 function pauseZoomiesAudio(){zoomiesAudioTracks.forEach(audio=>audio.pause());zoomiesAudioStarted=false}
