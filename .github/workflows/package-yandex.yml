@@ -1,0 +1,49 @@
+name: Package Yandex Games
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build clean Yandex package
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf yandex-release
+          mkdir -p yandex-release
+          cp index.html scene.html game.js style.css controls.css privileges.css collections.css income-icon.css level-shelf.css yandex-release/
+          cp -R assets yandex-release/
+          find yandex-release/assets/audio -type f -name '*.ogg' -delete
+
+      - name: Validate Yandex package
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f yandex-release/index.html
+          test "$(find yandex-release -maxdepth 1 -type f -name 'index.html' | wc -l)" -eq 1
+          if find yandex-release -print | grep -P '[А-Яа-яЁё ]'; then
+            echo "Release contains Cyrillic or spaces in file/folder names."
+            exit 1
+          fi
+          size="$(du -sb yandex-release | cut -f1)"
+          echo "Unpacked size: $size bytes"
+          test "$size" -lt 104857600
+          test -f yandex-release/assets/audio/tygydyk-owner.mp3
+          test ! -e yandex-release/submission-assets
+          test ! -e yandex-release/scripts
+
+      - name: Upload Yandex archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: kot-shef-yandex
+          path: yandex-release/**
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 6
