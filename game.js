@@ -296,7 +296,24 @@ const EventDirector={
     return !gameIsPaused()&&!adRequestPending&&!this.uiBusy()&&!this.busy()&&!document.querySelector('.game.zoomies-running');
   }
 };
-let chefAnticRunning=false,chefAnticTimer=null;
+let chefAnticRunning=false,chefAnticTimer=null,chefAnticFrameTimer=null,chefAnticCurrentFrame=null,lastChefAnticId='';
+const CHEF_ANTIC_ATLAS_SOURCE={width:2025,height:2922};
+const chefAnticAtlasFrames={
+  vase_watch:{x:6,y:6,w:457,h:480},vase_push:{x:469,y:6,w:434,h:480},vase_shards:{x:909,y:6,w:477,h:459},vase_smug:{x:1392,y:6,w:397,h:480},
+  yarn_play:{x:1795,y:6,w:175,h:480},yarn_pounce:{x:6,y:492,w:185,h:480},yarn_tangle:{x:197,y:492,w:300,h:451},yarn_more_tangle:{x:503,y:492,w:301,h:380},yarn_fully_tangled:{x:810,y:492,w:311,h:452},
+  butterfly_notice:{x:1127,y:492,w:307,h:419},butterfly_reach:{x:1440,y:492,w:301,h:417},butterfly_catch:{x:6,y:978,w:300,h:441},butterfly_eat:{x:312,y:978,w:301,h:425},butterfly_savor:{x:619,y:978,w:165,h:480},
+  tail_try:{x:790,y:978,w:218,h:480},tail_try_more:{x:1014,y:978,w:191,h:480},tail_almost:{x:1211,y:978,w:272,h:396},tail_catch:{x:1489,y:978,w:301,h:389},tail_lick_tip:{x:1796,y:978,w:223,h:480},
+  sleep_back:{x:6,y:1464,w:281,h:480},sleep_doze:{x:293,y:1464,w:272,h:480},sleep_asleep:{x:571,y:1464,w:316,h:480},
+  groom_back:{x:893,y:1464,w:470,h:480},groom_lick_leg:{x:1369,y:1464,w:434,h:480},groom_side_glance:{x:6,y:1950,w:470,h:480},
+  sing_right_soft:{x:482,y:1950,w:278,h:480},sing_right_louder:{x:766,y:1950,w:272,h:480},sing_right_loudest:{x:1044,y:1950,w:281,h:480},
+  chair_scratch:{x:1331,y:1950,w:332,h:449},chair_chaos:{x:1669,y:1950,w:318,h:462},chair_lick:{x:6,y:2436,w:318,h:404},chair_smug:{x:330,y:2436,w:318,h:406},chair_walk:{x:654,y:2436,w:340,h:382},
+  sing_left_loud:{x:1000,y:2436,w:481,h:480}
+};
+const chefAnticAtlas=new Image();
+let chefAnticAtlasReady=false,chefAnticAtlasFailed=false;
+chefAnticAtlas.onload=()=>{chefAnticAtlasReady=true;chefAnticAtlasFailed=false};
+chefAnticAtlas.onerror=()=>{chefAnticAtlasReady=false;chefAnticAtlasFailed=true};
+chefAnticAtlas.src='assets/images/antics/chef-antics-atlas.webp?v=20260923-18';
 let timerCheckpoint=Date.now(),timersWerePaused=false;
 function syncPausedTimers(){
   const now=Date.now(),elapsed=Math.max(0,now-timerCheckpoint);
@@ -606,20 +623,108 @@ function resumeGameAfterAd(){if(!adPlaying)return;adPlaying=false;EventDirector.
 function scheduleRoomEvent(first=false){clearTimeout(roomEventTimer);roomEventTimer=setTimeout(()=>{if(!EventDirector.canRunIdle()){scheduleRoomEvent();return}const event=roomEvents[Math.floor(Math.random()*roomEvents.length)],toy=$('roomEvent');toy.innerHTML=`<img src="${event.img}" alt="">`;toy.dataset.phrase=gameLanguage==='en'?event.enPhrase:event.phrase;toy.dataset.sound=event.sound;toy.style.setProperty('--event-x',`${12+Math.random()*72}%`);toy.style.setProperty('--event-y',`${30+Math.random()*38}%`);toy.classList.add('show');setTimeout(()=>{if(toy.classList.contains('show')){toy.classList.remove('show');scheduleRoomEvent()}},9000)},first?5000:18000+Math.random()*18000)}
 const chefAntics={
   'fur-rub':{
-    duration:4600,
+    minLevel:1,type:'css',duration:4600,
     phrase:['Насажаю тебе шерсти на одежду. Это бесплатно.','I will put fur all over your clothes. No charge.'],
-    thought:['Шеф проявляет нежность. С последствиями.','Chef is showing affection. With consequences.'],
-    reaction:'innocent'
+    thought:['Шеф проявляет нежность. С последствиями.','Chef is showing affection. With consequences.'],reaction:'innocent'
+  },
+  sleep:{
+    minLevel:2,frames:[['sleep_back',700],['sleep_doze',900],['sleep_asleep',1600]],
+    phrase:['Шеф временно недоступен. Он занят.','Chef is temporarily unavailable. He is busy.'],
+    thought:['Очень важная встреча с подушкой.','A very important meeting with a pillow.'],reaction:'fussy'
+  },
+  groom:{
+    minLevel:3,frames:[['groom_back',450],['groom_lick_leg',1050],['groom_side_glance',850]],
+    phrase:['Личная гигиена важнее ваших дел.','Personal grooming is more important than your business.'],
+    thought:['Не мешайте. Процедура серьёзная.','Do not interrupt. This is a serious procedure.'],reaction:'judging'
+  },
+  butterfly:{
+    minLevel:4,frames:[['butterfly_notice',500],['butterfly_reach',450,'toy-feather'],['butterfly_catch',350],['butterfly_eat',500],['butterfly_savor',1100,'cat-happy']],
+    phrase:['Закуска прилетела сама.','The snack flew in by itself.'],
+    thought:['Шеф считает это доставкой.','Chef considers this a delivery.'],reaction:'hunting'
+  },
+  yarn:{
+    minLevel:5,frames:[['yarn_play',500,'toy-yarn'],['yarn_pounce',450],['yarn_tangle',500],['yarn_more_tangle',550],['yarn_fully_tangled',1100]],
+    phrase:['Я всё контролирую.','I have everything under control.'],
+    thought:['Контроль выглядит примерно так.','Apparently this is what control looks like.'],reaction:'why'
+  },
+  vase:{
+    minLevel:6,frames:[['vase_watch',900],['vase_push',450],['vase_shards',1050,'error'],['vase_smug',1500]],
+    phrase:['Она сама.','It fell by itself.'],
+    thought:['Свидетелей нет. Значит, ваза сама.','No witnesses. Therefore, the vase did it itself.'],reaction:'innocent'
+  },
+  tail:{
+    minLevel:7,frames:[['tail_try',400],['tail_try_more',400],['tail_almost',450],['tail_catch',550],['tail_lick_tip',1050,'cat-soft']],
+    phrase:['Поймал. Наконец-то.','Caught it. Finally.'],
+    thought:['Операция длилась дольше, чем планировалось.','The operation took longer than planned.'],reaction:'stunned'
+  },
+  sing:{
+    minLevel:8,frames:[['sing_right_soft',450],['sing_right_louder',450],['sing_right_loudest',600,'cat-happy-2'],['sing_left_loud',700,'cat-happy-2']],
+    phrase:['У Шефа концерт. Билеты уже проданы.','Chef is performing. Tickets are already sold out.'],
+    thought:['Просьбы сделать потише не принимаются.','Requests to turn it down are not accepted.'],reaction:'happy'
+  },
+  chair:{
+    minLevel:9,frames:[['chair_scratch',600],['chair_chaos',650,'error'],['chair_lick',900],['chair_smug',800],['chair_walk',600]],
+    phrase:['Так было задумано дизайнером.','The designer intended it this way.'],
+    thought:['Кресло стало авторским.','The chair is now a designer piece.'],reaction:'innocent'
   }
 };
+function chefAnticDuration(antic){return antic.duration||antic.frames?.reduce((sum,frame)=>sum+(frame[1]||0),0)||4000}
+function clearChefAnticCanvas(){
+  const canvas=$('chefAnticCanvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  chefAnticCurrentFrame=null;
+}
+function drawChefAnticFrame(frameKey){
+  const frame=chefAnticAtlasFrames[frameKey],canvas=$('chefAnticCanvas');
+  if(!frame||!canvas||!chefAnticAtlasReady)return false;
+  const rect=canvas.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);
+  const cw=Math.max(1,Math.round(rect.width*dpr)),ch=Math.max(1,Math.round(rect.height*dpr));
+  if(canvas.width!==cw||canvas.height!==ch){canvas.width=cw;canvas.height=ch}
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,cw,ch);
+  ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+  const scaleX=chefAnticAtlas.naturalWidth/CHEF_ANTIC_ATLAS_SOURCE.width;
+  const scaleY=chefAnticAtlas.naturalHeight/CHEF_ANTIC_ATLAS_SOURCE.height;
+  const sx=frame.x*scaleX,sy=frame.y*scaleY,sw=frame.w*scaleX,sh=frame.h*scaleY;
+  const fit=Math.min(cw*.94/sw,ch*.96/sh);
+  const dw=sw*fit,dh=sh*fit,dx=(cw-dw)/2,dy=ch-dh;
+  ctx.drawImage(chefAnticAtlas,sx,sy,sw,sh,dx,dy,dw,dh);
+  chefAnticCurrentFrame=frameKey;
+  return true
+}
+function showChefAnticSequence(){
+  const canvas=$('chefAnticCanvas');
+  document.querySelector('.game')?.classList.add('chef-antic-sequence');
+  canvas?.classList.add('show');
+  canvas?.setAttribute('aria-hidden','false');
+}
+function hideChefAnticSequence(){
+  const canvas=$('chefAnticCanvas');
+  document.querySelector('.game')?.classList.remove('chef-antic-sequence');
+  canvas?.classList.remove('show');
+  canvas?.setAttribute('aria-hidden','true');
+  clearChefAnticCanvas();
+}
+function playChefAnticFrames(id,antic,index=0){
+  if(!chefAnticRunning||index>=antic.frames.length)return;
+  const [frameKey,delay,sound]=antic.frames[index];
+  if(!drawChefAnticFrame(frameKey)){finishChefAntic(id);return}
+  if(sound)playSound(sound,.7);
+  clearTimeout(chefAnticFrameTimer);
+  chefAnticFrameTimer=setTimeout(()=>index+1<antic.frames.length?playChefAnticFrames(id,antic,index+1):finishChefAntic(id),delay);
+}
 function finishChefAntic(id){
   const antic=chefAntics[id];
   if(!chefAnticRunning||!antic)return;
+  clearTimeout(chefAnticFrameTimer);
   chefAnticRunning=false;
   $('cat').classList.remove('chef-antic-rub');
+  hideChefAnticSequence();
   $('feed').disabled=false;
   EventDirector.end('chef-antic');
-  $('phrase').textContent=L('Процедура по распределению шерсти завершена.','The fur distribution procedure is complete.');
+  $('phrase').textContent=L('Шеф закончил. Можно снова обслуживать.','Chef is finished. Service may resume.');
   trackEvent('chef_antic_completed',{antic:id});
   scheduleRoomEvent();
   scheduleChefAntic();
@@ -627,24 +732,53 @@ function finishChefAntic(id){
 function runChefAntic(id='fur-rub'){
   const antic=chefAntics[id];
   if(!antic||chefAnticRunning||!EventDirector.canStartMajor('chef-antic'))return false;
-  if(!EventDirector.begin('chef-antic',antic.duration+800))return false;
-  chefAnticRunning=true;
+  if(antic.frames&&!chefAnticAtlasReady){
+    $('phrase').textContent=chefAnticAtlasFailed?L('Ассеты выходок не загрузились.','Antic assets failed to load.'):L('Выходка ещё загружается…','The antic is still loading…');
+    return false
+  }
+  const duration=chefAnticDuration(antic);
+  if(!EventDirector.begin('chef-antic',duration+1200))return false;
+  chefAnticRunning=true;lastChefAnticId=id;
   clearTimeout(roomEventTimer);
   $('roomEvent').classList.remove('show');
   $('feed').disabled=true;
-  $('cat').classList.add('chef-antic-rub');
   const phrase=L(...antic.phrase),thought=L(...antic.thought);
   $('phrase').textContent=phrase;
   showCatThought(antic.reaction,thought);
-  playSound('cat-soft',.72);
   trackEvent('chef_antic_started',{antic:id});
-  setTimeout(()=>finishChefAntic(id),antic.duration);
-  return true;
+  if(antic.type==='css'){
+    $('cat').classList.add('chef-antic-rub');
+    playSound('cat-soft',.72);
+    clearTimeout(chefAnticFrameTimer);
+    chefAnticFrameTimer=setTimeout(()=>finishChefAntic(id),duration);
+  }else{
+    showChefAnticSequence();
+    playChefAnticFrames(id,antic,0);
+  }
+  return true
+}
+function availableChefAntics(){
+  const level=currentLevel()+1;
+  return Object.keys(chefAntics).filter(id=>{
+    const antic=chefAntics[id];
+    return level>=(antic.minLevel||1)&&(!antic.frames||chefAnticAtlasReady)
+  })
+}
+function pickChefAntic(){
+  const available=availableChefAntics();
+  if(!available.length)return'fur-rub';
+  const alternatives=available.filter(id=>id!==lastChefAnticId);
+  const pool=alternatives.length?alternatives:available;
+  return pool[Math.floor(Math.random()*pool.length)]
 }
 function scheduleChefAntic(first=false,retry=false){
   clearTimeout(chefAnticTimer);
   const delay=retry?30000+Math.random()*30000:first?5*60*1000:(7+Math.random()*3)*60*1000;
-  chefAnticTimer=setTimeout(()=>{if(!runChefAntic('fur-rub'))scheduleChefAntic(false,true)},delay);
+  chefAnticTimer=setTimeout(()=>{
+    const id=pickChefAntic();
+    if(!runChefAntic(id)&&id!=='fur-rub')runChefAntic('fur-rub');
+    if(!chefAnticRunning)scheduleChefAntic(false,true)
+  },delay)
 }
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){trackEvent('game_hidden',{level:currentLevel()+1,total:Math.floor(state.total)});stopGameplay();stopAllSounds()}else{startGameplay();ensureMusic()}});
 const interactionGuardStyle=document.createElement('style');
@@ -695,7 +829,7 @@ $('copyLayout').addEventListener('click',async()=>{const value=JSON.stringify({d
 $('resetLayout').addEventListener('click',()=>{localStorage.removeItem(layoutKey());layoutItems.forEach(item=>{['left','top','right','bottom','width','height','z-index','visibility'].forEach(prop=>item.style.removeProperty(prop));['--layout-x','--layout-y','--layout-scale'].forEach(prop=>item.style.removeProperty(prop))});applyLayout();selectLayoutItem(layoutItems[0]);$('layoutStatus').textContent='возвращена стандартная расстановка'});
 function testDishReaction(refuse){showPanel(null,'openFeed');const cat=$('cat'),bowl=$('bowl'),message=refuse?'Шеф демонстративно отвернулся. Блюдо осталось на месте, рыбов не списано.':'Шеф принял блюдо. Ковёр официально получил статус ресторана.';cat.classList.add(refuse?'refuses':'feasting');bowl.classList.add(refuse?'refused':'served');playSound(refuse?'cat-soft':'cat-happy',.7);previousThoughtMessage=message;$('phrase').textContent=message;showCatThought(refuse?'fussy':'happy',refuse?(Math.random()<.22?'Ой, бабочка… Шеф уже забыл, что заказывал.':'Шеф передумал. Унесите это немедленно.'):'Котик доволен. Можно продолжать обслуживание.');setTimeout(()=>{cat.classList.remove('refuses','feasting');bowl.classList.remove('refused','served')},900)}
 function testBuffetStage(key,stage){const index=carpetFood.findIndex(treat=>treat.buffetKey===key),treat=carpetFood[index];if(!treat)return;carpetFood.forEach((item,itemIndex)=>{if(item.buffet&&itemIndex!==index)state.treatUntil[itemIndex]=0});state.treatUntil[index]=Date.now()+treat.minutes*60000;const [halfAt,emptyAt]=treat.stageClicks;state.buffetClicks[index]=stage==='empty'?emptyAt:stage==='half'?halfAt:0;$('phrase').textContent=L(`${itemName(treat)}: ${stage==='empty'?'пустой этап':stage==='half'?'половина':'полная подача'}.`,`${itemName(treat)}: ${stage} stage.`);render(true)}
-function initTestMode(){if(!testMode)return;const panel=$('testPanel'),select=$('testLevel');panel.hidden=false;const stages=document.createElement('div');stages.className='test-actions';stages.innerHTML=carpetFood.filter(t=>t.stageAssets).map(t=>['full','half','empty'].map(stage=>`<button data-buffet="${t.buffetKey}" data-stage="${stage}">${itemName(t)}: ${stage==='full'?L('полное','full'):stage==='half'?L('половина','half'):L('пустое','empty')}</button>`).join('')).join('');panel.append(stages);const anticActions=document.createElement('div');anticActions.className='test-actions';anticActions.innerHTML=`<button data-test="antic">Выходка: шерсть / Chef antic</button>`;panel.append(anticActions);select.innerHTML=levels.map((level,index)=>`<option value="${index}">${index+1} · ${level.name}</option>`).join('');select.value=String(currentLevel());$('testClose').addEventListener('click',()=>panel.classList.toggle('compact'));panel.addEventListener('click',e=>{const buffetButton=e.target.closest('[data-buffet]');if(buffetButton){testBuffetStage(buffetButton.dataset.buffet,buffetButton.dataset.stage);save();return}const action=e.target.closest('[data-test]')?.dataset.test;if(!action)return;const selected=+select.value,now=Date.now();if(action==='set-level'){state.total=levels[selected].at;state.food=Math.max(state.food,levels[selected].at);renderedLevel=selected;render(true)}if(action==='next-level'){const next=Math.min(levels.length-1,currentLevel()+1);state.total=levels[next].at;state.food=Math.max(state.food,levels[next].at);render(true);select.value=String(next)}if(action==='fish'){const amount=Math.max(1000,levels[Math.min(levels.length-1,currentLevel()+1)].at-state.total);state.food+=amount;state.total+=amount;render(true)}if(action==='reward'){const award=achievements.find(item=>!state.earnedAchievements.includes(item.name))||achievements.at(-1);achievementQueue.push(award);showNextAchievement()}if(action==='items'){upgrades.forEach(item=>{state.counts[item.id]=Math.max(1,state.counts[item.id]);state.helperUntil[item.id]=now+15*60000});render(true)}if(action==='end-items'){state.helperUntil={};render(true)}if(action==='dishes'){state.adTreatUnlocks=carpetFood.map((_,index)=>index);state.food=Math.max(state.food,carpetFood.reduce((sum,item)=>sum+treatPrice(item),0));$('phrase').textContent=L('Все блюда открыты для последовательной проверки.','All dishes are unlocked for sequential testing.');render(true)}if(action==='end-dishes'){state.treatUntil={};render(true)}if(action==='accept')testDishReaction(false);if(action==='refuse')testDishReaction(true);if(action==='ad-success'){const reward=adRewardAmount();state.food+=reward;state.total+=reward;state.adBonusUntil=now+5*60000;playSound('reward');$('phrase').textContent=`Тест рекламы: начислено ${format(reward)} рыбов, доход ×3 на 5 минут.`;render(true)}if(action==='ad-cancel'){$('phrase').textContent='Тест рекламы: ролик закрыт, награда не начислена.';playSound('error',.45)}if(action==='antic')runChefAntic('fur-rub');if(action==='reset'){localStorage.removeItem(saveKey);location.reload()}save()})}
+function initTestMode(){if(!testMode)return;const panel=$('testPanel'),select=$('testLevel');panel.hidden=false;const stages=document.createElement('div');stages.className='test-actions';stages.innerHTML=carpetFood.filter(t=>t.stageAssets).map(t=>['full','half','empty'].map(stage=>`<button data-buffet="${t.buffetKey}" data-stage="${stage}">${itemName(t)}: ${stage==='full'?L('полное','full'):stage==='half'?L('половина','half'):L('пустое','empty')}</button>`).join('')).join('');panel.append(stages);const anticActions=document.createElement('div');anticActions.className='test-actions';const anticLabels={'fur-rub':'Шерсть','sleep':'Сон','groom':'Вылизывание','butterfly':'Бабочка','yarn':'Клубок','vase':'Ваза','tail':'Хвост','sing':'Пение','chair':'Кресло'};anticActions.innerHTML=Object.entries(anticLabels).map(([id,label])=>`<button data-antic="${id}">Выходка: ${label}</button>`).join('');panel.append(anticActions);select.innerHTML=levels.map((level,index)=>`<option value="${index}">${index+1} · ${level.name}</option>`).join('');select.value=String(currentLevel());$('testClose').addEventListener('click',()=>panel.classList.toggle('compact'));panel.addEventListener('click',e=>{const buffetButton=e.target.closest('[data-buffet]');if(buffetButton){testBuffetStage(buffetButton.dataset.buffet,buffetButton.dataset.stage);save();return}const anticButton=e.target.closest('[data-antic]');if(anticButton){runChefAntic(anticButton.dataset.antic);return}const action=e.target.closest('[data-test]')?.dataset.test;if(!action)return;const selected=+select.value,now=Date.now();if(action==='set-level'){state.total=levels[selected].at;state.food=Math.max(state.food,levels[selected].at);renderedLevel=selected;render(true)}if(action==='next-level'){const next=Math.min(levels.length-1,currentLevel()+1);state.total=levels[next].at;state.food=Math.max(state.food,levels[next].at);render(true);select.value=String(next)}if(action==='fish'){const amount=Math.max(1000,levels[Math.min(levels.length-1,currentLevel()+1)].at-state.total);state.food+=amount;state.total+=amount;render(true)}if(action==='reward'){const award=achievements.find(item=>!state.earnedAchievements.includes(item.name))||achievements.at(-1);achievementQueue.push(award);showNextAchievement()}if(action==='items'){upgrades.forEach(item=>{state.counts[item.id]=Math.max(1,state.counts[item.id]);state.helperUntil[item.id]=now+15*60000});render(true)}if(action==='end-items'){state.helperUntil={};render(true)}if(action==='dishes'){state.adTreatUnlocks=carpetFood.map((_,index)=>index);state.food=Math.max(state.food,carpetFood.reduce((sum,item)=>sum+treatPrice(item),0));$('phrase').textContent=L('Все блюда открыты для последовательной проверки.','All dishes are unlocked for sequential testing.');render(true)}if(action==='end-dishes'){state.treatUntil={};render(true)}if(action==='accept')testDishReaction(false);if(action==='refuse')testDishReaction(true);if(action==='ad-success'){const reward=adRewardAmount();state.food+=reward;state.total+=reward;state.adBonusUntil=now+5*60000;playSound('reward');$('phrase').textContent=`Тест рекламы: начислено ${format(reward)} рыбов, доход ×3 на 5 минут.`;render(true)}if(action==='ad-cancel'){$('phrase').textContent='Тест рекламы: ролик закрыт, награда не начислена.';playSound('error',.45)}if(action==='reset'){localStorage.removeItem(saveKey);location.reload()}save()})}
 $('testPanel').addEventListener('click',e=>{if(!testMode)return;const reaction=e.target.closest('[data-reaction]')?.dataset.reaction;if(reaction)showCatThought(reaction,L(...catReactionNames[reaction]))});
 let suppressSave=false;
 $('testReset').addEventListener('click',e=>{if(!testMode)return;e.stopPropagation();suppressSave=true;localStorage.removeItem(saveKey);location.reload()});
@@ -784,4 +918,4 @@ updateMobileControls();
 function save(){if(suppressSave)return;syncPausedTimers();state.last=Date.now();localStorage.setItem(saveKey,JSON.stringify(state));queueCloudSave()}
 const away=Math.min(4*3600,Math.max(0,(Date.now()-(state.last||Date.now()))/1000));if(away>10&&cps()>0){const bonus=Math.floor(away*cps());state.food+=bonus;state.total+=bonus;$('phrase').textContent=L(`Пока тебя не было, Шеф получил ${format(bonus)} рыбов.`,`While you were away, Chef received ${format(bonus)} fish.`)}
 function syncOrientation(){if(needsLandscape()||masterOrientationPaused){stopGameplay();stopAllSounds()}else{startGameplay();ensureMusic()}}
-setInterval(()=>{syncPausedTimers();if(gameIsPaused())return;const gain=cps()/10;state.food+=gain;state.total+=gain;render()},100);setInterval(()=>{if(gameIsPaused())return;updateCare();save();if($('care').classList.contains('open'))renderCare();else renderChefWish()},60000);setInterval(save,5000);addEventListener('beforeunload',save);applyGameLanguage(queryParams.get('lang')||'ru');updateCare();render(true);applyLayout();addEventListener('resize',()=>{applyLayout();syncOrientation()});addEventListener('orientationchange',syncOrientation);addEventListener('load',applyLayout,{once:true});initTestMode();if(testMode||layoutEditorMode){$('layoutToggle').hidden=false;$('layoutToggle').setAttribute('aria-hidden','false')}if(layoutEditorMode)setLayoutMode(true);initCatThoughts();scheduleRoomEvent(true);scheduleChefAntic(true);setTimeout(()=>trackEvent('session_30_sec'),30000);setTimeout(()=>trackEvent('session_1_min'),60000);setTimeout(()=>trackEvent('session_3_min'),180000);setTimeout(()=>trackEvent('session_5_min'),300000);setTimeout(()=>{introMinElapsed=true;finishIntroWhenReady()},3000);setTimeout(()=>{initialDataReady=true;finishIntroWhenReady()},8000);
+setInterval(()=>{syncPausedTimers();if(gameIsPaused())return;const gain=cps()/10;state.food+=gain;state.total+=gain;render()},100);setInterval(()=>{if(gameIsPaused())return;updateCare();save();if($('care').classList.contains('open'))renderCare();else renderChefWish()},60000);setInterval(save,5000);addEventListener('beforeunload',save);applyGameLanguage(queryParams.get('lang')||'ru');updateCare();render(true);applyLayout();addEventListener('resize',()=>{applyLayout();syncOrientation();if(chefAnticRunning&&chefAnticCurrentFrame)requestAnimationFrame(()=>drawChefAnticFrame(chefAnticCurrentFrame))});addEventListener('orientationchange',syncOrientation);addEventListener('load',applyLayout,{once:true});initTestMode();if(testMode||layoutEditorMode){$('layoutToggle').hidden=false;$('layoutToggle').setAttribute('aria-hidden','false')}if(layoutEditorMode)setLayoutMode(true);initCatThoughts();scheduleRoomEvent(true);scheduleChefAntic(true);setTimeout(()=>trackEvent('session_30_sec'),30000);setTimeout(()=>trackEvent('session_1_min'),60000);setTimeout(()=>trackEvent('session_3_min'),180000);setTimeout(()=>trackEvent('session_5_min'),300000);setTimeout(()=>{introMinElapsed=true;finishIntroWhenReady()},3000);setTimeout(()=>{initialDataReady=true;finishIntroWhenReady()},8000);
