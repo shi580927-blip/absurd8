@@ -317,13 +317,13 @@ chefAnticAtlas.src='assets/images/antics/chef-antics-atlas.webp?v=20260923-19';
 const helperStageAtlasDefs={
   grandma:{
     src:'assets/images/helpers/grandma-stages.webp?v=20260923-25',width:912,height:608,
-    thresholds:[1,3,6,10,15],scales:[1,1.03,1.08,1.14,1.45],xScales:[1,1,1,1,1],
+    thresholds:[1,3,6,10,15],scales:[1,1.03,.98,1.14,2],xScales:[1,1,1,1,1],
     frames:[
       {key:'grandma_01_hot_dish',x:40,y:19,w:224,h:280},
       {key:'grandma_02_festive_plate',x:348,y:19,w:216,h:280},
-      {key:'grandma_03_home_roast_no_chair',asset:'assets/images/helpers/grandma-v2.png?v=20260923-25',x:655,y:19,w:210,h:280},
+      {key:'grandma_03_feast_hq',asset:'assets/images/helpers/grandma-stage-03-hq.webp?v=20260923-29',x:655,y:19,w:210,h:280},
       {key:'grandma_04_feast',x:42,y:323,w:220,h:280},
-      {key:'grandma_crowd_16x9',x:316,y:411,w:280,h:192}
+      {key:'grandma_crowd_hq',asset:'assets/images/helpers/grandma-stage-05-crowd-hq.webp?v=20260923-29',x:316,y:411,w:280,h:192}
     ]
   },
   mouse:{
@@ -348,7 +348,7 @@ const helperStageAtlasDefs={
       {key:'delivery_05_tricycle',x:296,y:304,w:260,h:259},
       {key:'delivery_06_van',x:580,y:309,w:260,h:254},
       {key:'delivery_07_truck',x:12,y:587,w:260,h:260},
-      {key:'delivery_08_airship',x:296,y:596,w:260,h:251}
+      {key:'delivery_08_airship_hq',asset:'assets/images/helpers/delivery-stage-08-airship-hq.webp?v=20260923-29',x:296,y:596,w:260,h:251}
     ]
   }
 };
@@ -1013,9 +1013,9 @@ const helperLayoutRoomDefaults={
     deliveryHelper:{z:2,hidden:false,left:2.19,top:77.03,width:9.47}
   },
   1:{
-    grandmaHelper:{z:0,hidden:false,left:10.12,top:28.08,width:14.11},
-    mouseDecor:{z:0,hidden:false,left:56.96,top:42.64,width:3.03},
-    deliveryHelper:{z:2,hidden:false,left:3.5,top:50.5,width:9.5}
+    grandmaHelper:{z:1,hidden:false,left:22.16,top:27.93,width:14.11},
+    mouseDecor:{z:0,hidden:false,left:70.88,top:64.56,width:3.03},
+    deliveryHelper:{z:4,hidden:false,left:0,top:68.62,width:21.46}
   },
   2:{
     grandmaHelper:{z:0,hidden:false,left:10.12,top:28.08,width:14.11},
@@ -1033,7 +1033,7 @@ const helperLayoutRoomDefaults={
     deliveryHelper:{z:2,hidden:false,left:3.5,top:50.5,width:9.5}
   }
 };
-const helperLayoutKey=()=>`absurd8-helper-layout-v12-landscape-room-${activeRoomStage+1}`;
+const helperLayoutKey=()=>`absurd8-helper-layout-v13-landscape-room-${activeRoomStage+1}`;
 function helperLayoutDefaults(){return helperLayoutRoomDefaults[activeRoomStage]||helperLayoutRoomDefaults[0]}
 function readHelperLayout(){const defaults=helperLayoutDefaults();try{return {...defaults,...JSON.parse(localStorage.getItem(helperLayoutKey())||'{}')}}catch(e){return {...defaults}}}
 function layoutItemKey(item){return item?.id}
