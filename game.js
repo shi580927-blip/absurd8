@@ -1131,7 +1131,7 @@ $('testReset').addEventListener('click',e=>{if(!testMode)return;e.stopPropagatio
 let zoomiesRunning=false,zoomiesElapsed=0,zoomiesPath=[],zoomiesLastFrame=0;
 const nextZoomiesInterval=()=> (30+Math.random()*15)*60*1000;
 let ZOOMIES_INTERVAL=nextZoomiesInterval();
-const ZOOMIES_DURATION=6000;
+const ZOOMIES_DURATION=6400;
 const zoomiesFrames=[1,2,3].map(n=>{const img=new Image();img.src=`assets/images/reactions/tigidik_${n}.webp`;return img});
 function zoomiesBlocked(){return !EventDirector.canStartMajor('zoomies')}
 function zoomiesPose(progress,path){
