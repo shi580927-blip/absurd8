@@ -240,7 +240,7 @@ class WebAudioTrack{
   pause(){if(!this._playing)return;this._offset=this.currentTime;this._playing=false;this._manualStop=true;try{this._source?.stop()}catch(error){}try{this._source?.disconnect();this._gain?.disconnect()}catch(error){}this._source=null;this._gain=null}
 }
 const soundExt='mp3';
-const zoomiesAudioTracks=[1,2].map(()=>{const audio=new WebAudioTrack(`assets/audio/tygydyk-owner.${soundExt}?v=20260923-1`);audio.preload='auto';audio.volume=.72;audio.loop=true;return audio});
+const zoomiesAudioTracks=[1,2].map(()=>{const audio=new WebAudioTrack(`assets/audio/tygydyk-owner.${soundExt}?v=20260923-2`);audio.preload='auto';audio.volume=.98;audio.loop=true;return audio});
 let zoomiesAudio=zoomiesAudioTracks[0];
 let zoomiesAudioStarted=false;
 function pauseZoomiesAudio(){zoomiesAudioTracks.forEach(audio=>audio.pause());zoomiesAudioStarted=false}
@@ -1145,7 +1145,7 @@ function startZoomies(kind){
   if(!EventDirector.begin('zoomies'))return false;
   zoomiesRunning=true;zoomiesElapsed=-1600;state.zoomiesActiveMs=0;ZOOMIES_INTERVAL=nextZoomiesInterval();
   zoomiesPath={kind:['spiral','walls','eight'].includes(kind)?kind:['spiral','walls','eight'][Math.floor(Math.random()*3)],direction:Math.random()<.5?-1:1,turns:3};
-  pauseZoomiesAudio();zoomiesAudio=zoomiesAudioTracks[zoomiesPath.kind==='walls'?1:0];zoomiesAudio.currentTime=0;syncZoomiesAudio();
+  pauseZoomiesAudio();zoomiesAudio=zoomiesAudioTracks[zoomiesPath.kind==='walls'?1:0];zoomiesAudio.currentTime=0;duckMusic(ZOOMIES_DURATION+1800);syncZoomiesAudio();
   $('zoomiesCat').hidden=true;$('feed').disabled=true;
   clearTimeout(delayedThoughtTimer);clearTimeout(thoughtBatchTimer);
   $('phrase').textContent=L('Я чувствую Зло…','I sense evil…');

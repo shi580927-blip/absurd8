@@ -46,7 +46,7 @@ The yarn, mouse, slipper, feather, fish and crystal level-transition sounds were
 - Source: original recording made by the game owner on 2026-09-23.
 - Original supplied file: `Тыгыдык.m4a`.
 - Production file: `assets/audio/tygydyk-owner.mp3`.
-- Processing: trimmed to the continuous running segment, low-frequency rumble reduced, light dynamics compression, level adjusted for in-game use, short fade-in/fade-out, encoded as mono MP3.
+- Processing: trimmed to the continuous running segment, low-frequency rumble reduced, normalized to an audible game-SFX level, short fade-in/fade-out, encoded as mono MP3. Background music is ducked during the zoomies event.
 - The same original recording is used for all zoomies routes; no third-party running sound is used.
 - Rights: original recording supplied by the game owner for use in the game and its promotional materials. No third-party attribution is required.
 - Playback follows the zoomies animation, respects the sound-effects switch and pauses with gameplay, menus or ads.
