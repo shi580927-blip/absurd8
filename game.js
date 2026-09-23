@@ -1044,7 +1044,7 @@ const helperStageRoomLayouts={
   },
   1:{
     grandmaHelper:{
-      5:{z:1,hidden:false,left:13.47,top:26.73,width:34.09}
+      5:{z:0,hidden:false,left:13.47,top:26.73,width:34.09}
     }
   },
   2:{
@@ -1058,7 +1058,7 @@ const helperStageRoomLayouts={
     }
   }
 };
-const helperStageLayoutKey=()=>`absurd8-helper-stage-layout-v18-landscape-room-${activeRoomStage+1}`;
+const helperStageLayoutKey=()=>`absurd8-helper-stage-layout-v19-landscape-room-${activeRoomStage+1}`;
 function readHelperStageLayouts(){
   const defaults=helperStageRoomLayouts[activeRoomStage]||{};
   try{
