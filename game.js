@@ -1028,12 +1028,12 @@ const helperLayoutRoomDefaults={
     deliveryHelper:{z:2,hidden:false,left:1.42,top:77.63,width:13.47}
   },
   4:{
-    grandmaHelper:{z:0,hidden:false,left:10.12,top:28.08,width:14.11},
-    mouseDecor:{z:0,hidden:false,left:56.96,top:42.64,width:3.03},
-    deliveryHelper:{z:2,hidden:false,left:3.5,top:50.5,width:9.5}
+    grandmaHelper:{z:0,hidden:false,left:11.6,top:34.08,width:16.11},
+    mouseDecor:{z:-3,hidden:false,left:54.25,top:20.12,width:7.02},
+    deliveryHelper:{z:2,hidden:false,left:4.45,top:68.92,width:9.47}
   }
 };
-const helperLayoutKey=()=>`absurd8-helper-layout-v15-landscape-room-${activeRoomStage+1}`;
+const helperLayoutKey=()=>`absurd8-helper-layout-v16-landscape-room-${activeRoomStage+1}`;
 function helperLayoutDefaults(){return helperLayoutRoomDefaults[activeRoomStage]||helperLayoutRoomDefaults[0]}
 function readHelperLayout(){const defaults=helperLayoutDefaults();try{return {...defaults,...JSON.parse(localStorage.getItem(helperLayoutKey())||'{}')}}catch(e){return {...defaults}}}
 const helperStageRoomLayouts={
@@ -1058,7 +1058,7 @@ const helperStageRoomLayouts={
     }
   }
 };
-const helperStageLayoutKey=()=>`absurd8-helper-stage-layout-v15-landscape-room-${activeRoomStage+1}`;
+const helperStageLayoutKey=()=>`absurd8-helper-stage-layout-v16-landscape-room-${activeRoomStage+1}`;
 function readHelperStageLayouts(){
   const defaults=helperStageRoomLayouts[activeRoomStage]||{};
   try{
