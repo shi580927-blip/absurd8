@@ -46,6 +46,6 @@ The yarn, mouse, slipper, feather, fish and crystal level-transition sounds were
 - Source: original home recording supplied by the game owner, Rich zoomies recording.
 - Production file: `assets/audio/tygydyk-owner.mp3`.
 - The recording itself is kept without creative filtering or synthetic replacement.
-- Audibility is handled in WebAudio: the zoomies track uses an explicit gain boost and the background music is strongly ducked during the event.
+- The final game file is already normalized; it plays at normal WebAudio gain while the background music is strongly ducked during the event.
 - The clip is played once per zoomies event and is not looped.
 - Rights: original recording supplied by the game owner for use in the game and promotional materials. No third-party attribution is required.
