@@ -314,6 +314,104 @@ let chefAnticAtlasReady=false,chefAnticAtlasFailed=false;
 chefAnticAtlas.onload=()=>{chefAnticAtlasReady=true;chefAnticAtlasFailed=false};
 chefAnticAtlas.onerror=()=>{chefAnticAtlasReady=false;chefAnticAtlasFailed=true};
 chefAnticAtlas.src='assets/images/antics/chef-antics-atlas.webp?v=20260923-19';
+const helperStageAtlasDefs={
+  grandma:{
+    src:'assets/images/helpers/grandma-stages.webp?v=20260923-23',width:912,height:608,
+    thresholds:[1,3,6,10,15],scales:[1,1.06,1.12,1.22,1.8],
+    frames:[
+      {key:'grandma_01_hot_dish',x:40,y:19,w:224,h:280},
+      {key:'grandma_02_festive_plate',x:348,y:19,w:216,h:280},
+      {key:'grandma_03_home_roast',x:655,y:19,w:210,h:280},
+      {key:'grandma_04_feast',x:42,y:323,w:220,h:280},
+      {key:'grandma_crowd_16x9',x:316,y:411,w:280,h:192}
+    ]
+  },
+  mouse:{
+    src:'assets/images/helpers/mice-stages.webp?v=20260923-23',width:882,height:588,
+    thresholds:[1,2,4,7,10],scales:[1.3,1.55,1.95,2.35,2.75],
+    frames:[
+      {key:'mice_01_hammock_2',x:12,y:23,w:270,h:266},
+      {key:'mice_02_hammock_3',x:306,y:30,w:270,h:259},
+      {key:'mice_03_gazebo',x:604,y:19,w:261,h:270},
+      {key:'mice_04_house',x:13,y:313,w:267,h:270},
+      {key:'mice_05_castle',x:307,y:313,w:267,h:270}
+    ]
+  },
+  delivery:{
+    src:'assets/images/helpers/delivery-stages.webp?v=20260923-23',width:852,height:852,
+    thresholds:[1,2,3,4,6,8,11,15],scales:[.78,.86,.96,1.05,1.15,1.28,1.45,1.68],
+    frames:[
+      {key:'delivery_01_on_foot',x:16,y:19,w:251,h:260},
+      {key:'delivery_02_many_boxes',x:296,y:19,w:260,h:260},
+      {key:'delivery_03_cart',x:581,y:19,w:257,h:260},
+      {key:'delivery_04_scooter',x:12,y:305,w:260,h:258},
+      {key:'delivery_05_tricycle',x:296,y:304,w:260,h:259},
+      {key:'delivery_06_van',x:580,y:309,w:260,h:254},
+      {key:'delivery_07_truck',x:12,y:587,w:260,h:260},
+      {key:'delivery_08_airship',x:296,y:596,w:260,h:251}
+    ]
+  }
+};
+const helperStageAtlases={},helperStageFrameCache=new Map();
+Object.entries(helperStageAtlasDefs).forEach(([kind,def])=>{
+  const image=new Image();
+  image.onload=()=>{def.ready=true;render(true)};
+  image.onerror=()=>{def.ready=false};
+  image.src=def.src;
+  helperStageAtlases[kind]=image
+});
+function helperStageIndex(kind,count){
+  const def=helperStageAtlasDefs[kind];
+  if(!def||count<=0)return 0;
+  let index=0;
+  def.thresholds.forEach((threshold,i)=>{if(count>=threshold)index=i});
+  return Math.min(index,def.frames.length-1)
+}
+function helperStageFrameUrl(kind,index){
+  const def=helperStageAtlasDefs[kind],atlas=helperStageAtlases[kind],frame=def?.frames[index];
+  if(!def||!atlas||!def.ready||!frame)return null;
+  const cacheKey=`${kind}:${index}`;
+  if(helperStageFrameCache.has(cacheKey))return helperStageFrameCache.get(cacheKey);
+  const canvas=document.createElement('canvas');
+  canvas.width=frame.w;canvas.height=frame.h;
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,frame.w,frame.h);
+  ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+  ctx.drawImage(atlas,frame.x,frame.y,frame.w,frame.h,0,0,frame.w,frame.h);
+  const url=canvas.toDataURL('image/png');
+  helperStageFrameCache.set(cacheKey,url);
+  return url
+}
+function renderStagedHelper(kind,elementId){
+  const def=helperStageAtlasDefs[kind],element=$(elementId);
+  if(!def||!element)return;
+  const index=helperStageIndex(kind,state.counts[kind]||0),frame=def.frames[index];
+  const url=helperStageFrameUrl(kind,index);
+  if(url&&element.dataset.helperFrame!==frame.key){
+    element.src=url;
+    element.dataset.helperFrame=frame.key;
+    element.classList.remove('helper-stage-change');
+    void element.offsetWidth;
+    element.classList.add('helper-stage-change');
+    setTimeout(()=>element.classList.remove('helper-stage-change'),620)
+  }
+  element.dataset.helperStage=String(index+1);
+  element.style.setProperty('--helper-stage-scale',String(def.scales[index]||1))
+}
+function cycleHelperStageForTest(kind){
+  const def=helperStageAtlasDefs[kind];
+  if(!def)return;
+  const count=state.counts[kind]||0,current=helperStageIndex(kind,count),next=(current+1)%def.thresholds.length;
+  state.counts[kind]=def.thresholds[next];
+  state.helperUntil[kind]=Date.now()+15*60*1000;
+  const names={
+    grandma:['блюдо','праздничная тарелка','жаркое','пир','совет бабушек'],
+    mouse:['две мыши','три мыши','беседка','мышиный дом','мышиный замок'],
+    delivery:['пешком','гора коробок','тележка','скутер','трицикл','фургон','грузовик','дирижабль']
+  };
+  $('phrase').textContent=`Тест: ${names[kind]?.[next]||'следующая стадия'}.`;
+  render(true);save()
+}
 let timerCheckpoint=Date.now(),timersWerePaused=false;
 function syncPausedTimers(){
   const now=Date.now(),elapsed=Math.max(0,now-timerCheckpoint);
@@ -508,12 +606,15 @@ function render(updatePanels=false){
   if(updatePanels)$('upgrades').innerHTML=upgrades.map(u=>`<button class="upgrade ${state.food<price(u)?'locked':''}" data-id="${u.id}"><span class="icon"><img src="${u.iconAsset}" alt="" draggable="false"><span class="upgrade-level">${L('Ур.','Lvl')} ${state.counts[u.id]}</span></span><span class="upgrade-copy"><b>${itemName(u)}</b><small>${itemDesc(u)}</small></span><span class="price">${L('Купить','Buy')}: ${format(price(u))} 🐟</span></button>`).join('');
   $('bowl').classList.toggle('upgraded',state.counts.bowl>0);
   [...$('foodDecor').children].forEach(item=>item.classList.toggle('visible',(state.treatUntil[+item.dataset.treatIndex]||0)>Date.now()));
+  renderStagedHelper('grandma','grandmaHelper');
   $('grandmaHelper').classList.toggle('visible',(state.helperUntil.grandma||0)>Date.now());
   const chefStage=state.counts.chef>=10?4:state.counts.chef>=6?3:state.counts.chef>=3?2:1;
   const chefImage=`assets/images/helpers/chef-stage-${chefStage}.png`;
   if($('chefHelper').getAttribute('src')!==chefImage)$('chefHelper').src=chefImage;
   $('chefHelper').classList.toggle('visible',(state.helperUntil.chef||0)>Date.now());
+  renderStagedHelper('delivery','deliveryHelper');
   $('deliveryHelper').classList.toggle('visible',(state.helperUntil.delivery||0)>Date.now());
+  renderStagedHelper('mouse','mouseDecor');
   $('mouseDecor').classList.toggle('visible',(state.helperUntil.mouse||0)>Date.now());
   $('boxDecor').classList.toggle('visible',(state.helperUntil.box||0)>Date.now());
   $('laserDecor').classList.toggle('visible',(state.helperUntil.laser||0)>Date.now());
@@ -912,7 +1013,7 @@ $('copyLayout').addEventListener('click',async()=>{const value=JSON.stringify({d
 $('resetLayout').addEventListener('click',()=>{localStorage.removeItem(layoutKey());layoutItems.forEach(item=>{['left','top','right','bottom','width','height','z-index','visibility'].forEach(prop=>item.style.removeProperty(prop));['--layout-x','--layout-y','--layout-scale'].forEach(prop=>item.style.removeProperty(prop))});applyLayout();selectLayoutItem(layoutItems[0]);$('layoutStatus').textContent='возвращена стандартная расстановка'});
 function testDishReaction(refuse){showPanel(null,'openFeed');const cat=$('cat'),bowl=$('bowl'),message=refuse?'Шеф демонстративно отвернулся. Блюдо осталось на месте, рыбов не списано.':'Шеф принял блюдо. Ковёр официально получил статус ресторана.';cat.classList.add(refuse?'refuses':'feasting');bowl.classList.add(refuse?'refused':'served');playSound(refuse?'cat-soft':'cat-happy',.7);previousThoughtMessage=message;$('phrase').textContent=message;showCatThought(refuse?'fussy':'happy',refuse?(Math.random()<.22?'Ой, бабочка… Шеф уже забыл, что заказывал.':'Шеф передумал. Унесите это немедленно.'):'Котик доволен. Можно продолжать обслуживание.');setTimeout(()=>{cat.classList.remove('refuses','feasting');bowl.classList.remove('refused','served')},900)}
 function testBuffetStage(key,stage){const index=carpetFood.findIndex(treat=>treat.buffetKey===key),treat=carpetFood[index];if(!treat)return;carpetFood.forEach((item,itemIndex)=>{if(item.buffet&&itemIndex!==index)state.treatUntil[itemIndex]=0});state.treatUntil[index]=Date.now()+treat.minutes*60000;const [halfAt,emptyAt]=treat.stageClicks;state.buffetClicks[index]=stage==='empty'?emptyAt:stage==='half'?halfAt:0;$('phrase').textContent=L(`${itemName(treat)}: ${stage==='empty'?'пустой этап':stage==='half'?'половина':'полная подача'}.`,`${itemName(treat)}: ${stage} stage.`);render(true)}
-function initTestMode(){if(!testMode)return;const panel=$('testPanel'),select=$('testLevel');panel.hidden=false;const stages=document.createElement('div');stages.className='test-actions';stages.innerHTML=carpetFood.filter(t=>t.stageAssets).map(t=>['full','half','empty'].map(stage=>`<button data-buffet="${t.buffetKey}" data-stage="${stage}">${itemName(t)}: ${stage==='full'?L('полное','full'):stage==='half'?L('половина','half'):L('пустое','empty')}</button>`).join('')).join('');panel.append(stages);const anticActions=document.createElement('div');anticActions.className='test-actions';const anticLabels={'fur-rub':'Шерсть','sleep':'Сон','groom':'Вылизывание','butterfly':'Бабочка','yarn':'Клубок','vase':'Ваза','tail':'Хвост','sing':'Пение','chair':'Кресло'};anticActions.innerHTML=Object.entries(anticLabels).filter(([id])=>chefAntics[id]?.enabled!==false).map(([id,label])=>`<button data-antic="${id}">Выходка: ${label}</button>`).join('');panel.append(anticActions);select.innerHTML=levels.map((level,index)=>`<option value="${index}">${index+1} · ${level.name}</option>`).join('');select.value=String(currentLevel());$('testClose').addEventListener('click',()=>panel.classList.toggle('compact'));panel.addEventListener('click',e=>{const buffetButton=e.target.closest('[data-buffet]');if(buffetButton){testBuffetStage(buffetButton.dataset.buffet,buffetButton.dataset.stage);save();return}const anticButton=e.target.closest('[data-antic]');if(anticButton){runChefAntic(anticButton.dataset.antic);return}const action=e.target.closest('[data-test]')?.dataset.test;if(!action)return;const selected=+select.value,now=Date.now();if(action==='set-level'){state.total=levels[selected].at;state.food=Math.max(state.food,levels[selected].at);renderedLevel=selected;render(true)}if(action==='next-level'){const next=Math.min(levels.length-1,currentLevel()+1);state.total=levels[next].at;state.food=Math.max(state.food,levels[next].at);render(true);select.value=String(next)}if(action==='fish'){const amount=Math.max(1000,levels[Math.min(levels.length-1,currentLevel()+1)].at-state.total);state.food+=amount;state.total+=amount;render(true)}if(action==='reward'){const award=achievements.find(item=>!state.earnedAchievements.includes(item.name))||achievements.at(-1);achievementQueue.push(award);showNextAchievement()}if(action==='items'){upgrades.forEach(item=>{state.counts[item.id]=Math.max(1,state.counts[item.id]);state.helperUntil[item.id]=now+15*60000});render(true)}if(action==='end-items'){state.helperUntil={};render(true)}if(action==='dishes'){state.adTreatUnlocks=carpetFood.map((_,index)=>index);state.food=Math.max(state.food,carpetFood.reduce((sum,item)=>sum+treatPrice(item),0));$('phrase').textContent=L('Все блюда открыты для последовательной проверки.','All dishes are unlocked for sequential testing.');render(true)}if(action==='end-dishes'){state.treatUntil={};render(true)}if(action==='accept')testDishReaction(false);if(action==='refuse')testDishReaction(true);if(action==='ad-success'){const reward=adRewardAmount();state.food+=reward;state.total+=reward;state.adBonusUntil=now+5*60000;playSound('reward');$('phrase').textContent=`Тест рекламы: начислено ${format(reward)} рыбов, доход ×3 на 5 минут.`;render(true)}if(action==='ad-cancel'){$('phrase').textContent='Тест рекламы: ролик закрыт, награда не начислена.';playSound('error',.45)}if(action==='reset'){localStorage.removeItem(saveKey);location.reload()}save()})}
+function initTestMode(){if(!testMode)return;const panel=$('testPanel'),select=$('testLevel');panel.hidden=false;const stages=document.createElement('div');stages.className='test-actions';stages.innerHTML=carpetFood.filter(t=>t.stageAssets).map(t=>['full','half','empty'].map(stage=>`<button data-buffet="${t.buffetKey}" data-stage="${stage}">${itemName(t)}: ${stage==='full'?L('полное','full'):stage==='half'?L('половина','half'):L('пустое','empty')}</button>`).join('')).join('');panel.append(stages);const anticActions=document.createElement('div');anticActions.className='test-actions';const anticLabels={'fur-rub':'Шерсть','sleep':'Сон','groom':'Вылизывание','butterfly':'Бабочка','yarn':'Клубок','vase':'Ваза','tail':'Хвост','sing':'Пение','chair':'Кресло'};anticActions.innerHTML=Object.entries(anticLabels).filter(([id])=>chefAntics[id]?.enabled!==false).map(([id,label])=>`<button data-antic="${id}">Выходка: ${label}</button>`).join('');panel.append(anticActions);const helperActions=document.createElement('div');helperActions.className='test-actions';helperActions.innerHTML='<button data-helper-cycle="grandma">Бабушки: следующий вид</button><button data-helper-cycle="mouse">Мыши: следующий вид</button><button data-helper-cycle="delivery">Доставка: следующий вид</button>';panel.append(helperActions);select.innerHTML=levels.map((level,index)=>`<option value="${index}">${index+1} · ${level.name}</option>`).join('');select.value=String(currentLevel());$('testClose').addEventListener('click',()=>panel.classList.toggle('compact'));panel.addEventListener('click',e=>{const buffetButton=e.target.closest('[data-buffet]');if(buffetButton){testBuffetStage(buffetButton.dataset.buffet,buffetButton.dataset.stage);save();return}const anticButton=e.target.closest('[data-antic]');if(anticButton){runChefAntic(anticButton.dataset.antic);return}const helperCycle=e.target.closest('[data-helper-cycle]');if(helperCycle){cycleHelperStageForTest(helperCycle.dataset.helperCycle);return}const action=e.target.closest('[data-test]')?.dataset.test;if(!action)return;const selected=+select.value,now=Date.now();if(action==='set-level'){state.total=levels[selected].at;state.food=Math.max(state.food,levels[selected].at);renderedLevel=selected;render(true)}if(action==='next-level'){const next=Math.min(levels.length-1,currentLevel()+1);state.total=levels[next].at;state.food=Math.max(state.food,levels[next].at);render(true);select.value=String(next)}if(action==='fish'){const amount=Math.max(1000,levels[Math.min(levels.length-1,currentLevel()+1)].at-state.total);state.food+=amount;state.total+=amount;render(true)}if(action==='reward'){const award=achievements.find(item=>!state.earnedAchievements.includes(item.name))||achievements.at(-1);achievementQueue.push(award);showNextAchievement()}if(action==='items'){upgrades.forEach(item=>{state.counts[item.id]=Math.max(1,state.counts[item.id]);state.helperUntil[item.id]=now+15*60000});render(true)}if(action==='end-items'){state.helperUntil={};render(true)}if(action==='dishes'){state.adTreatUnlocks=carpetFood.map((_,index)=>index);state.food=Math.max(state.food,carpetFood.reduce((sum,item)=>sum+treatPrice(item),0));$('phrase').textContent=L('Все блюда открыты для последовательной проверки.','All dishes are unlocked for sequential testing.');render(true)}if(action==='end-dishes'){state.treatUntil={};render(true)}if(action==='accept')testDishReaction(false);if(action==='refuse')testDishReaction(true);if(action==='ad-success'){const reward=adRewardAmount();state.food+=reward;state.total+=reward;state.adBonusUntil=now+5*60000;playSound('reward');$('phrase').textContent=`Тест рекламы: начислено ${format(reward)} рыбов, доход ×3 на 5 минут.`;render(true)}if(action==='ad-cancel'){$('phrase').textContent='Тест рекламы: ролик закрыт, награда не начислена.';playSound('error',.45)}if(action==='reset'){localStorage.removeItem(saveKey);location.reload()}save()})}
 $('testPanel').addEventListener('click',e=>{if(!testMode)return;const reaction=e.target.closest('[data-reaction]')?.dataset.reaction;if(reaction)showCatThought(reaction,L(...catReactionNames[reaction]))});
 let suppressSave=false;
 $('testReset').addEventListener('click',e=>{if(!testMode)return;e.stopPropagation();suppressSave=true;localStorage.removeItem(saveKey);location.reload()});
