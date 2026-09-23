@@ -395,13 +395,31 @@ function renderStagedHelper(kind,elementId){
   if(!def||!element)return;
   const index=helperStageIndex(kind,state.counts[kind]||0),frame=def.frames[index];
   const url=helperStageFrameUrl(kind,index);
-  if(url&&element.dataset.helperFrame!==frame.key){
-    element.src=url;
-    element.dataset.helperFrame=frame.key;
-    element.classList.remove('helper-stage-change');
-    void element.offsetWidth;
-    element.classList.add('helper-stage-change');
-    setTimeout(()=>element.classList.remove('helper-stage-change'),620)
+  if(url&&element.dataset.helperFrame!==frame.key&&element.dataset.helperPendingFrame!==frame.key){
+    const expectedFrame=frame.key;
+    element.dataset.helperPendingFrame=expectedFrame;
+    element.classList.add('helper-frame-loading');
+    const revealFrame=()=>{
+      if(element.dataset.helperPendingFrame!==expectedFrame)return;
+      element.dataset.helperFrame=expectedFrame;
+      delete element.dataset.helperPendingFrame;
+      element.classList.remove('helper-frame-loading');
+      element.classList.remove('helper-stage-change');
+      void element.offsetWidth;
+      element.classList.add('helper-stage-change');
+      setTimeout(()=>element.classList.remove('helper-stage-change'),620)
+    };
+    const failFrame=()=>{
+      if(element.dataset.helperPendingFrame!==expectedFrame)return;
+      delete element.dataset.helperPendingFrame;
+      element.classList.remove('helper-frame-loading')
+    };
+    if(element.getAttribute('src')===url&&element.complete&&element.naturalWidth)revealFrame();
+    else{
+      element.addEventListener('load',revealFrame,{once:true});
+      element.addEventListener('error',failFrame,{once:true});
+      element.src=url
+    }
   }
   const previousStage=element.dataset.helperStage;
   element.dataset.helperStage=String(index+1);
