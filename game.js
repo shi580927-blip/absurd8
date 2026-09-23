@@ -317,7 +317,7 @@ chefAnticAtlas.src='assets/images/antics/chef-antics-atlas.webp?v=20260923-19';
 const helperStageAtlasDefs={
   grandma:{
     src:'assets/images/helpers/grandma-stages.webp?v=20260923-25',width:912,height:608,
-    thresholds:[1,3,6,10,15],scales:[1,1.03,.98,1.14,2],xScales:[1,1,1,1,1],
+    thresholds:[1,3,6,10,15],scales:[1,1.03,.98,1.14,1],xScales:[1,1,1,1,1],
     frames:[
       {key:'grandma_01_hot_dish',x:40,y:19,w:224,h:280},
       {key:'grandma_02_festive_plate',x:348,y:19,w:216,h:280},
@@ -407,7 +407,7 @@ function renderStagedHelper(kind,elementId){
   element.dataset.helperStage=String(index+1);
   element.style.setProperty('--helper-stage-scale',String(def.scales[index]||1));
   element.style.setProperty('--helper-stage-scale-x',String(def.xScales?.[index]||1));
-  if(previousStage!==element.dataset.helperStage&&layoutOverridesEnabled()){
+  if(previousStage!==element.dataset.helperStage){
     applyLayout();
     if(selectedLayoutItem===element)updateLayoutControls()
   }
@@ -1033,7 +1033,7 @@ const helperLayoutRoomDefaults={
     deliveryHelper:{z:2,hidden:false,left:4.45,top:68.92,width:9.47}
   }
 };
-const helperLayoutKey=()=>`absurd8-helper-layout-v16-landscape-room-${activeRoomStage+1}`;
+const helperLayoutKey=()=>`absurd8-helper-layout-v17-landscape-room-${activeRoomStage+1}`;
 function helperLayoutDefaults(){return helperLayoutRoomDefaults[activeRoomStage]||helperLayoutRoomDefaults[0]}
 function readHelperLayout(){const defaults=helperLayoutDefaults();try{return {...defaults,...JSON.parse(localStorage.getItem(helperLayoutKey())||'{}')}}catch(e){return {...defaults}}}
 const helperStageRoomLayouts={
@@ -1058,7 +1058,7 @@ const helperStageRoomLayouts={
     }
   }
 };
-const helperStageLayoutKey=()=>`absurd8-helper-stage-layout-v16-landscape-room-${activeRoomStage+1}`;
+const helperStageLayoutKey=()=>`absurd8-helper-stage-layout-v17-landscape-room-${activeRoomStage+1}`;
 function readHelperStageLayouts(){
   const defaults=helperStageRoomLayouts[activeRoomStage]||{};
   try{
@@ -1075,6 +1075,7 @@ function helperStageLayoutPosition(item){
 }
 function hasSeparateHelperStageLayout(item){
   const stage=Number(item?.dataset?.helperStage||0);
+  if(item?.id==='grandmaHelper'&&stage===5)return true;
   return !!helperStageRoomLayouts[activeRoomStage]?.[item?.id]?.[stage]
 }
 function layoutItemKey(item){return item?.id}
