@@ -228,7 +228,7 @@ async function loadWebAudioBuffer(url){
 class WebAudioTrack{
   constructor(url){this.url=url;this.loop=false;this._volume=1;this._offset=0;this._playing=false;this._source=null;this._gain=null;this._buffer=null;this._startedAt=0;this._manualStop=false;this._listeners={ended:new Set(),error:new Set()};this._preload='none'}
   get paused(){return !this._playing} get readyState(){return this._buffer?4:0} get duration(){return this._buffer?.duration||0} get volume(){return this._volume}
-  set volume(value){this._volume=Math.max(0,Math.min(1,Number(value)||0));if(this._gain)this._gain.gain.value=this._volume}
+  set volume(value){this._volume=Math.max(0,Math.min(4,Number(value)||0));if(this._gain)this._gain.gain.value=this._volume}
   get preload(){return this._preload} set preload(value){this._preload=value;if(value==='auto')this.load().catch(()=>{})}
   get currentTime(){if(this._playing&&this._buffer){const elapsed=Math.max(0,(audioContext()?.currentTime||0)-this._startedAt);return this.loop&&this.duration?elapsed%this.duration:Math.min(elapsed,this.duration||elapsed)}return this._offset}
   set currentTime(value){this._offset=Math.max(0,Number(value)||0)}
@@ -240,7 +240,7 @@ class WebAudioTrack{
   pause(){if(!this._playing)return;this._offset=this.currentTime;this._playing=false;this._manualStop=true;try{this._source?.stop()}catch(error){}try{this._source?.disconnect();this._gain?.disconnect()}catch(error){}this._source=null;this._gain=null}
 }
 const soundExt='mp3';
-const zoomiesAudioTracks=[1,2].map(()=>{const audio=new WebAudioTrack(`assets/audio/tygydyk-owner.${soundExt}?v=20260924-1`);audio.preload='auto';audio.volume=1;audio.loop=false;return audio});
+const zoomiesAudioTracks=[1,2].map(()=>{const audio=new WebAudioTrack(`assets/audio/tygydyk-owner.${soundExt}?v=20260924-2`);audio.preload='auto';audio.volume=3.4;audio.loop=false;return audio});
 let zoomiesAudio=zoomiesAudioTracks[0];
 let zoomiesAudioStarted=false;
 function pauseZoomiesAudio(){zoomiesAudioTracks.forEach(audio=>audio.pause());zoomiesAudioStarted=false}
@@ -1145,7 +1145,7 @@ function startZoomies(kind){
   if(!EventDirector.begin('zoomies'))return false;
   zoomiesRunning=true;zoomiesElapsed=-1600;state.zoomiesActiveMs=0;ZOOMIES_INTERVAL=nextZoomiesInterval();
   zoomiesPath={kind:['spiral','walls','eight'].includes(kind)?kind:['spiral','walls','eight'][Math.floor(Math.random()*3)],direction:Math.random()<.5?-1:1,turns:3};
-  pauseZoomiesAudio();zoomiesAudio=zoomiesAudioTracks[zoomiesPath.kind==='walls'?1:0];zoomiesAudio.currentTime=0;duckMusic(ZOOMIES_DURATION+1800);syncZoomiesAudio();
+  pauseZoomiesAudio();zoomiesAudio=zoomiesAudioTracks[zoomiesPath.kind==='walls'?1:0];zoomiesAudio.currentTime=0;duckMusic(ZOOMIES_DURATION+1800);rampMusic(.015,120);syncZoomiesAudio();
   $('zoomiesCat').hidden=true;$('feed').disabled=true;
   clearTimeout(delayedThoughtTimer);clearTimeout(thoughtBatchTimer);
   $('phrase').textContent=L('Я чувствую Зло…','I sense evil…');
