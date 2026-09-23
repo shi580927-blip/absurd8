@@ -296,7 +296,7 @@ const EventDirector={
     return !gameIsPaused()&&!adRequestPending&&!this.uiBusy()&&!this.busy()&&!document.querySelector('.game.zoomies-running');
   }
 };
-let chefAnticRunning=false,chefAnticTimer=null,chefAnticFrameTimer=null,chefAnticCurrentFrame=null,lastChefAnticId='';
+let chefAnticRunning=false,chefAnticTimer=null,chefAnticFrameTimer=null,chefAnticRaf=0,chefAnticCurrentFrame=null,lastChefAnticId='';
 const CHEF_ANTIC_ATLAS_SOURCE={width:2025,height:2922};
 const chefAnticAtlasFrames={
   vase_watch:{x:6,y:6,w:457,h:480},vase_push:{x:469,y:6,w:434,h:480},vase_shards:{x:909,y:6,w:477,h:459},vase_smug:{x:1392,y:6,w:397,h:480},
@@ -313,7 +313,7 @@ const chefAnticAtlas=new Image();
 let chefAnticAtlasReady=false,chefAnticAtlasFailed=false;
 chefAnticAtlas.onload=()=>{chefAnticAtlasReady=true;chefAnticAtlasFailed=false};
 chefAnticAtlas.onerror=()=>{chefAnticAtlasReady=false;chefAnticAtlasFailed=true};
-chefAnticAtlas.src='assets/images/antics/chef-antics-atlas.webp?v=20260923-18';
+chefAnticAtlas.src='assets/images/antics/chef-antics-atlas.webp?v=20260923-19';
 let timerCheckpoint=Date.now(),timersWerePaused=false;
 function syncPausedTimers(){
   const now=Date.now(),elapsed=Math.max(0,now-timerCheckpoint);
@@ -668,29 +668,84 @@ const chefAntics={
     thought:['Кресло стало авторским.','The chair is now a designer piece.'],reaction:'innocent'
   }
 };
+const chefAnticVisual={
+  sleep:{scale:.82,sceneWidth:.58,widthScale:1.02},
+  groom:{scale:.84,sceneWidth:.60,widthScale:1.05},
+  butterfly:{scale:.82,sceneWidth:.60,widthScale:1.08},
+  yarn:{scale:.82,sceneWidth:.62,widthScale:1.12},
+  vase:{scale:.80,sceneWidth:.70,widthScale:1.34},
+  tail:{scale:.82,sceneWidth:.60,widthScale:1.08},
+  sing:{scale:.84,sceneWidth:.60,widthScale:1.08},
+  chair:{scale:.80,sceneWidth:.70,widthScale:1.34}
+};
 function chefAnticDuration(antic){return antic.duration||antic.frames?.reduce((sum,frame)=>sum+(frame[1]||0),0)||4000}
 function clearChefAnticCanvas(){
   const canvas=$('chefAnticCanvas');
+  cancelAnimationFrame(chefAnticRaf);chefAnticRaf=0;
   if(!canvas)return;
   const ctx=canvas.getContext('2d');
   ctx.clearRect(0,0,canvas.width,canvas.height);
   chefAnticCurrentFrame=null;
 }
-function drawChefAnticFrame(frameKey){
+function chefAnticMotion(id,index,progress){
+  const p=Math.max(0,Math.min(1,progress)),wave=Math.sin(p*Math.PI*2),pulse=Math.sin(p*Math.PI);
+  let dx=0,dy=0,scale=1,rotation=0;
+  if(id==='sleep'){scale=1+.012*pulse;dy=2*pulse}
+  if(id==='groom'){rotation=(index===1?1.5:.5)*wave;dy=index===1?-2.5*pulse:0}
+  if(id==='butterfly'){dx=(index===1?5:index===2?2:0)*pulse;dy=(index===1?-4:index===2?-2:0)*pulse;rotation=1.2*wave}
+  if(id==='yarn'){dy=-3*pulse;rotation=(index<3?2.2:1)*wave;scale=1+.01*pulse}
+  if(id==='vase'){
+    if(index===1){dx=5*p;rotation=-1.4*p}
+    if(index===2){dx=Math.sin(p*Math.PI*10)*(1-p)*4;rotation=Math.sin(p*Math.PI*8)*(1-p)*1.4}
+    if(index===3){scale=1+.012*pulse}
+  }
+  if(id==='tail'){rotation=2.2*wave;dy=-2*pulse}
+  if(id==='sing'){scale=1+.024*pulse;dy=-4*pulse;rotation=(index%2?1.4:-1.4)*wave}
+  if(id==='chair'){
+    if(index<=1){dx=Math.sin(p*Math.PI*12)*(1-p)*3;rotation=Math.sin(p*Math.PI*10)*(1-p)*1.2}
+    else{scale=1+.008*pulse}
+  }
+  return{dx,dy,scale,rotation:rotation*Math.PI/180}
+}
+function paintChefAnticFrame(ctx,canvas,frameKey,id,index,progress,alpha=1){
+  const frame=chefAnticAtlasFrames[frameKey];
+  if(!frame)return false;
+  const rect=canvas.getBoundingClientRect(),sceneRect=rect,catRect=$('cat').getBoundingClientRect();
+  const dpr=Math.min(3,window.devicePixelRatio||1);
+  const scaleX=chefAnticAtlas.naturalWidth/CHEF_ANTIC_ATLAS_SOURCE.width;
+  const scaleY=chefAnticAtlas.naturalHeight/CHEF_ANTIC_ATLAS_SOURCE.height;
+  const sx=frame.x*scaleX,sy=frame.y*scaleY,sw=frame.w*scaleX,sh=frame.h*scaleY;
+  const visual=chefAnticVisual[id]||{scale:.82,sceneWidth:.62,widthScale:1.1};
+  const catW=Math.max(1,catRect.width*dpr),catH=Math.max(1,catRect.height*dpr);
+  const maxH=catH*visual.scale;
+  const maxW=Math.min(canvas.width*visual.sceneWidth,catW*visual.widthScale);
+  const fit=Math.min(maxW/sw,maxH/sh);
+  const dw=sw*fit,dh=sh*fit;
+  const anchorX=(catRect.left+catRect.width/2-sceneRect.left)*dpr;
+  const anchorBottom=(catRect.bottom-sceneRect.top)*dpr;
+  const motion=chefAnticMotion(id,index,progress);
+  const dx=anchorX-dw/2+motion.dx*dpr,dy=anchorBottom-dh+motion.dy*dpr;
+  ctx.save();
+  ctx.globalAlpha=alpha;
+  ctx.translate(dx+dw/2,dy+dh/2);
+  ctx.rotate(motion.rotation);
+  ctx.scale(motion.scale,motion.scale);
+  ctx.drawImage(chefAnticAtlas,sx,sy,sw,sh,-dw/2,-dh/2,dw,dh);
+  ctx.restore();
+  return true
+}
+function drawChefAnticFrame(frameKey,{id='',index=0,progress=1,previousFrameKey=null,blend=1}={}){
   const frame=chefAnticAtlasFrames[frameKey],canvas=$('chefAnticCanvas');
   if(!frame||!canvas||!chefAnticAtlasReady)return false;
-  const rect=canvas.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);
+  const rect=canvas.getBoundingClientRect(),dpr=Math.min(3,window.devicePixelRatio||1);
   const cw=Math.max(1,Math.round(rect.width*dpr)),ch=Math.max(1,Math.round(rect.height*dpr));
   if(canvas.width!==cw||canvas.height!==ch){canvas.width=cw;canvas.height=ch}
   const ctx=canvas.getContext('2d');
   ctx.clearRect(0,0,cw,ch);
   ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
-  const scaleX=chefAnticAtlas.naturalWidth/CHEF_ANTIC_ATLAS_SOURCE.width;
-  const scaleY=chefAnticAtlas.naturalHeight/CHEF_ANTIC_ATLAS_SOURCE.height;
-  const sx=frame.x*scaleX,sy=frame.y*scaleY,sw=frame.w*scaleX,sh=frame.h*scaleY;
-  const fit=Math.min(cw*.94/sw,ch*.96/sh);
-  const dw=sw*fit,dh=sh*fit,dx=(cw-dw)/2,dy=ch-dh;
-  ctx.drawImage(chefAnticAtlas,sx,sy,sw,sh,dx,dy,dw,dh);
+  const mix=Math.max(0,Math.min(1,blend));
+  if(previousFrameKey&&mix<1)paintChefAnticFrame(ctx,canvas,previousFrameKey,id,Math.max(0,index-1),1,1-mix);
+  paintChefAnticFrame(ctx,canvas,frameKey,id,index,progress,mix);
   chefAnticCurrentFrame=frameKey;
   return true
 }
@@ -702,6 +757,7 @@ function showChefAnticSequence(){
 }
 function hideChefAnticSequence(){
   const canvas=$('chefAnticCanvas');
+  cancelAnimationFrame(chefAnticRaf);chefAnticRaf=0;
   document.querySelector('.game')?.classList.remove('chef-antic-sequence');
   canvas?.classList.remove('show');
   canvas?.setAttribute('aria-hidden','true');
@@ -709,11 +765,20 @@ function hideChefAnticSequence(){
 }
 function playChefAnticFrames(id,antic,index=0){
   if(!chefAnticRunning||index>=antic.frames.length)return;
-  const [frameKey,delay,sound]=antic.frames[index];
-  if(!drawChefAnticFrame(frameKey)){finishChefAntic(id);return}
-  if(sound)playSound(sound,.7);
+  cancelAnimationFrame(chefAnticRaf);chefAnticRaf=0;
   clearTimeout(chefAnticFrameTimer);
-  chefAnticFrameTimer=setTimeout(()=>index+1<antic.frames.length?playChefAnticFrames(id,antic,index+1):finishChefAntic(id),delay);
+  const [frameKey,duration,sound]=antic.frames[index],previousFrameKey=index>0?antic.frames[index-1][0]:null;
+  if(sound)playSound(sound,.7);
+  const started=performance.now();
+  const tick=now=>{
+    if(!chefAnticRunning)return;
+    const progress=Math.min(1,(now-started)/Math.max(1,duration));
+    const blend=previousFrameKey?Math.min(1,progress/.24):1;
+    if(!drawChefAnticFrame(frameKey,{id,index,progress,previousFrameKey,blend})){finishChefAntic(id);return}
+    if(progress<1)chefAnticRaf=requestAnimationFrame(tick);
+    else chefAnticFrameTimer=setTimeout(()=>index+1<antic.frames.length?playChefAnticFrames(id,antic,index+1):finishChefAntic(id),45);
+  };
+  chefAnticRaf=requestAnimationFrame(tick)
 }
 function finishChefAntic(id){
   const antic=chefAntics[id];
