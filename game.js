@@ -1010,7 +1010,7 @@ const helperLayoutRoomDefaults={
   0:{
     grandmaHelper:{z:0,hidden:false,left:8.38,top:34.23,width:14.11},
     mouseDecor:{z:0,hidden:false,left:56.96,top:42.64,width:3.03},
-    deliveryHelper:{z:2,hidden:false,left:2.19,top:77.03,width:9.47}
+    deliveryHelper:{z:2,hidden:false,left:0,top:73.27,width:19.46}
   },
   1:{
     grandmaHelper:{z:1,hidden:false,left:22.16,top:27.93,width:14.11},
@@ -1036,8 +1036,19 @@ const helperLayoutRoomDefaults={
 const helperLayoutKey=()=>`absurd8-helper-layout-v13-landscape-room-${activeRoomStage+1}`;
 function helperLayoutDefaults(){return helperLayoutRoomDefaults[activeRoomStage]||helperLayoutRoomDefaults[0]}
 function readHelperLayout(){const defaults=helperLayoutDefaults();try{return {...defaults,...JSON.parse(localStorage.getItem(helperLayoutKey())||'{}')}}catch(e){return {...defaults}}}
+const helperStageRoomLayouts={
+  0:{
+    grandmaHelper:{
+      5:{z:0,hidden:false,left:10.7,top:56.91,width:18.11}
+    }
+  }
+};
+function helperStageLayoutPosition(item){
+  const stage=Number(item?.dataset?.helperStage||0);
+  return helperStageRoomLayouts[activeRoomStage]?.[item?.id]?.[stage]||null
+}
 function layoutItemKey(item){return item?.id}
-function layoutItemPosition(saved,item){return stagedLayoutItemIds.has(item?.id)?readHelperLayout()[item.id]:saved[item?.id]}
+function layoutItemPosition(saved,item){if(stagedLayoutItemIds.has(item?.id))return helperStageLayoutPosition(item)||readHelperLayout()[item.id];return saved[item?.id]}
 function readLayout(){const master=masterLayout();if(!layoutOverridesEnabled())return {...master,...readHelperLayout()};try{const custom=JSON.parse(localStorage.getItem(layoutKey())||'{}');Object.keys(custom).forEach(key=>{if(stagedLayoutItemIds.has(key)||/__stage_\d+$/.test(key))delete custom[key]});return {...master,...custom,...readHelperLayout()}}catch(e){return {...master,...readHelperLayout()}}}
 function itemStage(item){return item.dataset.layoutMode==='offset'?document.querySelector('.game'):(item.closest('.food-decor,.helper-stage')||layoutStage)}
 function applyLayout(){const saved=readLayout();layoutItems.forEach(item=>{const pos=layoutItemPosition(saved,item);if(!pos)return;item.style.zIndex=pos.z??'';item.style.visibility=pos.hidden?'hidden':'';if(item.dataset.layoutMode==='offset'){item.style.setProperty('--layout-x',`${pos.dx||0}vw`);item.style.setProperty('--layout-y',`${pos.dy||0}dvh`);item.style.setProperty('--layout-scale',pos.scale||1);return}const isFood=item.classList.contains('food-prop'),safeLeft=isFood?Math.max(0,Math.min(100-(pos.width||10),pos.left)):pos.left,safeTop=isFood?Math.max(5,Math.min(90,pos.top)):pos.top;item.style.left=`${safeLeft}%`;item.style.top=`${safeTop}%`;item.style.right='auto';item.style.bottom='auto';item.style.width=`${pos.width}%`;item.style.height=item.id==='laserDecor'?`${pos.width}%`:'auto'})}
