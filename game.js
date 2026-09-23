@@ -1033,32 +1033,32 @@ const helperLayoutRoomDefaults={
     deliveryHelper:{z:2,hidden:false,left:4.45,top:68.92,width:9.47}
   }
 };
-const helperLayoutKey=()=>`absurd8-helper-layout-v17-landscape-room-${activeRoomStage+1}`;
+const helperLayoutKey=()=>`absurd8-helper-layout-v18-landscape-room-${activeRoomStage+1}`;
 function helperLayoutDefaults(){return helperLayoutRoomDefaults[activeRoomStage]||helperLayoutRoomDefaults[0]}
 function readHelperLayout(){const defaults=helperLayoutDefaults();try{return {...defaults,...JSON.parse(localStorage.getItem(helperLayoutKey())||'{}')}}catch(e){return {...defaults}}}
 const helperStageRoomLayouts={
   0:{
     grandmaHelper:{
-      5:{z:0,hidden:false,left:16.75,top:57.06,width:16.11}
+      5:{z:0,hidden:false,left:9.92,top:29.73,width:34.09}
     }
   },
   1:{
     grandmaHelper:{
-      5:{z:1,hidden:false,left:25.84,top:53.15,width:16.11}
+      5:{z:1,hidden:false,left:13.47,top:26.73,width:34.09}
     }
   },
   2:{
     grandmaHelper:{
-      5:{z:-2,hidden:false,left:21.52,top:47.6,width:16.11}
+      5:{z:-4,hidden:false,left:15.34,top:29.58,width:32.09}
     }
   },
   3:{
     grandmaHelper:{
-      5:{z:0,hidden:false,left:22.81,top:55.56,width:16.11}
+      5:{z:0,hidden:false,left:14.37,top:30.48,width:32.09}
     }
   }
 };
-const helperStageLayoutKey=()=>`absurd8-helper-stage-layout-v17-landscape-room-${activeRoomStage+1}`;
+const helperStageLayoutKey=()=>`absurd8-helper-stage-layout-v18-landscape-room-${activeRoomStage+1}`;
 function readHelperStageLayouts(){
   const defaults=helperStageRoomLayouts[activeRoomStage]||{};
   try{
