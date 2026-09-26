@@ -1,7 +1,7 @@
 /* One image alongside the existing live income value, on both screen sizes. */
 .game .topbar .counter-copy .income{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:6px;flex-wrap:nowrap}
 .game .topbar .counter-copy .income::before{content:'';display:block;flex:0 0 28px;width:28px;height:28px;margin:0;background:url('assets/images/ui/top/ui5.png') center / contain no-repeat}
-.game .topbar .counter-copy .income #income{white-space:nowrap;position:relative;top:3px;line-height:1}
+.game .topbar .counter-copy .income #income{white-space:nowrap;position:relative;top:6px;line-height:1}
 @media (min-width:1200px){
   .game .topbar .counter-copy{flex:0 0 430px;width:430px;max-width:430px;gap:10px}
   .game .topbar .counter-copy .counter-value{flex:1 1 235px;min-width:235px}
@@ -20,4 +20,4 @@
 .small-screen .game .topbar .counter-copy{flex:0 0 calc(274 * var(--ui-unit));width:calc(274 * var(--ui-unit));max-width:calc(274 * var(--ui-unit))}
 
 /* Align the income number to the bottom text line of the primary counter. */
-.small-screen .game .topbar .counter-copy .income #income{top:calc(2 * var(--ui-unit))}
+.small-screen .game .topbar .counter-copy .income #income{top:calc(5 * var(--ui-unit))}
