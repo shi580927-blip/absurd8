@@ -125,6 +125,13 @@ const freshCare={hunger:82,mood:78,rest:80,last:Date.now(),nextRequest:Date.now(
 state.care={...freshCare,...(state.care||{})};
 if(state.artVersion!==2){state.outfit=null;state.artVersion=2}
 const $=id=>document.getElementById(id);
+function alignIncomeToPrimaryCounter(){
+  const food=$('food'),income=$('income'),group=income?.closest('.income');
+  if(!food||!income||!group)return;
+  const current=parseFloat(group.style.getPropertyValue('--income-align-y'))||0;
+  const delta=food.getBoundingClientRect().bottom-income.getBoundingClientRect().bottom;
+  if(Math.abs(delta)>.25)group.style.setProperty('--income-align-y',`${current+delta}px`);
+}
 if(cleanTestMode)document.documentElement.classList.add('clean-test');
 $('foodDecor').innerHTML=carpetFood.map((item,index)=>(item.buffet||item.premium)?'':`<img id="foodProp${index+1}" data-treat-index="${index}" data-layout-name="Еда ${index+1}" class="food-prop layout-item" src="assets/images/food-${item.img}.png" style="left:${item.x}%;top:${item.y}%;width:${item.w}%" alt="">`).join('');
 const SUPPORTED_LANGUAGES=new Set(['ru','en']);
@@ -615,7 +622,7 @@ function render(updatePanels=false){
   $('food').textContent=compactNumber(state.food); $('perClick').textContent=L(`+${format(perClick())} рыбов`,`+${format(perClick())} fish`);
   renderAd();
   updateTreatWish();
-  $('income').textContent=`+${compactNumber(cps())}${L('/с','/s')}`; const li=currentLevel();
+  $('income').textContent=`+${compactNumber(cps())}${L('/с','/s')}`; requestAnimationFrame(alignIncomeToPrimaryCounter); const li=currentLevel();
   if(li!==renderedLevel){state.outfit=null;const advanced=li>renderedLevel;renderedLevel=li;if(advanced)returnToSceneForLevel(li);trackEvent(`level_${li+1}`);save();updatePanels=true}
   const level=levels[li],next=levels[li+1];
   const roomStage=li===levels.length-1?4:li>=10?3:li>=8?2:li>=4?1:0;
@@ -1213,4 +1220,4 @@ updateMobileControls();
 function save(){if(suppressSave)return;syncPausedTimers();state.last=Date.now();localStorage.setItem(saveKey,JSON.stringify(state));queueCloudSave()}
 const away=Math.min(4*3600,Math.max(0,(Date.now()-(state.last||Date.now()))/1000));if(away>10&&cps()>0){const bonus=Math.floor(away*cps());state.food+=bonus;state.total+=bonus;$('phrase').textContent=L(`Пока тебя не было, Шеф получил ${format(bonus)} рыбов.`,`While you were away, Chef received ${format(bonus)} fish.`)}
 function syncOrientation(){if(needsLandscape()||masterOrientationPaused){stopGameplay();stopAllSounds()}else{startGameplay();ensureMusic()}}
-setInterval(()=>{syncPausedTimers();if(gameIsPaused())return;const gain=cps()/10;state.food+=gain;state.total+=gain;render()},100);setInterval(()=>{if(gameIsPaused())return;updateCare();save();if($('care').classList.contains('open'))renderCare();else renderChefWish()},60000);setInterval(save,5000);addEventListener('beforeunload',save);applyGameLanguage(queryParams.get('lang')||'ru');updateCare();render(false);applyLayout();addEventListener('resize',()=>{applyLayout();syncOrientation();if(chefAnticRunning&&chefAnticCurrentFrame)requestAnimationFrame(()=>drawChefAnticFrame(chefAnticCurrentFrame))});addEventListener('orientationchange',syncOrientation);addEventListener('load',applyLayout,{once:true});initTestMode();if(testMode||layoutEditorMode){$('layoutToggle').hidden=false;$('layoutToggle').setAttribute('aria-hidden','false')}if(layoutEditorMode)setLayoutMode(true);initCatThoughts();scheduleRoomEvent(true);scheduleChefAntic(true);setTimeout(()=>trackEvent('session_30_sec'),30000);setTimeout(()=>trackEvent('session_1_min'),60000);setTimeout(()=>trackEvent('session_3_min'),180000);setTimeout(()=>trackEvent('session_5_min'),300000);setTimeout(()=>{introMinElapsed=true;finishIntroWhenReady()},1800);setTimeout(()=>{initialDataReady=true;finishIntroWhenReady()},8000);
+setInterval(()=>{syncPausedTimers();if(gameIsPaused())return;const gain=cps()/10;state.food+=gain;state.total+=gain;render()},100);setInterval(()=>{if(gameIsPaused())return;updateCare();save();if($('care').classList.contains('open'))renderCare();else renderChefWish()},60000);setInterval(save,5000);addEventListener('beforeunload',save);applyGameLanguage(queryParams.get('lang')||'ru');updateCare();render(false);applyLayout();addEventListener('resize',()=>{applyLayout();syncOrientation();requestAnimationFrame(alignIncomeToPrimaryCounter);if(chefAnticRunning&&chefAnticCurrentFrame)requestAnimationFrame(()=>drawChefAnticFrame(chefAnticCurrentFrame))});addEventListener('orientationchange',syncOrientation);addEventListener('load',applyLayout,{once:true});initTestMode();if(testMode||layoutEditorMode){$('layoutToggle').hidden=false;$('layoutToggle').setAttribute('aria-hidden','false')}if(layoutEditorMode)setLayoutMode(true);initCatThoughts();scheduleRoomEvent(true);scheduleChefAntic(true);setTimeout(()=>trackEvent('session_30_sec'),30000);setTimeout(()=>trackEvent('session_1_min'),60000);setTimeout(()=>trackEvent('session_3_min'),180000);setTimeout(()=>trackEvent('session_5_min'),300000);setTimeout(()=>{introMinElapsed=true;finishIntroWhenReady()},1800);setTimeout(()=>{initialDataReady=true;finishIntroWhenReady()},8000);
