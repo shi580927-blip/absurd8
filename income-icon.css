@@ -16,3 +16,5 @@
 }
 .small-screen .game .topbar .counter-copy .income{gap:calc(4 * var(--ui-unit))}
 .small-screen .game .topbar .counter-copy .income::before{flex-basis:calc(22 * var(--ui-unit));width:calc(22 * var(--ui-unit));height:calc(22 * var(--ui-unit))}
+/* Mobile only: give the top counter 16px more room without touching global HUD positioning. */
+.small-screen .game .topbar .counter-copy{flex:0 0 calc(274 * var(--ui-unit));width:calc(274 * var(--ui-unit));max-width:calc(274 * var(--ui-unit))}
