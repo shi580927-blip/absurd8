@@ -706,7 +706,7 @@ h1{margin:2px 0 0;font-size:clamp(1.55rem,5vw,2.15rem);line-height:1;text-shadow
 .counter-copy .income{min-width:7.5ch;font-variant-numeric:tabular-nums}
 .counter-copy .income:before{content:'📈';color:#8cda68;margin-right:6px}
 .small-screen .game .topbar{left:calc(5 * var(--ui-unit));right:calc(5 * var(--ui-unit));padding-inline:0}
-.small-screen .game .topbar .counter-copy{flex:0 0 calc(258 * var(--ui-unit));width:calc(258 * var(--ui-unit));max-width:calc(258 * var(--ui-unit));gap:calc(5 * var(--ui-unit));padding-inline:calc(7 * var(--ui-unit))}
+.small-screen .game .topbar .counter-copy{flex:0 0 calc(274 * var(--ui-unit));width:calc(274 * var(--ui-unit));max-width:calc(274 * var(--ui-unit));gap:calc(5 * var(--ui-unit));padding-inline:calc(7 * var(--ui-unit))}
 .small-screen .counter-copy #food{min-width:7.5ch}
 /* One reusable, horizontally scrollable row above the level bar. */
 .game #foodShop{--shelf-unit:1px;top:auto;bottom:148px;left:50%;right:auto;width:76%;height:auto;max-height:none;padding:12px 8px;overflow:visible;background:rgba(49,25,15,.9);border:2px solid #e5aa43;transition:transform .2s,opacity .2s}
