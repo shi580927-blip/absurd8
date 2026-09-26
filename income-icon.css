@@ -1,5 +1,5 @@
 /* One image alongside the existing live income value, on both screen sizes. */
-.game .topbar .counter-copy .income{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:6px;flex-wrap:nowrap;position:relative;top:6px}
+.game .topbar .counter-copy .income{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:6px;flex-wrap:nowrap;position:relative;transform:translateY(var(--income-align-y,0px))}
 .game .topbar .counter-copy .income::before{content:'';display:block;flex:0 0 28px;width:28px;height:28px;margin:0;background:url('assets/images/ui/top/ui5.png') center / contain no-repeat}
 .game .topbar .counter-copy .income #income{white-space:nowrap;line-height:1}
 @media (min-width:1200px){
@@ -14,7 +14,7 @@
   html[lang="ru"] .game .topbar .counter-copy .counter-value h1{font-size:clamp(1.42rem,2.35vw,2.02rem)}
   html[lang="ru"] .game .topbar .counter-copy .income{flex:0 0 136px;min-width:136px;padding-left:2px;box-sizing:border-box;left:-10px}
 }
-.small-screen .game .topbar .counter-copy .income{gap:calc(4 * var(--ui-unit));top:calc(5 * var(--ui-unit))}
+.small-screen .game .topbar .counter-copy .income{gap:calc(4 * var(--ui-unit))}
 .small-screen .game .topbar .counter-copy .income::before{flex-basis:calc(22 * var(--ui-unit));width:calc(22 * var(--ui-unit));height:calc(22 * var(--ui-unit))}
 /* Mobile only: give the top counter 16px more room without touching global HUD positioning. */
 .small-screen .game .topbar .counter-copy{flex:0 0 calc(274 * var(--ui-unit));width:calc(274 * var(--ui-unit));max-width:calc(274 * var(--ui-unit))}
