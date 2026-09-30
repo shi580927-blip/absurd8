@@ -215,11 +215,11 @@ const cps=()=>upgrades.reduce((n,u)=>n+(u.cps||0)*state.counts[u.id],0)*boostMul
 const adRewardAmount=()=>Math.max(100,Math.floor(cps()*180),rawPerClick()*30);
 if(!Array.isArray(state.earnedAchievements))state.earnedAchievements=achievements.filter(a=>a.done()).map(a=>a.name);
 const CLOUD_SAVE_KEY='absurd8State';
-let ysdk=null,yandexPlayer=null,cloudSaveReady=false,cloudSaveTimer=null,cloudSaveInFlight=false;
+let platform=null,platformInitPromise=null,cloudSaveReady=false,cloudSaveTimer=null,cloudSaveInFlight=false;
 let gameplayActive=false,loadingReady=false,brandIntroFinished=false,platformPaused=false;
-let parentSdkPromise=null;
-try{if(parent!==window)parentSdkPromise=parent.yandexSdkPromise||null}catch(error){}
-let initialDataReady=(!window.YaGames&&!parentSdkPromise)||testMode,introMinElapsed=false,introFinishStarted=false;
+try{if(parent!==window){platform=parent.GamePlatform||null;platformInitPromise=parent.gamePlatformReady||null}}catch(error){}
+platform=platform||window.GamePlatform||null;
+let initialDataReady=testMode,introMinElapsed=false,introFinishStarted=false;
 let adPlaying=false,adRequestPending=false;
 const NativeAudioContext=window.AudioContext||window.webkitAudioContext;
 let sharedAudioContext=null;
@@ -497,9 +497,9 @@ function initCatThoughts(){const preload=()=>Object.values(catReactionImages).fo
 function stopEffects(){pauseZoomiesAudio();activeSounds.forEach(audio=>{audio.pause();audio.currentTime=0});activeSounds.clear()}
 function stopAllSounds(){backgroundMusic.pause();stopEffects()}
 function trackEvent(name,params={}){try{window.dataLayer?.push({event:name,...params});if(window.YM_COUNTER_ID&&typeof window.ym==='function')window.ym(window.YM_COUNTER_ID,'reachGoal',name,params)}catch(error){}}
-function startGameplay(){syncPausedTimers();if(gameplayActive||gameIsPaused())return;gameplayActive=true;ysdk?.features?.GameplayAPI?.start?.()}
-function stopGameplay(){syncPausedTimers();if(!gameplayActive)return;gameplayActive=false;ysdk?.features?.GameplayAPI?.stop?.()}
-function announceGameReady(){if(!brandIntroFinished||loadingReady||!ysdk)return;ysdk.features?.LoadingAPI?.ready?.();loadingReady=true;startGameplay()}
+function startGameplay(){syncPausedTimers();if(gameplayActive||gameIsPaused())return;gameplayActive=true;platform?.startGameplay?.()}
+function stopGameplay(){syncPausedTimers();if(!gameplayActive)return;gameplayActive=false;platform?.stopGameplay?.()}
+function announceGameReady(){if(!brandIntroFinished||loadingReady)return;platform?.gameReady?.();loadingReady=true;startGameplay()}
 function finishIntroWhenReady(){if(introFinishStarted||!introMinElapsed||!initialDataReady)return;introFinishStarted=true;const splash=$('introSplash');splash?.classList.add('hide');setTimeout(()=>{splash?.remove();brandIntroFinished=true;announceGameReady();trackEvent('game_start',{level:currentLevel()+1,test_mode:testMode})},900)}
 function handlePlatformPause(){platformPaused=true;stopGameplay();stopAllSounds();clearTimeout(roomEventTimer);$('roomEvent').classList.remove('show')}
 function handlePlatformResume(){platformPaused=false;startGameplay();ensureMusic();scheduleRoomEvent()}
@@ -516,21 +516,19 @@ function normalizeCloudState(){
   state.saveVersion=9;
 }
 function queueCloudSave(delay=12000){
-  if(!cloudSaveReady||!yandexPlayer||testMode||suppressSave||cloudSaveTimer)return;
+  if(!cloudSaveReady||!platform||testMode||suppressSave||cloudSaveTimer)return;
   cloudSaveTimer=setTimeout(async()=>{
     cloudSaveTimer=null;
     if(cloudSaveInFlight)return queueCloudSave(3000);
     cloudSaveInFlight=true;
-    try{await yandexPlayer.setData({[CLOUD_SAVE_KEY]:JSON.parse(JSON.stringify(state))},true)}catch(error){}
+    try{await platform.saveState(CLOUD_SAVE_KEY,JSON.parse(JSON.stringify(state)))}catch(error){}
     finally{cloudSaveInFlight=false}
   },delay);
 }
 async function initCloudSave(){
-  if(!ysdk||testMode){initialDataReady=true;finishIntroWhenReady();return}
+  if(!platform||testMode){initialDataReady=true;finishIntroWhenReady();return}
   try{
-    yandexPlayer=await ysdk.getPlayer();
-    const cloudData=await yandexPlayer.getData([CLOUD_SAVE_KEY]);
-    const cloudState=cloudData?.[CLOUD_SAVE_KEY];
+    const cloudState=await platform.loadState(CLOUD_SAVE_KEY);
     if(cloudState&&typeof cloudState==='object'&&(!hasValidLocalSave||(cloudState.last||0)>(state.last||0))){
       state={...state,...cloudState};
       normalizeCloudState();
@@ -540,13 +538,27 @@ async function initCloudSave(){
       render(true);
       applyLayout();
     }
-    cloudSaveReady=true;
+    cloudSaveReady=platform.canCloudSave?.()!==false;
     queueCloudSave(1000);
-  }catch(error){yandexPlayer=null;cloudSaveReady=false}
+  }catch(error){cloudSaveReady=false}
   finally{initialDataReady=true;finishIntroWhenReady()}
 }
-async function initYandexSDK(){try{ysdk=parentSdkPromise?await parentSdkPromise:(window.YaGames?await YaGames.init():null);if(!ysdk){initialDataReady=true;finishIntroWhenReady();return}const sdkLanguage=ysdk.environment.i18n.lang;applyGameLanguage(queryParams.get('lang')||sdkLanguage);ysdk.on?.('game_api_pause',handlePlatformPause);ysdk.on?.('game_api_resume',handlePlatformResume);await initCloudSave();announceGameReady()}catch(error){ysdk=null;initialDataReady=true;finishIntroWhenReady()}}
-initYandexSDK();
+async function initPlatformSDK(){
+  try{
+    if(!platform){initialDataReady=true;finishIntroWhenReady();return}
+    if(platformInitPromise)await platformInitPromise;else await platform.init?.();
+    applyGameLanguage('ru');
+    platform.onPause?.(handlePlatformPause);
+    platform.onResume?.(handlePlatformResume);
+    await initCloudSave();
+    announceGameReady();
+  }catch(error){
+    cloudSaveReady=false;
+    initialDataReady=true;
+    finishIntroWhenReady();
+  }
+}
+initPlatformSDK();
 const careRequests={
   hunger:{icon:'🐟',title:'Шеф требует особый перекус',enTitle:'Chef Demands a Special Snack',text:'Обычное кормление считается работой. А это — забота.',enText:'Regular feeding is work. This is personal care.',action:'Подать особый перекус',enAction:'Serve a special snack'},
   mood:{icon:'🪶',title:'Шеф желает развлечений',enTitle:'Chef Requires Entertainment',text:'Перо уже уведомлено о неизбежном поражении.',enText:'The feather has been notified of its inevitable defeat.',action:'Поиграть с пером',enAction:'Play with the feather'},
@@ -745,7 +757,54 @@ $('treats').addEventListener('click',e=>{
 $('careAction').addEventListener('click',()=>{updateCare();const type=state.care.request;if(!type)return;if(type==='hunger'){const cost=Math.max(10,perClick()*8);if(state.food<cost){playSound('error');$('careRequestText').textContent=L(`Для особого перекуса не хватает ${format(cost-state.food)} рыбов.`,`The special snack needs ${format(cost-state.food)} more fish.`);return}state.food-=cost}state.care[type]=Math.min(100,state.care[type]+32);state.care.request=null;state.care.bonusUntil=Date.now()+5*60*1000;state.care.nextRequest=Date.now()+(2+Math.random())*3600000;playSound('reward',.75);if(type==='hunger')playPurr();else playSound(type==='mood'?'cat-happy-2':'cat-soft',.72);$('phrase').textContent=type==='hunger'?L('Особый перекус принят. Шеф великодушно не оставил ни крошки.','Special snack accepted. Chef generously left no crumbs.'):type==='mood'?L('Перо побеждено. Настроение руководства улучшилось.','The feather was defeated. Management morale improved.'):L('Тишина объявлена государственной необходимостью.','Silence has been declared a matter of national importance.');save();render(true)});
 const AD_WATCH_COOLDOWN=300000;
 let lastAdWatch=+(localStorage.getItem('absurd8-last-ad-watch')||0);
-function showRewardedAction({event,onReward,success}){if(adRequestPending)return;if(!EventDirector.canStartMajor('ad')){const message=L('Шеф сейчас занят. Попробуйте после завершения события.','Chef is busy right now. Try again after the event.');$('phrase').textContent=message;$('adStatus').textContent=message;return}const remaining=AD_WATCH_COOLDOWN-(Date.now()-lastAdWatch);if(remaining>0){playSound('error',.45);const message=L(`Следующая реклама будет доступна через ${Math.ceil(remaining/1000)} сек.`,`The next ad will be available in ${Math.ceil(remaining/1000)} sec.`);$('phrase').textContent=message;$('adStatus').textContent=message;return}if(!ysdk?.adv){playSound('error');const message=L('Реклама будет доступна после запуска игры на Яндекс Играх.','Ads will be available after launching the game on Yandex Games.');$('phrase').textContent=message;$('adStatus').textContent=message;return}adRequestPending=true;trackEvent(`${event}_clicked`);renderAd();let rewarded=false;const fail=()=>{adRequestPending=false;resumeGameAfterAd();playSound('error');const message=L('Сейчас реклама недоступна. Попробуйте немного позже.','Ads are unavailable right now. Please try again later.');$('phrase').textContent=message;$('adStatus').textContent=message;render(true)};try{const result=ysdk.adv.showRewardedVideo({callbacks:{onOpen:()=>{lastAdWatch=Date.now();localStorage.setItem('absurd8-last-ad-watch',String(lastAdWatch));pauseGameForAd();$('adStatus').textContent=L('Просмотр начался. Награда будет выдана после завершения.','Video started. The reward will be granted after completion.')},onRewarded:()=>{if(rewarded)return;syncPausedTimers();rewarded=true;onReward();trackEvent(`${event}_rewarded`);save()},onClose:()=>{adRequestPending=false;resumeGameAfterAd();if(rewarded)playSound('reward');const message=rewarded?success:L('Просмотр не завершён — награда не выдана.','Video not completed — no reward was granted.');$('phrase').textContent=message;$('adStatus').textContent=message;render(true)},onError:fail}});result?.catch?.(fail)}catch(error){fail()}}
+async function showRewardedAction({event,onReward,success}){
+  if(adRequestPending)return;
+  if(!EventDirector.canStartMajor('ad')){
+    const message=L('Шеф сейчас занят. Попробуйте после завершения события.','Chef is busy right now. Try again after the event.');
+    $('phrase').textContent=message;$('adStatus').textContent=message;return
+  }
+  const remaining=AD_WATCH_COOLDOWN-(Date.now()-lastAdWatch);
+  if(remaining>0){
+    playSound('error',.45);
+    const message=L(`Следующая реклама будет доступна через ${Math.ceil(remaining/1000)} сек.`,`The next ad will be available in ${Math.ceil(remaining/1000)} sec.`);
+    $('phrase').textContent=message;$('adStatus').textContent=message;return
+  }
+  if(!platform?.showRewarded){
+    playSound('error');
+    const message='Реклама будет доступна после запуска игры во ВКонтакте или Одноклассниках.';
+    $('phrase').textContent=message;$('adStatus').textContent=message;return
+  }
+  adRequestPending=true;
+  trackEvent(`${event}_clicked`);
+  renderAd();
+  lastAdWatch=Date.now();
+  localStorage.setItem('absurd8-last-ad-watch',String(lastAdWatch));
+  pauseGameForAd();
+  $('adStatus').textContent='Открываем рекламу. Награда будет выдана только за успешный просмотр.';
+  let rewarded=false;
+  try{
+    rewarded=await platform.showRewarded();
+    if(rewarded){
+      syncPausedTimers();
+      onReward();
+      trackEvent(`${event}_rewarded`);
+      save();
+      playSound('reward');
+    }else{
+      playSound('error');
+    }
+  }catch(error){
+    rewarded=false;
+    playSound('error');
+  }finally{
+    adRequestPending=false;
+    resumeGameAfterAd();
+    const message=rewarded?success:'Реклама не завершена или сейчас недоступна — награда не выдана.';
+    $('phrase').textContent=message;
+    $('adStatus').textContent=message;
+    render(true);
+  }
+}
 function mainRewardedAdClick(){if(adRequestPending)return;const cooldown=AD_WATCH_COOLDOWN-(Date.now()-lastAdWatch);if(cooldown>0){const message=L(`Следующая реклама будет доступна через ${Math.ceil(cooldown/1000)} сек.`,`The next ad will be available in ${Math.ceil(cooldown/1000)} sec.`);$('phrase').textContent=message;$('adStatus').textContent=message;return}const instantReward=adRewardAmount();showRewardedAction({event:'ad',onReward:()=>{state.food+=instantReward;state.total+=instantReward;state.adBonusUntil=Date.now()+5*60*1000},success:L(`Спонсор выделил ${format(instantReward)} рыбов. Доход ×3 на 5 минут.`,`The sponsor allocated ${format(instantReward)} fish. Income ×3 for 5 minutes.`)})}
 function openBoostOffer(){if(adRequestPending)return;const cooldown=Math.max(0,AD_WATCH_COOLDOWN-(Date.now()-lastAdWatch));if(cooldown>0){confirmRewardedAction(L('Реклама пока недоступна','Ad not ready'),L('Общий перерыв для ускорения и блюд: осталось '+Math.ceil(cooldown/1000)+' сек.','Shared cooldown for boosts and dishes: '+Math.ceil(cooldown/1000)+' seconds left.'),null);$('rewardConfirmWatch').disabled=true;return}confirmRewardedAction(L('Ускорение на 5 минут','Boost for 5 minutes'),L('За полный просмотр: +'+format(adRewardAmount())+' рыбов сразу и набор рыбов ×3 на 5 минут.','Watch the full ad for +'+format(adRewardAmount())+' fish now and ×3 fish earnings for 5 minutes.'),mainRewardedAdClick)}
 $('rewardedAd').addEventListener('click',openBoostOffer);
@@ -1220,4 +1279,4 @@ updateMobileControls();
 function save(){if(suppressSave)return;syncPausedTimers();state.last=Date.now();localStorage.setItem(saveKey,JSON.stringify(state));queueCloudSave()}
 const away=Math.min(4*3600,Math.max(0,(Date.now()-(state.last||Date.now()))/1000));if(away>10&&cps()>0){const bonus=Math.floor(away*cps());state.food+=bonus;state.total+=bonus;$('phrase').textContent=L(`Пока тебя не было, Шеф получил ${format(bonus)} рыбов.`,`While you were away, Chef received ${format(bonus)} fish.`)}
 function syncOrientation(){if(needsLandscape()||masterOrientationPaused){stopGameplay();stopAllSounds()}else{startGameplay();ensureMusic()}}
-setInterval(()=>{syncPausedTimers();if(gameIsPaused())return;const gain=cps()/10;state.food+=gain;state.total+=gain;render()},100);setInterval(()=>{if(gameIsPaused())return;updateCare();save();if($('care').classList.contains('open'))renderCare();else renderChefWish()},60000);setInterval(save,5000);addEventListener('beforeunload',save);applyGameLanguage(queryParams.get('lang')||'ru');updateCare();render(false);applyLayout();addEventListener('resize',()=>{applyLayout();syncOrientation();requestAnimationFrame(alignIncomeToPrimaryCounter);if(chefAnticRunning&&chefAnticCurrentFrame)requestAnimationFrame(()=>drawChefAnticFrame(chefAnticCurrentFrame))});addEventListener('orientationchange',syncOrientation);addEventListener('load',applyLayout,{once:true});initTestMode();if(testMode||layoutEditorMode){$('layoutToggle').hidden=false;$('layoutToggle').setAttribute('aria-hidden','false')}if(layoutEditorMode)setLayoutMode(true);initCatThoughts();scheduleRoomEvent(true);scheduleChefAntic(true);setTimeout(()=>trackEvent('session_30_sec'),30000);setTimeout(()=>trackEvent('session_1_min'),60000);setTimeout(()=>trackEvent('session_3_min'),180000);setTimeout(()=>trackEvent('session_5_min'),300000);setTimeout(()=>{introMinElapsed=true;finishIntroWhenReady()},1800);setTimeout(()=>{initialDataReady=true;finishIntroWhenReady()},8000);
+setInterval(()=>{syncPausedTimers();if(gameIsPaused())return;const gain=cps()/10;state.food+=gain;state.total+=gain;render()},100);setInterval(()=>{if(gameIsPaused())return;updateCare();save();if($('care').classList.contains('open'))renderCare();else renderChefWish()},60000);setInterval(save,5000);addEventListener('beforeunload',save);applyGameLanguage('ru');updateCare();render(false);applyLayout();addEventListener('resize',()=>{applyLayout();syncOrientation();requestAnimationFrame(alignIncomeToPrimaryCounter);if(chefAnticRunning&&chefAnticCurrentFrame)requestAnimationFrame(()=>drawChefAnticFrame(chefAnticCurrentFrame))});addEventListener('orientationchange',syncOrientation);addEventListener('load',applyLayout,{once:true});initTestMode();if(testMode||layoutEditorMode){$('layoutToggle').hidden=false;$('layoutToggle').setAttribute('aria-hidden','false')}if(layoutEditorMode)setLayoutMode(true);initCatThoughts();scheduleRoomEvent(true);scheduleChefAntic(true);setTimeout(()=>trackEvent('session_30_sec'),30000);setTimeout(()=>trackEvent('session_1_min'),60000);setTimeout(()=>trackEvent('session_3_min'),180000);setTimeout(()=>trackEvent('session_5_min'),300000);setTimeout(()=>{introMinElapsed=true;finishIntroWhenReady()},1800);setTimeout(()=>{initialDataReady=true;finishIntroWhenReady()},8000);
