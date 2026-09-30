@@ -141,7 +141,7 @@
     }
   }
 
-  async function showOkRewarded() {
+  async function showOkRewarded(onOpen) {
     if (!okFapiReady) await ensureOkFapi();
     if (!okFapiReady) return false;
 
@@ -151,6 +151,7 @@
     }
 
     return await new Promise(resolve => {
+      try { onOpen?.(); } catch (error) {}
       okAdShowResolve = resolve;
       okAdShowTimer = setTimeout(() => {
         if (!okAdShowResolve) return;
@@ -172,9 +173,10 @@
     });
   }
 
-  async function showBridgeRewarded() {
+  async function showBridgeRewarded(onOpen) {
     if (!bridgeReady || !bridge()?.send) return false;
     try {
+      try { onOpen?.(); } catch (error) {}
       const data = await bridge().send('VKWebAppShowNativeAds', { ad_format: 'reward' });
       return data?.result === true;
     } catch (error) {
@@ -231,20 +233,21 @@
     }
   }
 
-  async function showRewarded() {
+  async function showRewarded(options = {}) {
+    const onOpen = typeof options.onOpen === 'function' ? options.onOpen : null;
     if (client === 'ok') {
       const fapiAvailable = await ensureOkFapi();
-      if (fapiAvailable && okAdReady) return showOkRewarded();
+      if (fapiAvailable && okAdReady) return showOkRewarded(onOpen);
 
       // VK Bridge native ads are supported by OK on Android, so keep this
       // as a fallback when FAPI is unavailable/not prepared there.
-      const bridgeResult = await showBridgeRewarded();
+      const bridgeResult = await showBridgeRewarded(onOpen);
       if (bridgeResult) return true;
 
       if (fapiAvailable) prepareOkRewarded();
       return false;
     }
-    return showBridgeRewarded();
+    return showBridgeRewarded(onOpen);
   }
 
   window.GamePlatform = Object.freeze({
