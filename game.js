@@ -777,13 +777,17 @@ async function showRewardedAction({event,onReward,success}){
   adRequestPending=true;
   trackEvent(`${event}_clicked`);
   renderAd();
-  lastAdWatch=Date.now();
-  localStorage.setItem('absurd8-last-ad-watch',String(lastAdWatch));
-  pauseGameForAd();
   $('adStatus').textContent='Открываем рекламу. Награда будет выдана только за успешный просмотр.';
-  let rewarded=false;
+  let rewarded=false,adStarted=false;
   try{
-    rewarded=await platform.showRewarded();
+    rewarded=await platform.showRewarded({onOpen:()=>{
+      if(adStarted)return;
+      adStarted=true;
+      lastAdWatch=Date.now();
+      localStorage.setItem('absurd8-last-ad-watch',String(lastAdWatch));
+      pauseGameForAd();
+      $('adStatus').textContent='Просмотр начался. Награда будет выдана после завершения.';
+    }});
     if(rewarded){
       syncPausedTimers();
       onReward();
