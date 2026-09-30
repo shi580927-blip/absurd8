@@ -12,6 +12,7 @@
   let okFapiLoading = null;
   let okAdReady = false;
   let okAdPreparing = false;
+  let okAdPreparedAt = 0;
   let okAdShowResolve = null;
   let okAdShowTimer = null;
   let previousApiCallback = null;
@@ -54,6 +55,7 @@
       if (method === 'loadAd') {
         okAdPreparing = false;
         okAdReady = result === 'ok' && (data === 'ready' || data === 'ad_prepared');
+        if (okAdReady) okAdPreparedAt = Date.now();
       }
 
       if (method === 'showLoadedAd') {
@@ -66,6 +68,7 @@
           okAdShowTimer = null;
           const completed = result === 'ok' && (data === 'complete' || data === 'ad_shown');
           okAdReady = false;
+          okAdPreparedAt = 0;
           resolve(completed);
           setTimeout(prepareOkRewarded, 30000);
         }
@@ -150,6 +153,10 @@
       return false;
     }
 
+    const earliestShowAt = okAdPreparedAt + 10000;
+    if (Date.now() < earliestShowAt) await delay(earliestShowAt - Date.now());
+    if (!okAdReady) return false;
+
     return await new Promise(resolve => {
       try { onOpen?.(); } catch (error) {}
       okAdShowResolve = resolve;
@@ -159,6 +166,7 @@
         okAdShowResolve = null;
         okAdShowTimer = null;
         okAdReady = false;
+        okAdPreparedAt = 0;
         finish(false);
       }, 90000);
       try {
@@ -168,6 +176,7 @@
         okAdShowTimer = null;
         okAdShowResolve = null;
         okAdReady = false;
+        okAdPreparedAt = 0;
         resolve(false);
       }
     });
@@ -208,13 +217,37 @@
     return initPromise;
   }
 
+  const STORAGE_CHUNK_SIZE = 3000;
+  const STORAGE_MAX_CHUNKS = 8;
+  const storageChunkKey = (key, index) => `${key}_${index}`;
+  const storageMetaKey = key => `${key}_meta`;
+
+  async function bridgeStorageGet(keys) {
+    const data = await withTimeout(bridge().send('VKWebAppStorageGet', { keys }), 4000, null);
+    return Array.isArray(data?.keys) ? data.keys : [];
+  }
+
   async function loadState(key) {
     if (!bridgeReady || !bridge()?.send) return null;
     try {
-      const data = await withTimeout(bridge().send('VKWebAppStorageGet', { keys: [key] }), 4000, null);
-      const raw = data?.keys?.find?.(item => item.key === key)?.value ?? data?.keys?.[0]?.value ?? '';
-      if (!raw) return null;
-      return JSON.parse(raw);
+      const metaRows = await bridgeStorageGet([storageMetaKey(key), key]);
+      const metaRaw = metaRows.find(item => item.key === storageMetaKey(key))?.value || '';
+      const legacyRaw = metaRows.find(item => item.key === key)?.value || '';
+
+      if (metaRaw) {
+        const meta = JSON.parse(metaRaw);
+        const count = Math.max(0, Math.min(STORAGE_MAX_CHUNKS, Number(meta?.chunks) || 0));
+        if (!count) return null;
+        const keys = Array.from({ length: count }, (_, index) => storageChunkKey(key, index));
+        const rows = await bridgeStorageGet(keys);
+        const map = Object.fromEntries(rows.map(item => [item.key, item.value || '']));
+        const raw = keys.map(chunkKey => map[chunkKey] || '').join('');
+        if (!raw) return null;
+        return JSON.parse(raw);
+      }
+
+      if (!legacyRaw) return null;
+      return JSON.parse(legacyRaw);
     } catch (error) {
       return null;
     }
@@ -224,9 +257,28 @@
     if (!bridgeReady || !bridge()?.send) return false;
     try {
       const payload = JSON.stringify(value);
-      const bytes = new TextEncoder().encode(payload).length;
-      if (bytes > 4096) throw new Error('VK storage value exceeds 4096 bytes');
-      await withTimeout(bridge().send('VKWebAppStorageSet', { key, value: payload }), 4000, null);
+      const chunks = [];
+      for (let offset = 0; offset < payload.length; offset += STORAGE_CHUNK_SIZE) {
+        chunks.push(payload.slice(offset, offset + STORAGE_CHUNK_SIZE));
+      }
+      if (!chunks.length) chunks.push('');
+      if (chunks.length > STORAGE_MAX_CHUNKS) return false;
+
+      for (let index = 0; index < chunks.length; index++) {
+        await withTimeout(
+          bridge().send('VKWebAppStorageSet', { key: storageChunkKey(key, index), value: chunks[index] }),
+          4000,
+          null
+        );
+      }
+      await withTimeout(
+        bridge().send('VKWebAppStorageSet', {
+          key: storageMetaKey(key),
+          value: JSON.stringify({ chunks: chunks.length, version: 1 })
+        }),
+        4000,
+        null
+      );
       return true;
     } catch (error) {
       return false;
@@ -269,7 +321,8 @@
         bridgeReady,
         okFapiReady,
         okAdReady,
-        okAdPreparing
+        okAdPreparing,
+        okAdPreparedAt
       };
     }
   });
