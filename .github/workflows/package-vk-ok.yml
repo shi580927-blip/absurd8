@@ -1,0 +1,63 @@
+name: Package VK OK
+
+on:
+  push:
+    branches: [platform/vk-ok]
+  workflow_dispatch:
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build VK OK package
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf vk-ok-release
+          mkdir -p vk-ok-release
+          cp index.html scene.html game.js platform-vk-ok.js style.css controls.css privileges.css collections.css income-icon.css level-shelf.css vk-ok-release/
+          cp -R assets vk-ok-release/
+          find vk-ok-release/assets/audio -type f -name '*.ogg' -delete
+
+      - name: Validate VK OK package
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f vk-ok-release/index.html
+          test -f vk-ok-release/platform-vk-ok.js
+          test -f vk-ok-release/game.js
+          test -f vk-ok-release/scene.html
+
+          if grep -R -n -E 'YaGames|yandexSdkPromise|/sdk\.js|showRewardedVideo|GameplayAPI|LoadingAPI'             vk-ok-release/index.html vk-ok-release/game.js vk-ok-release/platform-vk-ok.js; then
+            echo "VK/OK package contains Yandex platform references."
+            exit 1
+          fi
+
+          grep -q 'VKWebAppInit' vk-ok-release/platform-vk-ok.js
+          grep -q 'VKWebAppStorageGet' vk-ok-release/platform-vk-ok.js
+          grep -q 'VKWebAppStorageSet' vk-ok-release/platform-vk-ok.js
+          grep -q 'VKWebAppShowNativeAds' vk-ok-release/platform-vk-ok.js
+          grep -q 'vk_client' vk-ok-release/platform-vk-ok.js
+
+          if find vk-ok-release -print | grep -P '[А-Яа-яЁё ]'; then
+            echo "Release contains Cyrillic or spaces in file/folder names."
+            exit 1
+          fi
+
+          size="$(du -sb vk-ok-release | cut -f1)"
+          echo "Unpacked size: $size bytes"
+          test "$size" -lt 104857600
+          test ! -e vk-ok-release/submission-assets
+          test ! -e vk-ok-release/scripts
+
+      - name: Upload VK OK archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: kot-shef-vk-ok
+          path: vk-ok-release/**
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 6
