@@ -24,6 +24,7 @@ const levels=[
   {at:5000000000,name:'Повелитель заслуженного отдыха',scale:1,img:'assets/images/cat-level-13.png'},
   {at:25000000000,name:'Абсолютно сытый Шеф',scale:1,img:'assets/images/cat-level-14.png'}
 ];
+levels.forEach((level,index)=>level.at=ChefEconomy.config.levelThresholds[index]);
 const phrases=['Шеф требует второе первое.','Кот не толстый. Он стратегически запасливый.','Эта рыбка была недостаточно амбициозна.','Шеф одобряет. Молча и свысока.','В миске появилось дно. Кто ответит?','Кот съел бюджет. Буквально.','Теперь можно и перекусить.','Работай усерднее. Кот сам себя не накормит.','Уровень мурчания временно повышен.','Рыбка поступила в распоряжение руководства.'];
 const englishPhrases=['Chef demands a second first course.','The cat is not fat. He is strategically stocked.','That fish lacked ambition.','Chef approves. Silently and from above.','The bottom of the bowl is visible. Who is responsible?','The cat ate the budget. Literally.','Now we may have a little snack.','Work harder. The cat will not feed himself.','Purring level temporarily increased.','The fish has been transferred to management.'];
 const achievements=[
@@ -101,7 +102,7 @@ const queryParams=new URLSearchParams(location.search);
 const testMode=queryParams.get('test')==='1';
 const layoutEditorMode=queryParams.get('layout')==='1';
 const cleanTestMode=testMode&&queryParams.get('clean')==='1';
-const forcedTestLevel=testMode?Math.max(0,Math.min(levels.length-1,(parseInt(queryParams.get('level'),10)||0)-1)):-1;
+const forcedTestLevel=testMode&&queryParams.has('level')?Math.max(0,Math.min(levels.length-1,(parseInt(queryParams.get('level'),10)||0)-1)):-1;
 const saveKey=testMode?'absurd8-test-save':'absurd8-save';
 const storedSave=localStorage.getItem(saveKey);
 let hasValidLocalSave=false;
@@ -119,7 +120,8 @@ if((state.saveVersion||0)<5&&state.counts.laser>0)state.helperUntil.laser=Date.n
 if((state.saveVersion||0)<6&&state.counts.box>0)state.helperUntil.box=Date.now()+10*60*1000;
 if(typeof state.music!=='boolean')state.music=state.sound!==false;
 if(typeof state.sfx!=='boolean')state.sfx=state.sound!==false;
-state.saveVersion=9;
+state.saveVersion=10;
+ChefEconomy.normalize(state,Date.now());
 if(forcedTestLevel>=0){state.total=levels[forcedTestLevel].at;state.food=Math.max(state.food,state.total);state.outfit=null}
 const freshCare={hunger:82,mood:78,rest:80,last:Date.now(),nextRequest:Date.now(),request:null,bonusUntil:0};
 state.care={...freshCare,...(state.care||{})};
@@ -150,8 +152,8 @@ const englishDescriptions={
   '+1 рыбов за нажатие':'+1 fish per click','+1 рыбов в секунду':'+1 fish per second','+5 рыбов в секунду':'+5 fish per second','+20 рыбов в секунду':'+20 fish per second','+100 рыбов в секунду':'+100 fish per second','+3 рыбов за нажатие':'+3 fish per click','+12 рыбов в секунду':'+12 fish per second','+250 рыбов в секунду':'+250 fish per second',
   'Заработать 10 рыбов':'Earn 10 fish','Купить «Миску без дна»':'Buy the Bottomless Bowl','Нанять бабушку-кормителя':'Hire Feeder Grandma','Нанять испуганного повара':'Hire the frightened chef','Купить скоростную доставку':'Buy lightspeed delivery','Достичь 5 уровня':'Reach level 5','Получать 25 рыбов в секунду':'Earn 25 fish per second','Получить поддержку министерства':'Secure ministry support','Заработать 1 000 000 рыбов':'Earn 1,000,000 fish','Достичь 12 уровня':'Reach level 12','Довести Шефа до абсолютной сытости':'Bring Chef to absolute satisfaction'
 };
-const itemName=item=>gameLanguage==='en'?(englishNames[item.name]||item.name):item.name;
-const itemDesc=item=>gameLanguage==='en'?(englishDescriptions[item.desc]||item.desc):item.desc;
+const itemName=item=>gameLanguage==='en'?(item.enName||englishNames[item.name]||item.name):item.name;
+const itemDesc=item=>gameLanguage==='en'?(item.enDesc||englishDescriptions[item.desc]||item.desc):item.desc;
 const staticTranslations={
   pageTitle:['Кот, который слишком хорошо живёт','The Cat Who Lives Too Well'],phrase:['В этой миске подозрительно видно дно.','The bottom of this bowl is suspiciously visible.'],feedLabel:['ПОКОРМИТЬ','FEED'],feedHint:['Можно нажимать на кота или на кнопку','Tap the cat or press the button'],levelLabel:['Уровень наглости','Audacity level'],incomeLabel:['Доход','Income'],incomeUnit:['рыбов/сек','fish/sec'],navFeed:['Еда','Food'],navShop:['Привилегии','Privileges'],navWardrobe:['Шкаф','Wardrobe'],navAwards:['Награды','Awards'],shopTitle:['👑 Привилегии Шефа','👑 Chef’s Privileges'],shopMessage:['Выберите привилегию для Шефа.','Choose a privilege for Chef.'],wardrobeTitle:['👕 Гардероб Шефа','👕 Chef’s Wardrobe'],wardrobeMessage:['Одежда меняет вид, но не уменьшает наглость.','Clothes change his look, not his audacity.'],awardsTitle:['🏆 Награды Шефа','🏆 Chef’s Awards'],awardsMessage:['Шеф не хвастается. Он официально информирует.','Chef does not brag. He issues official updates.'],careTitle:['Как поживает Шеф','How Is Chef Doing?'],careMessage:['Шеф не нуждается в заботе. Он разрешает её проявить.','Chef needs no care. He merely permits it.'],hungerLabel:['Сытость','Fullness'],moodLabel:['Настроение','Mood'],restLabel:['Отдых','Rest'],careRequestTitle:['Шеф обдумывает пожелания','Chef Is Considering His Demands'],careRequestText:['Он сообщит, когда потребуется персонал.','He will notify the staff when needed.'],careAction:['Ожидаем распоряжений','Awaiting orders'],careBonus:['Бонус заботы пока не действует.','Care bonus is not active.'],treatTitle:['🍽️ Еда для Шефа','🍽️ Food for Chef'],treatIntro:['Купленное блюдо появляется в комнате на несколько минут. Сытый Шеф иногда имеет собственное мнение.','A purchased dish appears in the room for several minutes. A full Chef may still have opinions.'],careNote:['Показатели снижаются очень медленно. Шеф не болеет, не убегает и никого не наказывает. Почти.','Stats decrease very slowly. Chef never gets sick, runs away, or punishes anyone. Almost.'],settingsTitle:['⚙️ Настройки','⚙️ Settings'],settingsMessage:['Управление и звуки кабинета Шефа.','Controls and sounds in Chef’s office.'],musicLabel:['Фоновая музыка','Background music'],musicHint:['Музыка играет во время кормления','Music plays while you feed Chef'],effectsLabel:['Звуки игры','Game sounds'],effectsHint:['Кормление, кот, награды и игрушки','Feeding, cat, rewards and toys'],developerLabel:['Разработчик','Developer'],presentsLabel:['представляет','presents'],newLevelLabel:['✨ НОВЫЙ УРОВЕНЬ ✨','✨ NEW LEVEL ✨'],congratsLabel:['Шеф принимает поздравления.','Chef accepts your congratulations.'],achievementReceivedLabel:['НАГРАДА ПОЛУЧЕНА','AWARD UNLOCKED'],rewardConfirmTitle:['Открыть за просмотр рекламы?','Unlock by watching an ad?'],rewardConfirmText:['Посмотрите ролик полностью — награда будет выдана после просмотра.','Watch the full video to receive the reward.'],rewardConfirmCancel:['Не сейчас','Not now'],rewardConfirmWatch:['Смотреть рекламу','Watch ad']
 };
@@ -211,7 +213,8 @@ const boostMultiplier=()=>Math.max(state.care.bonusUntil>Date.now()?2:1,state.ad
 const rawPerClick=()=>1+upgrades.reduce((n,u)=>n+(u.click||0)*state.counts[u.id],0);
 const perClick=()=>Math.floor(rawPerClick()*boostMultiplier());
 const treatPrice=treat=>Math.max(12,treat.minimumPrice||0,Math.floor(rawPerClick()*treat.cost));
-const cps=()=>upgrades.reduce((n,u)=>n+(u.cps||0)*state.counts[u.id],0)*boostMultiplier();
+const baseCps=()=>upgrades.reduce((n,u)=>n+(u.cps||0)*state.counts[u.id],0);
+const cps=()=>baseCps()*boostMultiplier();
 const adRewardAmount=()=>Math.max(100,Math.floor(cps()*180),rawPerClick()*30);
 if(!Array.isArray(state.earnedAchievements))state.earnedAchievements=achievements.filter(a=>a.done()).map(a=>a.name);
 const CLOUD_SAVE_KEY='absurd8State';
@@ -221,6 +224,7 @@ let parentSdkPromise=null;
 try{if(parent!==window)parentSdkPromise=parent.yandexSdkPromise||null}catch(error){}
 let initialDataReady=(!window.YaGames&&!parentSdkPromise)||testMode,introMinElapsed=false,introFinishStarted=false;
 let adPlaying=false,adRequestPending=false;
+let economyReady=false,economyLastTick=performance.now();
 const NativeAudioContext=window.AudioContext||window.webkitAudioContext;
 let sharedAudioContext=null;
 const sharedAudioBuffers=new Map();
@@ -269,35 +273,43 @@ const needsLandscape=()=>matchMedia('(orientation:portrait) and (max-width:899px
 let masterOrientationPaused=false,windowBlurred=false;
 addEventListener('message',event=>{if(event.source!==parent||event.origin!==location.origin||event.data?.type!=='master-orientation')return;masterOrientationPaused=!!event.data.paused;const scale=Number(event.data.scale);if(Number.isFinite(scale)&&scale>0){document.documentElement.style.setProperty('--ui-unit',`${1/scale}px`);document.documentElement.classList.toggle('small-screen',scale<.75)}syncOrientation()});
 function gameIsPaused(){return adPlaying||platformPaused||masterOrientationPaused||windowBlurred||!brandIntroFinished||document.visibilityState==='hidden'||needsLandscape()}
+const EVENT_DIRECTOR_CONFIG={anticCooldownMinMs:45000,anticCooldownMaxMs:60000,zoomiesCooldownMs:90000};
 const EventDirector={
-  major:null,
-  until:0,
+  major:null,until:0,activeEvent:null,lastMajorEvent:null,nextMajorAllowedAt:0,lastZoomiesAt:0,lastAnticAt:0,
   begin(name,duration=0){
     this.cleanup();
     if(this.major&&this.major!==name)return false;
-    this.major=name;
+    this.major=this.activeEvent=name;
     this.until=duration>0?Date.now()+duration:0;
     document.documentElement.dataset.majorEvent=name;
     return true;
   },
   end(name){
     if(name&&this.major!==name)return;
-    this.major=null;
-    this.until=0;
+    const completed=this.major,now=Date.now();
+    if(completed==='chef-antic'||completed==='zoomies'){
+      this.lastMajorEvent=completed;
+      if(completed==='zoomies')this.lastZoomiesAt=now;else this.lastAnticAt=now;
+      this.nextMajorAllowedAt=now+(completed==='zoomies'?EVENT_DIRECTOR_CONFIG.zoomiesCooldownMs:
+        EVENT_DIRECTOR_CONFIG.anticCooldownMinMs+Math.random()*(EVENT_DIRECTOR_CONFIG.anticCooldownMaxMs-EVENT_DIRECTOR_CONFIG.anticCooldownMinMs));
+    }
+    this.major=this.activeEvent=null;this.until=0;
     delete document.documentElement.dataset.majorEvent;
   },
   cleanup(){
-    if(this.major&&this.until>0&&Date.now()>=this.until)this.end(this.major);
+    // Animated scenes own completion. A suspended frame must not release their lock.
+    if(this.major&&this.major!=='chef-antic'&&this.major!=='zoomies'&&this.until>0&&Date.now()>=this.until)this.end(this.major);
   },
-  busy(except=null){
-    this.cleanup();
-    return !!this.major&&this.major!==except;
+  busy(except=null){this.cleanup();return !!this.major&&this.major!==except},
+  uiBusy(sourcePanel=null){
+    const selector=sourcePanel==='foodShop'?'.shop.open:not(#foodShop),.reward-confirm.show,.level-celebration.show,.game.layout-mode':
+      '.shop.open,.reward-confirm.show,.level-celebration.show,.game.layout-mode';
+    return !!document.querySelector(selector);
   },
-  uiBusy(){
-    return !!document.querySelector('.shop.open,.reward-confirm.show,.level-celebration.show,.game.layout-mode');
-  },
-  canStartMajor(name){
-    return !gameIsPaused()&&!adRequestPending&&!this.uiBusy()&&!this.busy(name);
+  canStartMajor(name,{sourcePanel=null}={}){
+    const autonomous=name==='chef-antic'||name==='zoomies';
+    const cooling=autonomous&&this.major!==name&&Date.now()<this.nextMajorAllowedAt;
+    return !gameIsPaused()&&!adRequestPending&&!cooling&&!this.uiBusy(sourcePanel)&&!this.busy(name);
   },
   canRunIdle(){
     return !gameIsPaused()&&!adRequestPending&&!this.uiBusy()&&!this.busy()&&!document.querySelector('.game.zoomies-running');
@@ -500,7 +512,7 @@ function trackEvent(name,params={}){try{window.dataLayer?.push({event:name,...pa
 function startGameplay(){syncPausedTimers();if(gameplayActive||gameIsPaused())return;gameplayActive=true;ysdk?.features?.GameplayAPI?.start?.()}
 function stopGameplay(){syncPausedTimers();if(!gameplayActive)return;gameplayActive=false;ysdk?.features?.GameplayAPI?.stop?.()}
 function announceGameReady(){if(!brandIntroFinished||loadingReady||!ysdk)return;ysdk.features?.LoadingAPI?.ready?.();loadingReady=true;startGameplay()}
-function finishIntroWhenReady(){if(introFinishStarted||!introMinElapsed||!initialDataReady)return;introFinishStarted=true;const splash=$('introSplash');splash?.classList.add('hide');setTimeout(()=>{splash?.remove();brandIntroFinished=true;announceGameReady();trackEvent('game_start',{level:currentLevel()+1,test_mode:testMode})},900)}
+function finishIntroWhenReady(){if(introFinishStarted||!introMinElapsed||!initialDataReady)return;finishEconomyLoading();introFinishStarted=true;const splash=$('introSplash');splash?.classList.add('hide');setTimeout(()=>{splash?.remove();brandIntroFinished=true;announceGameReady();startGameplay();trackEvent('game_start',{level:currentLevel()+1,test_mode:testMode})},900)}
 function handlePlatformPause(){platformPaused=true;stopGameplay();stopAllSounds();clearTimeout(roomEventTimer);$('roomEvent').classList.remove('show')}
 function handlePlatformResume(){platformPaused=false;startGameplay();ensureMusic();scheduleRoomEvent()}
 function normalizeCloudState(){
@@ -513,10 +525,11 @@ function normalizeCloudState(){
   if(typeof state.sfx!=='boolean')state.sfx=true;
   state.care={hunger:82,mood:78,rest:80,last:Date.now(),nextRequest:Date.now(),request:null,bonusUntil:0,...(state.care||{})};
   state.buffetClicks??={};
-  state.saveVersion=9;
+  ChefEconomy.normalize(state,Date.now());
+  state.saveVersion=10;
 }
 function queueCloudSave(delay=12000){
-  if(!cloudSaveReady||!yandexPlayer||testMode||suppressSave||cloudSaveTimer)return;
+  if(!economyReady||!cloudSaveReady||!yandexPlayer||testMode||suppressSave||cloudSaveTimer)return;
   cloudSaveTimer=setTimeout(async()=>{
     cloudSaveTimer=null;
     if(cloudSaveInFlight)return queueCloudSave(3000);
@@ -531,8 +544,9 @@ async function initCloudSave(){
     yandexPlayer=await ysdk.getPlayer();
     const cloudData=await yandexPlayer.getData([CLOUD_SAVE_KEY]);
     const cloudState=cloudData?.[CLOUD_SAVE_KEY];
-    if(cloudState&&typeof cloudState==='object'&&(!hasValidLocalSave||(cloudState.last||0)>(state.last||0))){
-      state={...state,...cloudState};
+    if(!economyReady&&cloudState&&typeof cloudState==='object'&&(!hasValidLocalSave||(cloudState.last||0)>(state.last||0))){
+      // Economy defaults come from this snapshot, never from a rejected local save.
+      state={...state,...cloudState,offlineReserve:cloudState.offlineReserve??0,lastSeen:cloudState.lastSeen??cloudState.last,economyVersion:cloudState.economyVersion??0,milestones:cloudState.milestones??{},milestonePending:cloudState.milestonePending??[],activePlaySeconds:cloudState.activePlaySeconds??0,levelActiveSeconds:cloudState.levelActiveSeconds??{},levelCompletions:cloudState.levelCompletions??[]};
       normalizeCloudState();
       localStorage.setItem(saveKey,JSON.stringify(state));
       renderedLevel=currentLevel();
@@ -613,7 +627,7 @@ let achievementShowing=false,achievementDelayTimer;
 function showNextAchievement(){if(achievementShowing||!achievementQueue.length)return;if($('levelCelebration').classList.contains('show')){if(!achievementDelayTimer)achievementDelayTimer=setTimeout(()=>{achievementDelayTimer=null;showNextAchievement()},2850);return}achievementShowing=true;const award=achievementQueue.shift();$('achievementToastIcon').textContent=award.icon;$('achievementToastTitle').textContent=itemName(award);$('achievementToastText').textContent=itemDesc(award);$('achievementToast').classList.add('show');setTimeout(()=>playSound('reward',.62),350);setTimeout(()=>{$('achievementToast').classList.remove('show');setTimeout(()=>{achievementShowing=false;showNextAchievement()},350)},3600)}
 function checkAchievements(){achievements.forEach(award=>{if(award.done()&&!state.earnedAchievements.includes(award.name)){state.earnedAchievements.push(award.name);achievementQueue.push(award);trackEvent('achievement_unlocked',{achievement:award.name})}});if(achievementQueue.length){save();showNextAchievement()}}
 let levelCelebrationTimer;
-function showLevelCelebration(levelIndex){clearTimeout(levelCelebrationTimer);stopGameplay();EventDirector.begin('level',3000);$('levelCelebrationTitle').textContent=`${levelIndex+1} · ${itemName(levels[levelIndex])}`;$('levelCelebration').classList.remove('show');void $('levelCelebration').offsetWidth;$('levelCelebration').classList.add('show');levelCelebrationTimer=setTimeout(()=>{$('levelCelebration').classList.remove('show');EventDirector.end('level');if(!document.querySelector('.shop.open'))startGameplay()},2700)}
+function showLevelCelebration(levelIndex){clearTimeout(levelCelebrationTimer);if(gameIsPaused()||adRequestPending||EventDirector.busy()){levelCelebrationTimer=setTimeout(()=>showLevelCelebration(levelIndex),250);return}stopGameplay();if(!EventDirector.begin('level',3000))return;$('levelCelebrationTitle').textContent=`${levelIndex+1} · ${itemName(levels[levelIndex])}`;$('levelCelebration').classList.remove('show');void $('levelCelebration').offsetWidth;$('levelCelebration').classList.add('show');levelCelebrationTimer=setTimeout(()=>{$('levelCelebration').classList.remove('show');EventDirector.end('level');if(!document.querySelector('.shop.open'))startGameplay()},2700)}
 function returnToSceneForLevel(levelIndex){document.querySelectorAll('.shop.open').forEach(panel=>{panel.classList.remove('open');panel.setAttribute('aria-hidden','true')});document.querySelector('.game').classList.remove('menu-open');document.querySelectorAll('.nav-button').forEach(button=>button.classList.toggle('active',button.id==='openFeed'));playSound('level',.9);showLevelCelebration(levelIndex);setTimeout(()=>playPurr(true),2100)}
 let renderedLevel=currentLevel();
 let renderedBoxStage=-1;
@@ -671,7 +685,7 @@ function render(updatePanels=false){
   checkAchievements();
 }
 let lastClickPhrase=0;
-function feed(e){if(zoomiesRunning||chefAnticRunning||gameIsPaused()||document.querySelector('.game').classList.contains('layout-mode'))return;const buffet=activeBuffet(),gain=perClick()*(buffet?.treat.clickMultiplier||1),before=currentLevel();state.food+=gain;state.total+=gain;if(buffet){state.buffetClicks[buffet.index]=(state.buffetClicks[buffet.index]||0)+1;const clicks=state.buffetClicks[buffet.index],isPearl=buffet.treat.buffetKey==='pearl-shell',isShip=buffet.treat.buffetKey==='sushi-ship';if(clicks===1){$('phrase').textContent=isPearl?L('Раковина принята. Жемчуг оставить в бухгалтерии.','Shell accepted. Leave the pearl with accounting.'):!isShip?L('Фуршет принят. Приступаю к дегустации.','Buffet accepted. Let the tasting begin.'):L('Корабль принят. Экипаж свободен.','The ship is accepted. The crew may leave.');showCatThought('happy',isPearl?L('О, подача с драгоценностями.','Oh, a serving with jewels.'):L('О, любимая рыбка.','Oh, my favorite fish.'))}else if(clicks===buffet.treat.stageClicks[1]){state.treatUntil[buffet.index]=Math.min(state.treatUntil[buffet.index]||Infinity,Date.now()+25000);$('phrase').textContent=L('Шеф проявил умеренность. Почти.','Chef has shown restraint. Almost.');showCatThought('happy',isPearl?L('Жемчужина осталась. Остальное — нет.','The pearl remains. The rest does not.'):!isShip?L('Всё съедено. Посуда остаётся вам.','All eaten. You may keep the dishes.'):L('Корабль пропал без вести.','The ship has gone missing.'))}}const after=currentLevel();if(after<=before){playFeedSound();if(after===levels.length-1)playPurr()}const cat=$('cat'),bowl=$('bowl');cat.classList.add('bop');bowl.classList.add('served');setTimeout(()=>{cat.classList.remove('bop');bowl.classList.remove('served')},180);if(after>before){$('phrase').textContent=after===12?L('Шеф официально перешёл к заслуженному отдыху. Государственные дела подождут.','Chef has officially entered well-earned retirement. Affairs of state can wait.'):after===13?L('Достигнута абсолютная сытость. Шеф доволен и продолжает принимать рыбов.','Absolute satisfaction achieved. Chef is pleased and continues accepting fish.'):L(`Новый статус: «${itemName(levels[after])}». Шеф ожидал этого раньше.`,`New status: “${itemName(levels[after])}”. Chef expected it sooner.`);lastClickPhrase=Date.now()}else if(!buffet&&Date.now()-lastClickPhrase>18000&&Math.random()<.06){const pool=gameLanguage==='en'?englishPhrases:phrases;$('phrase').textContent=pool[Math.floor(Math.random()*pool.length)];lastClickPhrase=Date.now()}const f=document.createElement('span');f.className='floater';f.textContent=`+${format(gain)} 🐟`;f.style.left=`${e?.clientX||innerWidth/2}px`;f.style.top=`${e?.clientY||innerHeight/2}px`;$('floaters').append(f);setTimeout(()=>f.remove(),850);render(after>before);save()}
+function feed(e){if(!economyReady||zoomiesRunning||chefAnticRunning||gameIsPaused()||document.querySelector('.game').classList.contains('layout-mode'))return;const buffet=activeBuffet(),gain=perClick()*(buffet?.treat.clickMultiplier||1),before=currentLevel();state.food+=gain;state.total+=gain;if(buffet){state.buffetClicks[buffet.index]=(state.buffetClicks[buffet.index]||0)+1;const clicks=state.buffetClicks[buffet.index],isPearl=buffet.treat.buffetKey==='pearl-shell',isShip=buffet.treat.buffetKey==='sushi-ship';if(clicks===1){$('phrase').textContent=isPearl?L('Раковина принята. Жемчуг оставить в бухгалтерии.','Shell accepted. Leave the pearl with accounting.'):!isShip?L('Фуршет принят. Приступаю к дегустации.','Buffet accepted. Let the tasting begin.'):L('Корабль принят. Экипаж свободен.','The ship is accepted. The crew may leave.');showCatThought('happy',isPearl?L('О, подача с драгоценностями.','Oh, a serving with jewels.'):L('О, любимая рыбка.','Oh, my favorite fish.'))}else if(clicks===buffet.treat.stageClicks[1]){state.treatUntil[buffet.index]=Math.min(state.treatUntil[buffet.index]||Infinity,Date.now()+25000);$('phrase').textContent=L('Шеф проявил умеренность. Почти.','Chef has shown restraint. Almost.');showCatThought('happy',isPearl?L('Жемчужина осталась. Остальное — нет.','The pearl remains. The rest does not.'):!isShip?L('Всё съедено. Посуда остаётся вам.','All eaten. You may keep the dishes.'):L('Корабль пропал без вести.','The ship has gone missing.'))}}const after=currentLevel();if(after<=before){playFeedSound();if(after===levels.length-1)playPurr()}const cat=$('cat'),bowl=$('bowl');cat.classList.add('bop');bowl.classList.add('served');setTimeout(()=>{cat.classList.remove('bop');bowl.classList.remove('served')},180);if(after>before){$('phrase').textContent=after===12?L('Шеф официально перешёл к заслуженному отдыху. Государственные дела подождут.','Chef has officially entered well-earned retirement. Affairs of state can wait.'):after===13?L('Достигнута абсолютная сытость. Шеф доволен и продолжает принимать рыбов.','Absolute satisfaction achieved. Chef is pleased and continues accepting fish.'):L(`Новый статус: «${itemName(levels[after])}». Шеф ожидал этого раньше.`,`New status: “${itemName(levels[after])}”. Chef expected it sooner.`);lastClickPhrase=Date.now()}else if(!buffet&&Date.now()-lastClickPhrase>18000&&Math.random()<.06){const pool=gameLanguage==='en'?englishPhrases:phrases;$('phrase').textContent=pool[Math.floor(Math.random()*pool.length)];lastClickPhrase=Date.now()}const f=document.createElement('span');f.className='floater';f.textContent=`+${format(gain)} 🐟`;f.style.left=`${e?.clientX||innerWidth/2}px`;f.style.top=`${e?.clientY||innerHeight/2}px`;$('floaters').append(f);setTimeout(()=>f.remove(),850);render(after>before);save()}
 $('cat').addEventListener('click',feed);$('feed').addEventListener('click',feed);
 $('cat').addEventListener('contextmenu',e=>e.preventDefault());
 const panels=['foodShop','shop','wardrobe','awards','care','settings'];
@@ -729,7 +743,7 @@ $('treats').addEventListener('scroll',updateFoodArrows,{passive:true});
 $('foodPrev').addEventListener('click',()=>scrollFood(-1));
 $('foodNext').addEventListener('click',()=>scrollFood(1));
 new ResizeObserver(updateFoodArrows).observe($('treats'));
-$('treats').addEventListener('click',e=>{const button=e.target.closest('.treat-card');if(!button)return;const index=+button.dataset.treat;if(isTreatUnlocked(index))return;e.stopImmediatePropagation();const treat=carpetFood[index],name=itemName(treat);if(!canUnlockTreatWithAd(index)){$('phrase').textContent=L(`Секретное блюдо пока не раскрывает условий. Возвращайтесь на уровне ${treat.adLevel}.`,`The secret dish is not revealing its terms yet. Return at level ${treat.adLevel}.`);playSound('error',.4);return}const hiddenName=isPremiumTreat(index)?L('секретное блюдо','secret dish'):name;confirmRewardedAction(L(`Открыть «${hiddenName}» за рекламу?`,`Unlock “${hiddenName}” by watching an ad?`),L('Посмотрите ролик полностью — блюдо откроется навсегда, и его можно будет покупать за рыбов.','Watch the full video to unlock this dish permanently. You can then buy it with fish.'),()=>showRewardedAction({event:'treat_unlock',onReward:()=>{state.adTreatUnlocks.push(index);if(state.treatWish?.index===index){rememberCompletedWish();state.treatWish=null;state.nextTreatWish=Date.now()+(6+Math.random()*4)*60000}},success:L(`«${name}» открыто навсегда. Теперь его можно купить за рыбов.`,`“${name}” is permanently unlocked. You can now buy it with fish.`)}))},true);
+$('treats').addEventListener('click',e=>{const button=e.target.closest('.treat-card');if(!button)return;const index=+button.dataset.treat;if(isTreatUnlocked(index))return;e.stopImmediatePropagation();const treat=carpetFood[index],name=itemName(treat);if(!canUnlockTreatWithAd(index)){$('phrase').textContent=L(`Секретное блюдо пока не раскрывает условий. Возвращайтесь на уровне ${treat.adLevel}.`,`The secret dish is not revealing its terms yet. Return at level ${treat.adLevel}.`);playSound('error',.4);return}const hiddenName=isPremiumTreat(index)?L('секретное блюдо','secret dish'):name;confirmRewardedAction(L(`Открыть «${hiddenName}» за рекламу?`,`Unlock “${hiddenName}” by watching an ad?`),L('Посмотрите ролик полностью — блюдо откроется навсегда, и его можно будет покупать за рыбов.','Watch the full video to unlock this dish permanently. You can then buy it with fish.'),()=>showRewardedAction({event:'treat_unlock',sourcePanel:'foodShop',onReward:()=>{state.adTreatUnlocks.push(index);if(state.treatWish?.index===index){rememberCompletedWish();state.treatWish=null;state.nextTreatWish=Date.now()+(6+Math.random()*4)*60000}},success:L(`«${name}» открыто навсегда. Теперь его можно купить за рыбов.`,`“${name}” is permanently unlocked. You can now buy it with fish.`)}))},true);
 $('treats').addEventListener('click',e=>{
   const button=e.target.closest('.treat-card');if(!button)return;updateCare();
   const index=+button.dataset.treat,treat=carpetFood[index],name=itemName(treat),cost=treatPrice(treat),activeUntil=state.treatUntil[index]||0;
@@ -745,7 +759,46 @@ $('treats').addEventListener('click',e=>{
 $('careAction').addEventListener('click',()=>{updateCare();const type=state.care.request;if(!type)return;if(type==='hunger'){const cost=Math.max(10,perClick()*8);if(state.food<cost){playSound('error');$('careRequestText').textContent=L(`Для особого перекуса не хватает ${format(cost-state.food)} рыбов.`,`The special snack needs ${format(cost-state.food)} more fish.`);return}state.food-=cost}state.care[type]=Math.min(100,state.care[type]+32);state.care.request=null;state.care.bonusUntil=Date.now()+5*60*1000;state.care.nextRequest=Date.now()+(2+Math.random())*3600000;playSound('reward',.75);if(type==='hunger')playPurr();else playSound(type==='mood'?'cat-happy-2':'cat-soft',.72);$('phrase').textContent=type==='hunger'?L('Особый перекус принят. Шеф великодушно не оставил ни крошки.','Special snack accepted. Chef generously left no crumbs.'):type==='mood'?L('Перо побеждено. Настроение руководства улучшилось.','The feather was defeated. Management morale improved.'):L('Тишина объявлена государственной необходимостью.','Silence has been declared a matter of national importance.');save();render(true)});
 const AD_WATCH_COOLDOWN=300000;
 let lastAdWatch=+(localStorage.getItem('absurd8-last-ad-watch')||0);
-function showRewardedAction({event,onReward,success}){if(adRequestPending)return;if(!EventDirector.canStartMajor('ad')){const message=L('Шеф сейчас занят. Попробуйте после завершения события.','Chef is busy right now. Try again after the event.');$('phrase').textContent=message;$('adStatus').textContent=message;return}const remaining=AD_WATCH_COOLDOWN-(Date.now()-lastAdWatch);if(remaining>0){playSound('error',.45);const message=L(`Следующая реклама будет доступна через ${Math.ceil(remaining/1000)} сек.`,`The next ad will be available in ${Math.ceil(remaining/1000)} sec.`);$('phrase').textContent=message;$('adStatus').textContent=message;return}if(!ysdk?.adv){playSound('error');const message=L('Реклама будет доступна после запуска игры на Яндекс Играх.','Ads will be available after launching the game on Yandex Games.');$('phrase').textContent=message;$('adStatus').textContent=message;return}adRequestPending=true;trackEvent(`${event}_clicked`);renderAd();let rewarded=false;const fail=()=>{adRequestPending=false;resumeGameAfterAd();playSound('error');const message=L('Сейчас реклама недоступна. Попробуйте немного позже.','Ads are unavailable right now. Please try again later.');$('phrase').textContent=message;$('adStatus').textContent=message;render(true)};try{const result=ysdk.adv.showRewardedVideo({callbacks:{onOpen:()=>{lastAdWatch=Date.now();localStorage.setItem('absurd8-last-ad-watch',String(lastAdWatch));pauseGameForAd();$('adStatus').textContent=L('Просмотр начался. Награда будет выдана после завершения.','Video started. The reward will be granted after completion.')},onRewarded:()=>{if(rewarded)return;syncPausedTimers();rewarded=true;onReward();trackEvent(`${event}_rewarded`);save()},onClose:()=>{adRequestPending=false;resumeGameAfterAd();if(rewarded)playSound('reward');const message=rewarded?success:L('Просмотр не завершён — награда не выдана.','Video not completed — no reward was granted.');$('phrase').textContent=message;$('adStatus').textContent=message;render(true)},onError:fail}});result?.catch?.(fail)}catch(error){fail()}}
+function showRewardedAction({event,onReward,success,sourcePanel=null}){
+  if(adRequestPending)return;
+  if(!EventDirector.canStartMajor('ad',{sourcePanel})){
+    const message=L('Шеф сейчас занят. Попробуйте после завершения события.','Chef is busy right now. Try again after the event.');
+    $('phrase').textContent=message;$('adStatus').textContent=message;return;
+  }
+  const remaining=AD_WATCH_COOLDOWN-(Date.now()-lastAdWatch);
+  if(remaining>0){
+    playSound('error',.45);const message=L(`Следующая реклама будет доступна через ${Math.ceil(remaining/1000)} сек.`,`The next ad will be available in ${Math.ceil(remaining/1000)} sec.`);
+    $('phrase').textContent=message;$('adStatus').textContent=message;return;
+  }
+  if(!ysdk?.adv){
+    playSound('error');const message=L('Реклама будет доступна после запуска игры на Яндекс Играх.','Ads will be available after launching the game on Yandex Games.');
+    $('phrase').textContent=message;$('adStatus').textContent=message;return;
+  }
+  // Reserve before calling SDK, including the wait before onOpen.
+  if(!EventDirector.begin('ad'))return;
+  adRequestPending=true;
+  const restoreFood=sourcePanel==='foodShop'&&$('foodShop').classList.contains('open');
+  if(restoreFood){$('foodShop').classList.remove('open');$('foodShop').setAttribute('aria-hidden','true');document.querySelector('.game').classList.remove('menu-open')}
+  pauseGameForAd();trackEvent(`${event}_clicked`);renderAd();
+  let rewarded=false,settled=false;
+  const settle=(failed=false)=>{
+    if(settled)return;settled=true;adRequestPending=false;
+    if(restoreFood){$('foodShop').classList.add('open');$('foodShop').setAttribute('aria-hidden','false');document.querySelector('.game').classList.add('menu-open')}
+    resumeGameAfterAd();
+    if(failed)playSound('error');else if(rewarded)playSound('reward');
+    const message=failed?L('Сейчас реклама недоступна. Попробуйте немного позже.','Ads are unavailable right now. Please try again later.'):
+      rewarded?success:L('Просмотр не завершён — награда не выдана.','Video not completed — no reward was granted.');
+    $('phrase').textContent=message;$('adStatus').textContent=message;render(true);
+  };
+  try{
+    const result=ysdk.adv.showRewardedVideo({callbacks:{
+      onOpen:()=>{if(settled)return;lastAdWatch=Date.now();try{localStorage.setItem('absurd8-last-ad-watch',String(lastAdWatch))}catch(error){};$('adStatus').textContent=L('Просмотр начался. Награда будет выдана после завершения.','Video started. The reward will be granted after completion.')},
+      onRewarded:()=>{if(settled||rewarded)return;syncPausedTimers();rewarded=true;onReward();trackEvent(`${event}_rewarded`);save()},
+      onClose:()=>settle(),onError:()=>settle(true)
+    }});
+    result?.catch?.(()=>settle(true));
+  }catch(error){settle(true)}
+}
 function mainRewardedAdClick(){if(adRequestPending)return;const cooldown=AD_WATCH_COOLDOWN-(Date.now()-lastAdWatch);if(cooldown>0){const message=L(`Следующая реклама будет доступна через ${Math.ceil(cooldown/1000)} сек.`,`The next ad will be available in ${Math.ceil(cooldown/1000)} sec.`);$('phrase').textContent=message;$('adStatus').textContent=message;return}const instantReward=adRewardAmount();showRewardedAction({event:'ad',onReward:()=>{state.food+=instantReward;state.total+=instantReward;state.adBonusUntil=Date.now()+5*60*1000},success:L(`Спонсор выделил ${format(instantReward)} рыбов. Доход ×3 на 5 минут.`,`The sponsor allocated ${format(instantReward)} fish. Income ×3 for 5 minutes.`)})}
 function openBoostOffer(){if(adRequestPending)return;const cooldown=Math.max(0,AD_WATCH_COOLDOWN-(Date.now()-lastAdWatch));if(cooldown>0){confirmRewardedAction(L('Реклама пока недоступна','Ad not ready'),L('Общий перерыв для ускорения и блюд: осталось '+Math.ceil(cooldown/1000)+' сек.','Shared cooldown for boosts and dishes: '+Math.ceil(cooldown/1000)+' seconds left.'),null);$('rewardConfirmWatch').disabled=true;return}confirmRewardedAction(L('Ускорение на 5 минут','Boost for 5 minutes'),L('За полный просмотр: +'+format(adRewardAmount())+' рыбов сразу и набор рыбов ×3 на 5 минут.','Watch the full ad for +'+format(adRewardAmount())+' fish now and ×3 fish earnings for 5 minutes.'),mainRewardedAdClick)}
 $('rewardedAd').addEventListener('click',openBoostOffer);
@@ -763,7 +816,7 @@ const roomEvents=[
 ];
 let roomEventTimer;
 function pauseGameForAd(){EventDirector.begin('ad');adPlaying=true;stopGameplay();stopAllSounds();clearTimeout(roomEventTimer);$('roomEvent').classList.remove('show')}
-function resumeGameAfterAd(){if(!adPlaying)return;adPlaying=false;EventDirector.end('ad');startGameplay();ensureMusic();scheduleRoomEvent()}
+function resumeGameAfterAd(){if(!adPlaying)return;adPlaying=false;EventDirector.end('ad');if(!document.querySelector('.shop.open'))startGameplay();ensureMusic();scheduleRoomEvent()}
 function scheduleRoomEvent(first=false){clearTimeout(roomEventTimer);roomEventTimer=setTimeout(()=>{if(!EventDirector.canRunIdle()){scheduleRoomEvent();return}const event=roomEvents[Math.floor(Math.random()*roomEvents.length)],toy=$('roomEvent');toy.innerHTML=`<img src="${event.img}" alt="">`;toy.dataset.phrase=gameLanguage==='en'?event.enPhrase:event.phrase;toy.dataset.sound=event.sound;toy.style.setProperty('--event-x',`${12+Math.random()*72}%`);toy.style.setProperty('--event-y',`${30+Math.random()*38}%`);toy.classList.add('show');setTimeout(()=>{if(toy.classList.contains('show')){toy.classList.remove('show');scheduleRoomEvent()}},9000)},first?5000:18000+Math.random()*18000)}
 const chefAntics={
   'fur-rub':{
@@ -1217,7 +1270,48 @@ $('openSettings').addEventListener('click',updateMobileControls);
 new MutationObserver(updateMobileControls).observe($('perClick'),{childList:true,characterData:true,subtree:true});
 new MutationObserver(updateMobileControls).observe($('feed'),{attributes:true,attributeFilter:['disabled']});
 updateMobileControls();
-function save(){if(suppressSave)return;syncPausedTimers();state.last=Date.now();localStorage.setItem(saveKey,JSON.stringify(state));queueCloudSave()}
-const away=Math.min(4*3600,Math.max(0,(Date.now()-(state.last||Date.now()))/1000));if(away>10&&cps()>0){const bonus=Math.floor(away*cps());state.food+=bonus;state.total+=bonus;$('phrase').textContent=L(`Пока тебя не было, Шеф получил ${format(bonus)} рыбов.`,`While you were away, Chef received ${format(bonus)} fish.`)}
+function save(){if(suppressSave||!economyReady)return;syncPausedTimers();state.lastSeen=state.last=Date.now();localStorage.setItem(saveKey,JSON.stringify(state));queueCloudSave()}
+function finishEconomyLoading(){
+  if(economyReady)return;
+  ChefEconomy.normalize(state,Date.now());
+  const award=ChefEconomy.settleOffline(state,Date.now(),baseCps());
+  economyReady=true;economyLastTick=performance.now();
+  // Persist the debit and earnings together before exposing gameplay.
+  save();
+  if(award.gain>0){$('phrase').textContent=L(`Пока вас не было, Шеф получил ${format(award.gain)} рыбов из резерва.`,`While you were away, Chef received ${format(award.gain)} fish from the reserve.`);trackEvent('offline_income',award)}
+  renderedLevel=currentLevel();render(true);
+}
+let nextMilestoneToastAt=0;
+function updateEconomyProgress(){
+  if(!economyReady)return;
+  const reached=ChefEconomy.checkpoints(state);
+  reached.forEach(entry=>trackEvent(entry.percent===100?'level_completed':'level_milestone',{...entry,activeSeconds:state.levelActiveSeconds[String(entry.level)]||0,baseCps:baseCps(),clickValue:perClick()}));
+  if(reached.length)save();
+  if(!state.milestonePending.length||Date.now()<nextMilestoneToastAt||gameIsPaused()||adRequestPending||EventDirector.busy()||EventDirector.uiBusy()||achievementShowing||achievementQueue.length)return;
+  const entry=state.milestonePending.shift();nextMilestoneToastAt=Date.now()+12000;
+  const quotes={25:['Четверть дела сделана. Шеф заметил.','A quarter done. Chef noticed.'],50:['Половина пути. Миска уже гордится вами.','Halfway there. The bowl is proud of you.'],75:['Осталась четверть. Шеф присматривает новый статус.','One quarter left. Chef is considering a new title.'],100:['Шеф принимает новый статус. Персоналу — благодарность.','Chef accepts the new title. Thanks to the staff.']};
+  achievementQueue.push({icon:'🐾',name:`Уровень ${entry.level}: ${entry.percent}%`,enName:`Level ${entry.level}: ${entry.percent}%`,desc:quotes[entry.percent][0],enDesc:quotes[entry.percent][1]});
+  showNextAchievement();save();
+}
+function tickEconomy(){
+  const now=performance.now(),seconds=Math.min(1,Math.max(0,(now-economyLastTick)/1000));economyLastTick=now;
+  if(!economyReady||!gameplayActive||gameIsPaused()||adRequestPending||EventDirector.uiBusy())return;
+  ChefEconomy.accrue(state,seconds);
+}
+function initEconomyTestMode(){
+  if(!testMode)return;
+  const section=document.createElement('div');section.className='test-actions';
+  section.innerHTML='<label>Offline reserve (seconds) <input id="testOfflineReserve" type="number" min="0" max="3600" value="3600"></label><button data-economy="reserve">Set reserve</button><button data-economy="offline">Simulate 2h offline</button><button data-economy="milestone">Next milestone</button><button data-economy="metrics">Show balance data</button><pre id="testEconomyMetrics"></pre>';
+  $('testPanel').append(section);
+  section.addEventListener('click',event=>{
+    const action=event.target.closest('[data-economy]')?.dataset.economy;if(!action)return;
+    if(action==='reserve'){state.offlineReserve=Math.max(0,Math.min(3600,Number($('testOfflineReserve').value)||0))}
+    if(action==='offline'){state.lastSeen=Date.now()-2*3600000;const result=ChefEconomy.settleOffline(state,Date.now(),baseCps());$('phrase').textContent=L(`Тест: ${format(result.gain)} рыбов; резерв ${Math.round(state.offlineReserve)} сек.`,`Test: ${format(result.gain)} fish; reserve ${Math.round(state.offlineReserve)}s.`)}
+    if(action==='milestone'){const index=currentLevel(),start=levels[index].at,end=levels[index+1]?.at;if(end){const progress=(state.total-start)/(end-start),fraction=ChefEconomy.config.milestones.find(x=>x>progress+1e-9);if(fraction){state.total=start+(end-start)*fraction}}}
+    $('testEconomyMetrics').textContent=JSON.stringify({level:currentLevel()+1,fish:state.food,total:state.total,baseCps:baseCps(),activeCps:cps(),offlineReserveSeconds:Math.round(state.offlineReserve),activeSeconds:Math.round(state.activePlaySeconds),levelActiveSeconds:state.levelActiveSeconds,completions:state.levelCompletions},null,2);
+    render(true);updateEconomyProgress();save();
+  });
+}
+
 function syncOrientation(){if(needsLandscape()||masterOrientationPaused){stopGameplay();stopAllSounds()}else{startGameplay();ensureMusic()}}
-setInterval(()=>{syncPausedTimers();if(gameIsPaused())return;const gain=cps()/10;state.food+=gain;state.total+=gain;render()},100);setInterval(()=>{if(gameIsPaused())return;updateCare();save();if($('care').classList.contains('open'))renderCare();else renderChefWish()},60000);setInterval(save,5000);addEventListener('beforeunload',save);applyGameLanguage(queryParams.get('lang')||'ru');updateCare();render(false);applyLayout();addEventListener('resize',()=>{applyLayout();syncOrientation();requestAnimationFrame(alignIncomeToPrimaryCounter);if(chefAnticRunning&&chefAnticCurrentFrame)requestAnimationFrame(()=>drawChefAnticFrame(chefAnticCurrentFrame))});addEventListener('orientationchange',syncOrientation);addEventListener('load',applyLayout,{once:true});initTestMode();if(testMode||layoutEditorMode){$('layoutToggle').hidden=false;$('layoutToggle').setAttribute('aria-hidden','false')}if(layoutEditorMode)setLayoutMode(true);initCatThoughts();scheduleRoomEvent(true);scheduleChefAntic(true);setTimeout(()=>trackEvent('session_30_sec'),30000);setTimeout(()=>trackEvent('session_1_min'),60000);setTimeout(()=>trackEvent('session_3_min'),180000);setTimeout(()=>trackEvent('session_5_min'),300000);setTimeout(()=>{introMinElapsed=true;finishIntroWhenReady()},1800);setTimeout(()=>{initialDataReady=true;finishIntroWhenReady()},8000);
+setInterval(()=>{syncPausedTimers();tickEconomy();if(!economyReady||gameIsPaused())return;const gain=cps()/10;state.food+=gain;state.total+=gain;render()},100);setInterval(()=>{if(gameIsPaused())return;updateCare();save();if($('care').classList.contains('open'))renderCare();else renderChefWish()},60000);setInterval(save,5000);addEventListener('beforeunload',save);applyGameLanguage(queryParams.get('lang')||'ru');updateCare();render(false);applyLayout();addEventListener('resize',()=>{applyLayout();syncOrientation();requestAnimationFrame(alignIncomeToPrimaryCounter);if(chefAnticRunning&&chefAnticCurrentFrame)requestAnimationFrame(()=>drawChefAnticFrame(chefAnticCurrentFrame))});addEventListener('orientationchange',syncOrientation);addEventListener('load',applyLayout,{once:true});initTestMode();initEconomyTestMode();setInterval(updateEconomyProgress,1000);if(testMode||layoutEditorMode){$('layoutToggle').hidden=false;$('layoutToggle').setAttribute('aria-hidden','false')}if(layoutEditorMode)setLayoutMode(true);initCatThoughts();scheduleRoomEvent(true);scheduleChefAntic(true);setTimeout(()=>trackEvent('session_30_sec'),30000);setTimeout(()=>trackEvent('session_1_min'),60000);setTimeout(()=>trackEvent('session_3_min'),180000);setTimeout(()=>trackEvent('session_5_min'),300000);setTimeout(()=>{introMinElapsed=true;finishIntroWhenReady()},1800);setTimeout(()=>{initialDataReady=true;finishIntroWhenReady()},8000);
