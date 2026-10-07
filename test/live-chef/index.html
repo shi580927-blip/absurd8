@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Кот, который слишком хорошо живёт</title>
+<!-- GitHub Pages preview; no Yandex SDK. -->
+<style>
+*{box-sizing:border-box;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#160b09}
+#viewport{position:fixed;inset:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);overflow:hidden}
+#stage{position:absolute;left:50%;top:50%;width:1600px;height:900px;border:0;transform-origin:0 0}
+#rotate{position:fixed;inset:0;display:none;place-content:center;text-align:center;padding:28px;background:#21100c;color:#fff5c9;font:24px "Trebuchet MS",sans-serif}
+#rotate small{display:block;margin-top:16px;font-size:16px}
+@media(orientation:portrait) and (pointer:coarse){#rotate{display:grid}}
+</style>
+</head>
+<body>
+<div id="viewport"><iframe id="stage" title="Кот Шеф" allow="autoplay; fullscreen; clipboard-write" allowfullscreen></iframe></div>
+<div id="rotate"><strong>Поверните телефон</strong><small>Шеф ждёт в горизонтальном кабинете</small></div>
+<script>
+const frame=document.getElementById('stage'),viewport=document.getElementById('viewport');
+window.yandexSdkPromise=window.YaGames?YaGames.init().catch(()=>null):Promise.resolve(null);
+const params=new URLSearchParams(location.search);
+params.set('master','1');
+params.set('test','1');
+params.set('build','live-chef-v2-b1');
+frame.src='scene.html?'+params.toString();
+function fit(){
+  const scale=Math.min(viewport.clientWidth/1600,viewport.clientHeight/900);
+  frame.style.transform='scale('+scale+') translate(-50%,-50%)';
+  frame.contentWindow.postMessage({type:'master-orientation',paused:matchMedia('(orientation:portrait) and (pointer:coarse)').matches,scale},location.origin);
+}
+frame.addEventListener('load',fit);
+addEventListener('resize',fit);
+new ResizeObserver(fit).observe(viewport);
+function setShellLanguage(language){
+  const english=language==='en';
+  document.documentElement.lang=english?'en':'ru';
+  document.title=english?'The Cat Who Lives Too Well':'Кот, который слишком хорошо живёт';
+  document.getElementById('rotate').innerHTML=english?'<strong>Rotate your phone</strong><small>Chef awaits in his landscape office</small>':'<strong>Поверните телефон</strong><small>Шеф ждёт в горизонтальном кабинете</small>';
+}
+addEventListener('message',event=>{if(event.source===frame.contentWindow&&event.origin===location.origin&&event.data?.type==='game-language')setShellLanguage(event.data.language)});
+setShellLanguage(params.get('lang'));
+fit();
+</script>
+</body>
+</html>
